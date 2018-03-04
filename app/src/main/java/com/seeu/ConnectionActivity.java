@@ -9,8 +9,11 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import java.util.Arrays;
 
 public class ConnectionActivity extends AppCompatActivity {
 
@@ -23,11 +26,12 @@ public class ConnectionActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_connection);
 
-		boolean loggedIn = AccessToken.getCurrentAccessToken() == null;
+		final AccessToken token = AccessToken.getCurrentAccessToken();
 
-		if (loggedIn) {
+		if (null != token) {
 			// Go to the main activity and skip this activity
 			Log.d("Facebook", "already logged in");
+			Log.d("Facebook", token.getToken());
 		}
 
 		callbackManager = CallbackManager.Factory.create();
@@ -42,6 +46,7 @@ public class ConnectionActivity extends AppCompatActivity {
 			@Override
 			public void onSuccess(LoginResult loginResult) {
 				// App code
+				Log.d("Facebook", "Login success");
 			}
 
 			@Override
