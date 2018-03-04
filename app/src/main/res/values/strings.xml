@@ -1,4 +1,8 @@
 <resources>
+    <!-- Facebook strings -->
+    <string name="facebook_app_id">1885995028085352</string>
+    <string name="fb_login_protocol_scheme">fb1885995028085352</string>
+
     <string name="app_name">SeeU</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
