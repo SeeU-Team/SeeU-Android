@@ -15,13 +15,11 @@ import java.util.List;
 public class TypeTeamRecyclerAdapter extends RecyclerView.Adapter<TypeTeamViewHolder> {
 
 	private LayoutInflater inflater;
-	private List<Integer> colors;
 	private List<String> names;
 	private ClickListener listener;
 
-	public TypeTeamRecyclerAdapter(Context context, List<Integer> colors, List<String> names, ClickListener listener) {
+	public TypeTeamRecyclerAdapter(Context context, List<String> names, ClickListener listener) {
 		this.inflater = LayoutInflater.from(context);
-		this.colors = colors;
 		this.names = names;
 		this.listener = listener;
 	}
@@ -34,12 +32,13 @@ public class TypeTeamRecyclerAdapter extends RecyclerView.Adapter<TypeTeamViewHo
 
 	@Override
 	public void onBindViewHolder(TypeTeamViewHolder holder, int position) {
-		int color = colors.get(position);
-		String name = names.get(position);
+		if (0 == position) {
+			holder.setSelectedBackground();
+		} else {
+			holder.setDefaultBackground();
+		}
 
-		holder.rootLayout.setBackgroundResource(R.drawable.drawable_radius);
-		holder.name.setText(name);
-		holder.setPosition(position);
+		holder.setName(names.get(position));
 	}
 
 	@Override

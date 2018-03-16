@@ -2,6 +2,7 @@ package com.seeu;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,30 +14,28 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.*;
+
 /**
  * Created by thomasfouan on 16/03/2018.
  */
 
 public class TeamWallFragment extends Fragment implements ClickListener {
 
+	private RecyclerView recyclerView;
 	private TypeTeamRecyclerAdapter typeTeamRecyclerAdapter;
 
-	private List<Integer> colors;
 	private List<String> names;
+	private int selectedType;
 
 	public TeamWallFragment() {
-		colors = new ArrayList<>();
-		colors.add(Color.BLUE);
-		colors.add(Color.YELLOW);
-		colors.add(Color.MAGENTA);
-		colors.add(Color.RED);
-		colors.add(Color.BLACK);
-
 		names = new ArrayList<>();
 		names.add("Popular");
 		names.add("Barbecue");
 		names.add("Dancing");
 		names.add("Hangover");
+
+		selectedType = 0;
 	}
 
 	@Override
@@ -45,15 +44,15 @@ public class TeamWallFragment extends Fragment implements ClickListener {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_teamwall, container, false);
 
 		// set up the RecyclerView
-		RecyclerView recyclerView = view.findViewById(R.id.typeTeamRecycler);
-		LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-		recyclerView.setLayoutManager(horizontalLayoutManagaer);
+		recyclerView = view.findViewById(R.id.typeTeamRecycler);
+		LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+		recyclerView.setLayoutManager(horizontalLayoutManager);
 
-		typeTeamRecyclerAdapter = new TypeTeamRecyclerAdapter(getActivity(), colors, names, this);
+		typeTeamRecyclerAdapter = new TypeTeamRecyclerAdapter(getActivity(), names, this);
 		recyclerView.setAdapter(typeTeamRecyclerAdapter);
 
 		return view;
@@ -61,6 +60,13 @@ public class TeamWallFragment extends Fragment implements ClickListener {
 
 	@Override
 	public void onItemClick(View view, int position) {
+		TypeTeamViewHolder currentSelectedView = (TypeTeamViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedType);
+		currentSelectedView.setDefaultBackground();
+
+		selectedType = position;
+		TypeTeamViewHolder newSelectedView = (TypeTeamViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedType);
+		newSelectedView.setSelectedBackground();
+
 		Toast.makeText(getActivity(), "You clicked " + typeTeamRecyclerAdapter.getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
 	}
 }

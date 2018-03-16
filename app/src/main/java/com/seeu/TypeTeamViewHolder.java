@@ -1,5 +1,6 @@
 package com.seeu;
 
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -11,11 +12,10 @@ import android.widget.TextView;
 
 class TypeTeamViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-	public ConstraintLayout rootLayout;
-	public TextView name;
+	private ConstraintLayout rootLayout;
+	private TextView name;
 
 	private ClickListener listener;
-	private int position;
 
 	public TypeTeamViewHolder(View itemView, ClickListener listener) {
 		super(itemView);
@@ -23,17 +23,24 @@ class TypeTeamViewHolder extends RecyclerView.ViewHolder implements View.OnClick
 		this.listener = listener;
 		this.rootLayout = itemView.findViewById(R.id.colorView);
 		this.name = itemView.findViewById(R.id.typeTeamName);
-		this.position = -1;
 
 		itemView.setOnClickListener(this);
 	}
 
-	public void setPosition(int position) {
-		this.position = position;
+	public void setDefaultBackground() {
+		this.rootLayout.setBackgroundResource(R.drawable.not_selected_type_team_background);
+	}
+
+	public void setSelectedBackground() {
+		this.rootLayout.setBackgroundResource(R.drawable.selected_type_team_background);
+	}
+
+	public void setName(final String name) {
+		this.name.setText(name);
 	}
 
 	@Override
 	public void onClick(View v) {
-		listener.onItemClick(v, position);
+		listener.onItemClick(v, getAdapterPosition());
 	}
 }

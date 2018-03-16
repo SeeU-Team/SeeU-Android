@@ -6,6 +6,7 @@
         android:left="2dp"
         android:bottom="2dp"
         android:right="2dp" />
+
     <gradient
         android:type="linear"
         android:angle="0"
