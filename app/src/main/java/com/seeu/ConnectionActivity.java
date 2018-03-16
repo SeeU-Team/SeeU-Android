@@ -9,11 +9,8 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
-import java.util.Arrays;
 
 public class ConnectionActivity extends AppCompatActivity {
 
@@ -32,6 +29,10 @@ public class ConnectionActivity extends AppCompatActivity {
 			// Go to the main activity and skip this activity
 			Log.d("Facebook", "already logged in");
 			Log.d("Facebook", token.getToken());
+
+			Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
+			startActivity(intent);
+			finish();
 		}
 
 		callbackManager = CallbackManager.Factory.create();
