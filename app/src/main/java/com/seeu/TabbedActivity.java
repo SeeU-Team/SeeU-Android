@@ -2,26 +2,30 @@ package com.seeu;
 
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
 
 public class TabbedActivity extends AppCompatActivity {
 
-	private TextView mTextMessage;
-
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
+		Fragment selectedFragment = null;
 		switch (item.getItemId()) {
-			case R.id.navigation_home:
-				mTextMessage.setText(R.string.title_home);
-				return true;
-			case R.id.navigation_dashboard:
-				mTextMessage.setText(R.string.title_dashboard);
-				return true;
-			case R.id.navigation_notifications:
-				mTextMessage.setText(R.string.title_notifications);
-				return true;
+			case R.id.navigation_teamwall:
+				selectedFragment = new TeamWallFragment();
+				break;
+			case R.id.navigation_messages:
+				selectedFragment = new MessagesFragment();
+				break;
+			case R.id.navigation_nightcenter:
+				selectedFragment = new NightCenterFragment();
 		}
-		return false;
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.replace(R.id.frame_layout, selectedFragment);
+		transaction.commit();
+
+		return true;
 	};
 
 	@Override
@@ -29,9 +33,13 @@ public class TabbedActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tabbed);
 
-		mTextMessage = findViewById(R.id.message);
 		BottomNavigationView navigation = findViewById(R.id.navigation);
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+		//Manually displaying the first fragment - one time only
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.replace(R.id.frame_layout, new TeamWallFragment());
+		transaction.commit();
 	}
 
 }
