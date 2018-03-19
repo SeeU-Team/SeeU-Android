@@ -1,16 +1,16 @@
 package com.seeu;
 
-import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 /**
  * Created by thomasfouan on 16/03/2018.
  */
 
-class TypeTeamViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+class TypeTeamViewHolder extends ViewHolder implements OnClickListener {
 
 	private ConstraintLayout rootLayout;
 	private TextView name;

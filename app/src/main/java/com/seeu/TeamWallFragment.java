@@ -14,8 +14,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.v7.widget.RecyclerView.*;
-
 /**
  * Created by thomasfouan on 16/03/2018.
  */
