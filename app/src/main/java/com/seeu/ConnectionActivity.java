@@ -42,7 +42,7 @@ public class ConnectionActivity extends AppCompatActivity {
 					});
 
 			Bundle parameters = new Bundle();
-			parameters.putString("fields", "id,name,link,albums,picture.type(large),photos");
+			parameters.putString("fields", "id,name,link,albums,picture.type(large),cover");
 			request.setParameters(parameters);
 			request.executeAsync();
 			*/

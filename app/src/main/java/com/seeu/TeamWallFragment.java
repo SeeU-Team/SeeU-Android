@@ -55,10 +55,18 @@ public class TeamWallFragment extends Fragment implements ClickListener {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_teamwall, container, false);
 
+		// TODO: get saved state from last instance of fragment
 		setupTypeTeamRecycler(view);
 		setupTeamRecycler(view);
 
 		return view;
+	}
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		// TODO: save the state of the fragment before it is destroy
+
 	}
 
 	@Override

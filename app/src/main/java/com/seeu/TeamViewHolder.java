@@ -1,11 +1,12 @@
 package com.seeu;
 
-import android.net.Uri;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 /**
  * Created by thomasfouan on 19/03/2018.
@@ -15,7 +16,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 	private TextView name;
 	private TextView tags;
-	private ImageView picture;
+	private ConstraintLayout layoutPicture;
 
 	private ClickListener listener;
 
@@ -26,9 +27,9 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 		name = itemView.findViewById(R.id.teamName);
 		tags = itemView.findViewById(R.id.teamTags);
-		picture = itemView.findViewById(R.id.teamPicture);
+		layoutPicture = itemView.findViewById(R.id.teamPicture);
 
-		picture.setOnClickListener(this);
+		layoutPicture.setOnClickListener(this);
 	}
 
 	public void setName(String name) {
@@ -40,7 +41,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	}
 
 	public void setPicture(String pictureUrl) {
-		this.picture.setImageURI(Uri.parse(pictureUrl));
+		new DownloadImageAndSetBackgroundTask(layoutPicture, 20, 200, 200).execute(pictureUrl);
 	}
 
 	@Override

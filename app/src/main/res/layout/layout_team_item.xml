@@ -23,16 +23,10 @@
         android:text="#fiesta#noche#caliente"
         android:textColor="@android:color/darker_gray" />
 
-    <android.support.v7.widget.CardView
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/teamPicture"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:cardCornerRadius="6dp" >
+        android:layout_height="200dp" >
 
-        <ImageView
-            android:id="@+id/teamPicture"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="team image"
-            app:srcCompat="@color/colorPrimaryDark" />
-    </android.support.v7.widget.CardView>
+    </android.support.constraint.ConstraintLayout>
 </LinearLayout>
