@@ -1,7 +1,7 @@
 package com.seeu;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +12,18 @@ import java.util.List;
  * Created by thomasfouan on 16/03/2018.
  */
 
-public class TypeTeamRecyclerAdapter extends RecyclerView.Adapter<TypeTeamViewHolder> {
+public class TypeTeamRecyclerAdapter extends Adapter<TypeTeamViewHolder> {
 
 	private LayoutInflater inflater;
 	private List<String> names;
 	private ClickListener listener;
+	private int selected;
 
 	public TypeTeamRecyclerAdapter(Context context, List<String> names, ClickListener listener) {
 		this.inflater = LayoutInflater.from(context);
 		this.names = names;
 		this.listener = listener;
+		this.selected = (0 < names.size()) ? 0 : -1;
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public class TypeTeamRecyclerAdapter extends RecyclerView.Adapter<TypeTeamViewHo
 
 	@Override
 	public void onBindViewHolder(TypeTeamViewHolder holder, int position) {
-		if (0 == position) {
+		if (selected == position) {
 			holder.setSelectedBackground();
 		} else {
 			holder.setDefaultBackground();
@@ -48,5 +50,15 @@ public class TypeTeamRecyclerAdapter extends RecyclerView.Adapter<TypeTeamViewHo
 
 	public String getItem(int position) {
 		return names.get(position);
+	}
+
+	public int getSelected() {
+		return selected;
+	}
+
+	public void setSelected(int newSelected) {
+		notifyItemChanged(selected);
+		notifyItemChanged(newSelected);
+		this.selected = newSelected;
 	}
 }

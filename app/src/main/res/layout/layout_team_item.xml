@@ -5,18 +5,19 @@
     android:id="@+id/rootLayoutTeamItem"
     android:layout_width="200dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginStart="20dp" >
 
     <TextView
         android:id="@+id/teamName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Les Lascars"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tags"
+        android:id="@+id/teamTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="#fiesta#noche#caliente"
@@ -28,7 +29,7 @@
         app:cardCornerRadius="6dp" >
 
         <ImageView
-            android:id="@+id/imageTeam"
+            android:id="@+id/teamPicture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="team image"

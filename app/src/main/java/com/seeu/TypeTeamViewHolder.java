@@ -21,7 +21,7 @@ class TypeTeamViewHolder extends ViewHolder implements OnClickListener {
 		super(itemView);
 
 		this.listener = listener;
-		this.rootLayout = itemView.findViewById(R.id.colorView);
+		this.rootLayout = itemView.findViewById(R.id.rootLayoutTypeTeamItem);
 		this.name = itemView.findViewById(R.id.typeTeamName);
 
 		itemView.setOnClickListener(this);

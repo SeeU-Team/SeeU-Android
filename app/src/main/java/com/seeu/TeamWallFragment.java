@@ -1,6 +1,5 @@
 package com.seeu;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,20 +19,31 @@ import java.util.List;
 
 public class TeamWallFragment extends Fragment implements ClickListener {
 
-	private RecyclerView recyclerView;
+	private RecyclerView typeTeamRecycler;
 	private TypeTeamRecyclerAdapter typeTeamRecyclerAdapter;
 
-	private List<String> names;
-	private int selectedType;
+	private RecyclerView teamRecycler;
+	private TeamRecyclerAdapter teamRecyclerAdapter;
+
+	private List<String> typeNames;
+	private List<String> teamNames;
 
 	public TeamWallFragment() {
-		names = new ArrayList<>();
-		names.add("Popular");
-		names.add("Barbecue");
-		names.add("Dancing");
-		names.add("Hangover");
+		typeNames = new ArrayList<>();
+		teamNames = new ArrayList<>();
 
-		selectedType = 0;
+		loadTypes();
+	}
+
+	private void loadTypes() {
+		// TODO: make http request to get types
+		typeNames.clear();
+		typeNames.add("Popular");
+		typeNames.add("Barbecue");
+		typeNames.add("Dancing");
+		typeNames.add("Hangover");
+
+		refreshTeams(0);
 	}
 
 	@Override
@@ -45,26 +55,51 @@ public class TeamWallFragment extends Fragment implements ClickListener {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_teamwall, container, false);
 
-		// set up the RecyclerView
-		recyclerView = view.findViewById(R.id.typeTeamRecycler);
-		LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-		recyclerView.setLayoutManager(horizontalLayoutManager);
-
-		typeTeamRecyclerAdapter = new TypeTeamRecyclerAdapter(getActivity(), names, this);
-		recyclerView.setAdapter(typeTeamRecyclerAdapter);
+		setupTypeTeamRecycler(view);
+		setupTeamRecycler(view);
 
 		return view;
 	}
 
 	@Override
 	public void onItemClick(View view, int position) {
-		TypeTeamViewHolder currentSelectedView = (TypeTeamViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedType);
-		currentSelectedView.setDefaultBackground();
+		typeTeamRecyclerAdapter.setSelected(position);
 
-		selectedType = position;
-		TypeTeamViewHolder newSelectedView = (TypeTeamViewHolder) recyclerView.findViewHolderForAdapterPosition(selectedType);
-		newSelectedView.setSelectedBackground();
+		// TODO: reload teams
+		refreshTeams(position);
+	}
 
-		Toast.makeText(getActivity(), "You clicked " + typeTeamRecyclerAdapter.getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
+	private void setupTypeTeamRecycler(View view) {
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+		// Keep reference of the dataset (arraylist here) in the adapter
+		typeTeamRecyclerAdapter = new TypeTeamRecyclerAdapter(getActivity(), typeNames, this);
+
+		// set up the RecyclerView for the types of team
+		typeTeamRecycler = view.findViewById(R.id.typeTeamRecycler);
+		typeTeamRecycler.setLayoutManager(layoutManager);
+		typeTeamRecycler.setAdapter(typeTeamRecyclerAdapter);
+	}
+
+	private void setupTeamRecycler(View view) {
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teamNames, (view1, position) -> {
+			Toast.makeText(getActivity(), "You clicked " + teamRecyclerAdapter.getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
+		});
+
+		teamRecycler = view.findViewById(R.id.teamRecycler);
+		teamRecycler.setLayoutManager(layoutManager);
+		teamRecycler.setAdapter(teamRecyclerAdapter);
+	}
+
+	private void refreshTeams(int selectedType) {
+		// TODO: make http request to get data
+		teamNames.clear();
+		for (int i = 0; i < 10; i++) {
+			teamNames.add("Team " + typeNames.get(selectedType) + " - " + i);
+		}
+
+		if (null != teamRecyclerAdapter) {
+			teamRecyclerAdapter.notifyDataSetChanged();
+		}
 	}
 }
