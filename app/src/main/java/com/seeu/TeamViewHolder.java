@@ -58,6 +58,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 	public void setTeamMemberPictures(String[] urls) {
 		for (int i = 0; i < urls.length && i < MAX_MEMBER_PICTURES; i++) {
+			teamMemberPictures[i].setVisibility(View.VISIBLE);
 			new DownloadImageAndSetBackgroundTask(teamMemberPictures[i], 16, 32, 32).execute(urls[i]);
 		}
 
@@ -71,6 +72,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 			int nbExtraMembers = urls.length - MAX_MEMBER_PICTURES;
 			String text = layoutPicture.getResources().getString(R.string.extra_member_placeholder, nbExtraMembers);
 			extraMembers.setText(text);
+			extraMembers.setVisibility(View.VISIBLE);
 		} else {
 			extraMembers.setVisibility(View.GONE);
 		}
