@@ -1,5 +1,15 @@
 package com.seeu;
 
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Rect;
+import android.graphics.Shader;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.PaintDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
@@ -22,6 +32,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	private ConstraintLayout layoutPicture;
 	private ImageView[] teamMemberPictures;
 	private TextView extraMembers;
+	private View genderIndex;
 
 	private ClickListener listener;
 
@@ -40,6 +51,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		teamMemberPictures[3] 	= itemView.findViewById(R.id.teamMemberPicture4);
 		teamMemberPictures[4] 	= itemView.findViewById(R.id.teamMemberPicture5);
 		extraMembers 			= itemView.findViewById(R.id.extraMembers);
+		genderIndex				= itemView.findViewById(R.id.genderIndex);
 
 		layoutPicture.setOnClickListener(this);
 	}
@@ -76,6 +88,24 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		} else {
 			extraMembers.setVisibility(View.GONE);
 		}
+	}
+
+	public void setGenderIndex(float maleProportion) {
+		/*	IMPORTANT, this doesn't work :
+				GradientDrawable drawable = (GradientDrawable) layoutPicture.getResources().getDrawable(R.drawable.measure_gender);
+				drawable.mutate();
+				drawable.setGradientCenter((float) 0.5, maleProportion);
+
+			The current version of the API doesn't allow to change dynamically the center color position of a linear gradient
+		*/
+		GenderShaderFactory genderShaderFactory = new GenderShaderFactory(maleProportion);
+		PaintDrawable pd = new PaintDrawable();
+		pd.setShape(new RectShape());
+		pd.setShaderFactory(genderShaderFactory);
+		pd.setCornerRadius(10);
+		pd.setPadding(2, 2, 2, 2);
+
+		genderIndex.setBackground(pd);
 	}
 
 	@Override
