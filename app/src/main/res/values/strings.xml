@@ -3,8 +3,13 @@
     <string name="facebook_app_id">1885995028085352</string>
     <string name="fb_login_protocol_scheme">fb1885995028085352</string>
 
+    <!-- Application name -->
     <string name="app_name">SeeU</string>
+
+    <!-- Bottom navigation bar titles -->
     <string name="title_teamwall">Team Wall</string>
     <string name="title_messages">Messages</string>
     <string name="title_nightcenter">Night Center</string>
+
+    <string name="extra_member_placeholder">+%1$d</string>
 </resources>

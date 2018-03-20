@@ -33,10 +33,16 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> {
 
 	@Override
 	public void onBindViewHolder(TeamViewHolder holder, int position) {
+		String[] teamMemberPictures = new String[position];
+
+		for (int i = 0; i < position; i++) {
+			teamMemberPictures[i] = "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/22365631_1924906760859051_4812781837110089872_n.jpg?oh=a27a7d0053306572e7e485b647db99d4&oe=5B3A50DA";
+		}
+
 		holder.setName(names.get(position));
 		holder.setTags("#uno#dos#tres");
 		holder.setPicture("https://scontent.xx.fbcdn.net/v/t1.0-9/s720x720/28796203_2100578413291884_3128132353430932217_n.jpg?oh=cf890e20f692253214d595fd266fd73b&oe=5B3BCC27");
-		// holder.setPicture("https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/22365631_1924906760859051_4812781837110089872_n.jpg?oh=a27a7d0053306572e7e485b647db99d4&oe=5B3A50DA");
+		holder.setTeamMemberPictures(teamMemberPictures);
 	}
 
 	@Override

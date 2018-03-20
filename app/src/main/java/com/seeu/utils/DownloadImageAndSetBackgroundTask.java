@@ -12,6 +12,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.io.InputStream;
 
@@ -58,6 +59,11 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, B
 		// BitmapDrawable drawable = new BitmapDrawable(Resources.getSystem(), result);
 		RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(view.getResources(), result);
 		drawable.setCornerRadius(cornerRadius);
-		view.setBackground(drawable);
+
+		if (view instanceof ImageView) {
+			((ImageView) view).setImageDrawable(drawable);
+		} else {
+			view.setBackground(drawable);
+		}
 	}
 }
