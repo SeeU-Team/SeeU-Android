@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayoutTeamItem"
@@ -14,21 +14,37 @@
         android:layout_height="wrap_content"
         android:text="Les Lascars"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/teamTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="#fiesta#noche#caliente"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/teamName" />
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/teamPicture"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="250dp" >
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/teamTags"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="6dp" >
 
-        <!--<android.support.v7.widget.CardView-->
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/teamPicture"
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+
+            <!--<android.support.v7.widget.CardView-->
             <!--android:layout_width="32dp"-->
             <!--android:layout_height="32dp"-->
             <!--android:layout_marginStart="8dp"-->
@@ -37,77 +53,102 @@
             <!--app:layout_constraintStart_toStartOf="parent"-->
             <!--app:layout_constraintTop_toTopOf="parent">-->
 
-        <ImageView
-            android:id="@+id/teamMemberPicture1"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <!--</android.support.v7.widget.CardView>-->
+            <ImageView
+                android:id="@+id/teamMemberPicture1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <!--</android.support.v7.widget.CardView>-->
 
-        <ImageView
-            android:id="@+id/teamMemberPicture2"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/teamMemberPicture2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/teamMemberPicture3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="48dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/teamMemberPicture3"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/teamMemberPicture4"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="68dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/teamMemberPicture4"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="68dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/teamMemberPicture5"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="88dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/teamMemberPicture5"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="88dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/extraMembers"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="108dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/extra_member_background"
-            android:gravity="center"
-            android:text="+3"
-            android:textAlignment="center"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/extraMembers"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="108dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/extra_member_background"
+                android:gravity="center"
+                android:text="+3"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:id="@+id/genderIndex"
-            android:layout_width="8dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="32dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@android:color/black" />
+            <View
+                android:id="@+id/genderIndex"
+                android:layout_width="8dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/measure_gender"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
-</LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="220dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/teamTags"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="6dp" >
+
+        <Button
+            android:id="@+id/teamUpBtn"
+            style="@android:style/Widget.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selected_type_team_background"
+            android:minHeight="40dip"
+            android:text="Team Up"
+            android:textColor="@android:color/white" />
+
+    </android.support.v7.widget.CardView>
+
+</android.support.constraint.ConstraintLayout>

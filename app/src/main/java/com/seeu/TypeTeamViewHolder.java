@@ -1,6 +1,6 @@
 package com.seeu;
 
-import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 class TypeTeamViewHolder extends ViewHolder implements OnClickListener {
 
-	private ConstraintLayout rootLayout;
+	private CardView rootLayout;
 	private TextView name;
 
 	private ClickListener listener;

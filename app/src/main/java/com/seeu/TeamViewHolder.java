@@ -1,15 +1,8 @@
 package com.seeu;
 
-import android.graphics.Color;
-import android.graphics.LinearGradient;
-import android.graphics.Rect;
-import android.graphics.Shader;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
@@ -100,10 +93,8 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		*/
 		GenderShaderFactory genderShaderFactory = new GenderShaderFactory(maleProportion);
 		PaintDrawable pd = new PaintDrawable();
-		pd.setShape(new RectShape());
+		pd.setShape(new RoundRectShape(new float[]{100, 100, 100, 100, 100, 100, 100, 100}, null, null));
 		pd.setShaderFactory(genderShaderFactory);
-		pd.setCornerRadius(10);
-		pd.setPadding(2, 2, 2, 2);
 
 		genderIndex.setBackground(pd);
 	}

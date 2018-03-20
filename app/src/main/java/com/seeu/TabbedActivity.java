@@ -1,12 +1,12 @@
 package com.seeu;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
-public class TabbedActivity extends AppCompatActivity {
+public class TabbedActivity extends Activity {
 
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
 		Fragment selectedFragment = null;
@@ -21,7 +21,7 @@ public class TabbedActivity extends AppCompatActivity {
 				selectedFragment = new NightCenterFragment();
 		}
 
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.frame_layout, selectedFragment);
 		transaction.commit();
 
@@ -37,7 +37,7 @@ public class TabbedActivity extends AppCompatActivity {
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 		//Manually displaying the first fragment - one time only
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.frame_layout, new TeamWallFragment());
 		transaction.commit();
 	}
