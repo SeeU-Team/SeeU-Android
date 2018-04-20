@@ -1,7 +1,7 @@
 package com.seeu;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -9,14 +9,10 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import org.json.JSONObject;
-
-public class ConnectionActivity extends AppCompatActivity {
+public class ConnectionActivity extends Activity {
 
 	private CallbackManager callbackManager;
 
@@ -65,6 +61,10 @@ public class ConnectionActivity extends AppCompatActivity {
 			public void onSuccess(LoginResult loginResult) {
 				// App code
 				Log.d("Facebook", "Login success");
+
+				Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
+				startActivity(intent);
+				finish();
 			}
 
 			@Override

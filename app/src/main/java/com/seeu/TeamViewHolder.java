@@ -1,7 +1,6 @@
 package com.seeu;
 
 import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -19,13 +18,15 @@ import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 	private static final int MAX_MEMBER_PICTURES = 5;
+	private static final int MAX_DESCRIPTION_PICTURES = 4;
 
 	private TextView name;
 	private TextView tags;
 	private ConstraintLayout layoutPicture;
-	private ImageView[] teamMemberPictures;
+	private ImageView[] memberPictures;
 	private TextView extraMembers;
 	private View genderIndex;
+	private ImageView[] descriptionPictures;
 
 	private ClickListener listener;
 
@@ -33,18 +34,23 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		super(itemView);
 
 		this.listener = listener;
-		teamMemberPictures = new ImageView[MAX_MEMBER_PICTURES];
+		memberPictures = new ImageView[MAX_MEMBER_PICTURES];
+		descriptionPictures = new ImageView[MAX_DESCRIPTION_PICTURES];
 
 		name 					= itemView.findViewById(R.id.teamName);
 		tags 					= itemView.findViewById(R.id.teamTags);
 		layoutPicture 			= itemView.findViewById(R.id.teamPicture);
-		teamMemberPictures[0] 	= itemView.findViewById(R.id.teamMemberPicture1);
-		teamMemberPictures[1] 	= itemView.findViewById(R.id.teamMemberPicture2);
-		teamMemberPictures[2] 	= itemView.findViewById(R.id.teamMemberPicture3);
-		teamMemberPictures[3] 	= itemView.findViewById(R.id.teamMemberPicture4);
-		teamMemberPictures[4] 	= itemView.findViewById(R.id.teamMemberPicture5);
+		memberPictures[0] 		= itemView.findViewById(R.id.teamMemberPicture1);
+		memberPictures[1] 		= itemView.findViewById(R.id.teamMemberPicture2);
+		memberPictures[2] 		= itemView.findViewById(R.id.teamMemberPicture3);
+		memberPictures[3] 		= itemView.findViewById(R.id.teamMemberPicture4);
+		memberPictures[4] 		= itemView.findViewById(R.id.teamMemberPicture5);
 		extraMembers 			= itemView.findViewById(R.id.extraMembers);
 		genderIndex				= itemView.findViewById(R.id.genderIndex);
+		descriptionPictures[0] 	= itemView.findViewById(R.id.teamDescription1);
+		descriptionPictures[1] 	= itemView.findViewById(R.id.teamDescription2);
+		descriptionPictures[2] 	= itemView.findViewById(R.id.teamDescription3);
+		descriptionPictures[3] 	= itemView.findViewById(R.id.teamDescription4);
 
 		layoutPicture.setOnClickListener(this);
 	}
@@ -61,15 +67,15 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		new DownloadImageAndSetBackgroundTask(layoutPicture, 20, 250, 250).execute(pictureUrl);
 	}
 
-	public void setTeamMemberPictures(String[] urls) {
+	public void setMemberPictures(String[] urls) {
 		for (int i = 0; i < urls.length && i < MAX_MEMBER_PICTURES; i++) {
-			teamMemberPictures[i].setVisibility(View.VISIBLE);
-			new DownloadImageAndSetBackgroundTask(teamMemberPictures[i], 16, 32, 32).execute(urls[i]);
+			memberPictures[i].setVisibility(View.VISIBLE);
+			new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(urls[i]);
 		}
 
 		// Hide member pictures that are not used
 		for (int i = urls.length; i < MAX_MEMBER_PICTURES; i++) {
-			teamMemberPictures[i].setVisibility(View.GONE);
+			memberPictures[i].setVisibility(View.GONE);
 		}
 
 		// Put all extra members in a circle with a number
@@ -91,12 +97,20 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 			The current version of the API doesn't allow to change dynamically the center color position of a linear gradient
 		*/
+
 		GenderShaderFactory genderShaderFactory = new GenderShaderFactory(maleProportion);
 		PaintDrawable pd = new PaintDrawable();
 		pd.setShape(new RoundRectShape(new float[]{100, 100, 100, 100, 100, 100, 100, 100}, null, null));
 		pd.setShaderFactory(genderShaderFactory);
 
 		genderIndex.setBackground(pd);
+	}
+
+	public void setDescriptionPictures() {
+		descriptionPictures[0].setImageResource(R.drawable.icon_beer);
+		descriptionPictures[1].setImageResource(R.drawable.icon_food);
+		descriptionPictures[2].setImageResource(R.drawable.icon_soccer_ball);
+		descriptionPictures[3].setImageResource(R.drawable.icon_swimming_pool);
 	}
 
 	@Override
