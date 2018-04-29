@@ -1,10 +1,13 @@
-package com.seeu;
+package com.seeu.teamwall;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+
+import com.seeu.ClickListener;
+import com.seeu.R;
 
 /**
  * Created by thomasfouan on 16/03/2018.

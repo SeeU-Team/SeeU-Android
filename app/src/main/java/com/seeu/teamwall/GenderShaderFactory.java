@@ -1,4 +1,4 @@
-package com.seeu;
+package com.seeu.teamwall;
 
 import android.graphics.Color;
 import android.graphics.LinearGradient;

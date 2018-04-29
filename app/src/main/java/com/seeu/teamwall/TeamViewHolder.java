@@ -1,4 +1,4 @@
-package com.seeu;
+package com.seeu.teamwall;
 
 import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
@@ -9,6 +9,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.seeu.ClickListener;
+import com.seeu.R;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 /**
