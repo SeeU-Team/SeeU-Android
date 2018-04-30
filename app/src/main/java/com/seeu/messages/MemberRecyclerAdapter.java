@@ -33,7 +33,7 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements 
 
 	@Override
 	public MemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View view = inflater.inflate(R.layout.layout_member_item, parent, false);
+		View view = inflater.inflate(R.layout.messages_layout_member_item, parent, false);
 		return new MemberViewHolder(view, this);
 	}
 

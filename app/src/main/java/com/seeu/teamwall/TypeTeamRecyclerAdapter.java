@@ -31,7 +31,7 @@ public class TypeTeamRecyclerAdapter extends Adapter<TypeTeamViewHolder> {
 
 	@Override
 	public TypeTeamViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View view = inflater.inflate(R.layout.layout_type_team_item, parent, false);
+		View view = inflater.inflate(R.layout.teamwall_layout_type_team_item, parent, false);
 		return new TypeTeamViewHolder(view, listener);
 	}
 

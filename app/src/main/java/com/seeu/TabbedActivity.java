@@ -41,7 +41,7 @@ public class TabbedActivity extends AppCompatActivity implements NavigationView.
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_tabbed);
+		setContentView(R.layout.tabbed_activity);
 
 		BottomNavigationView navigation = findViewById(R.id.navigation);
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

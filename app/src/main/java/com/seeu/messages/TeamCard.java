@@ -46,7 +46,7 @@ public class TeamCard implements OnClickListener {
 	}
 
 	public void setPicture(String url) {
-		new DownloadImageAndSetBackgroundTask(picture, 2, 100, 80).execute(url);
+		new DownloadImageAndSetBackgroundTask(picture, 6, 100, 80).execute(url);
 	}
 
 	public void setName(String name) {

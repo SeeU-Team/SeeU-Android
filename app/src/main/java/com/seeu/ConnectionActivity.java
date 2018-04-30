@@ -21,7 +21,7 @@ public class ConnectionActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_connection);
+		setContentView(R.layout.connection_activity);
 
 		final AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
