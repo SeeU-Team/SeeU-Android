@@ -25,17 +25,21 @@ public class MessagesFragment extends Fragment {
 	private TeamCard teamCard;
 	private Team team;
 
-	private RecyclerView memberRecycler;
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 	private List<Member> members;
+
+	private TeamRecyclerAdapter teamRecyclerAdapter;
+	private List<Team> teams;
 
 	public MessagesFragment() {
 		teamCard = null;
 		team = null;
 		members = new ArrayList<>();
+		teams = new ArrayList<>();
 
 		loadTeam();
 		loadMembers();
+		loadTeams();
 	}
 
 	@Override
@@ -51,6 +55,7 @@ public class MessagesFragment extends Fragment {
 		teamCard.setData(team);
 
 		setupMemberRecycler(view);
+		setupTeamRecycler(view);
 
 		return view;
 	}
@@ -60,9 +65,19 @@ public class MessagesFragment extends Fragment {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members);
 
-		memberRecycler = view.findViewById(R.id.memberRecycler);
+		RecyclerView memberRecycler = view.findViewById(R.id.memberRecycler);
 		memberRecycler.setLayoutManager(layoutManager);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
+	}
+
+	private void setupTeamRecycler(View view) {
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+		// Keep reference of the dataset (arraylist here) in the adapter
+		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
+
+		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
+		teamRecycler.setLayoutManager(layoutManager);
+		teamRecycler.setAdapter(teamRecyclerAdapter);
 	}
 
 	private void loadTeam() {
@@ -109,6 +124,24 @@ public class MessagesFragment extends Fragment {
 
 		if (null != memberRecyclerAdapter) {
 			memberRecyclerAdapter.notifyDataSetChanged();
+		}
+	}
+
+	private void loadTeams() {
+		// TODO: make http request to load data
+
+		for (int i = 0; i < 10; i++) {
+			Team team = new Team();
+			team.setId(i);
+			team.setPictureUrl(Team.DEBUG_PICTURE_URL);
+			team.setName("Team " + i);
+			team.setTags("#uno#dos#tres");
+
+			teams.add(team);
+		}
+
+		if (null != teamRecyclerAdapter) {
+			teamRecyclerAdapter.notifyDataSetChanged();
 		}
 	}
 }

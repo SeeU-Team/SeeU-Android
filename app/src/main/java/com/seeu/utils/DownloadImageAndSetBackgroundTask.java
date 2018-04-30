@@ -22,14 +22,12 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, B
 	private int height;
 
 	public DownloadImageAndSetBackgroundTask(View view, float cornerRadius) {
-		this.view = view;
-		this.cornerRadius = cornerRadius;
-		this.width = view.getWidth();
-		this.height = view.getHeight();
+		this(view, cornerRadius, view.getWidth(), view.getHeight());
 	}
 
 	public DownloadImageAndSetBackgroundTask(View view, float cornerRadius, int width, int height) {
-		this(view, cornerRadius);
+		this.view = view;
+		this.cornerRadius = cornerRadius;
 		this.width = width;
 		this.height = height;
 	}

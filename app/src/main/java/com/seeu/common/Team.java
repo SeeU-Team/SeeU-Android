@@ -14,6 +14,7 @@ public class Team {
 	private long id;
 	private String pictureUrl;
 	private String name;
+	private String tags;
 	private int mark;
 	private List<Member> members;
 
@@ -44,6 +45,14 @@ public class Team {
 		this.name = name;
 	}
 
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
 	public int getMark() {
 		return mark;
 	}
@@ -58,5 +67,10 @@ public class Team {
 
 	public void setMembers(List<Member> members) {
 		this.members = members;
+	}
+
+	@Override
+	public String toString() {
+		return "team " + id;
 	}
 }
