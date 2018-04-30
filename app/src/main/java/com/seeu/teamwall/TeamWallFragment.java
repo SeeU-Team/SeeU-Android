@@ -38,17 +38,6 @@ public class TeamWallFragment extends Fragment implements ClickListener {
 		loadTypes();
 	}
 
-	private void loadTypes() {
-		// TODO: make http request to get types
-		typeNames.clear();
-		typeNames.add("Popular");
-		typeNames.add("Barbecue");
-		typeNames.add("Dancing");
-		typeNames.add("Hangover");
-
-		refreshTeams(0);
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,13 +82,22 @@ public class TeamWallFragment extends Fragment implements ClickListener {
 
 	private void setupTeamRecycler(View view) {
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teamNames, (view1, position) -> {
-			Toast.makeText(getActivity(), "You clicked " + teamRecyclerAdapter.getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
-		});
+		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teamNames);
 
 		teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setLayoutManager(layoutManager);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
+	}
+
+	private void loadTypes() {
+		// TODO: make http request to get types
+		typeNames.clear();
+		typeNames.add("Popular");
+		typeNames.add("Barbecue");
+		typeNames.add("Dancing");
+		typeNames.add("Hangover");
+
+		refreshTeams(0);
 	}
 
 	private void refreshTeams(int selectedType) {

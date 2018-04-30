@@ -11,7 +11,10 @@ import android.widget.TextView;
 
 import com.seeu.ClickListener;
 import com.seeu.R;
+import com.seeu.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+
+import java.util.List;
 
 /**
  * Created by thomasfouan on 19/03/2018.
@@ -19,14 +22,12 @@ import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
-	private static final int MAX_MEMBER_PICTURES = 5;
 	private static final int MAX_DESCRIPTION_PICTURES = 4;
 
 	private TextView name;
 	private TextView tags;
 	private ConstraintLayout layoutPicture;
-	private ImageView[] memberPictures;
-	private TextView extraMembers;
+	private TeamMemberPictures teamMemberPictures;
 	private View genderIndex;
 	private ImageView[] descriptionPictures;
 
@@ -36,18 +37,12 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		super(itemView);
 
 		this.listener = listener;
-		memberPictures = new ImageView[MAX_MEMBER_PICTURES];
+		teamMemberPictures = new TeamMemberPictures(itemView);
 		descriptionPictures = new ImageView[MAX_DESCRIPTION_PICTURES];
 
 		name 					= itemView.findViewById(R.id.teamName);
 		tags 					= itemView.findViewById(R.id.teamTags);
 		layoutPicture 			= itemView.findViewById(R.id.teamPicture);
-		memberPictures[0] 		= itemView.findViewById(R.id.teamMemberPicture1);
-		memberPictures[1] 		= itemView.findViewById(R.id.teamMemberPicture2);
-		memberPictures[2] 		= itemView.findViewById(R.id.teamMemberPicture3);
-		memberPictures[3] 		= itemView.findViewById(R.id.teamMemberPicture4);
-		memberPictures[4] 		= itemView.findViewById(R.id.teamMemberPicture5);
-		extraMembers 			= itemView.findViewById(R.id.extraMembers);
 		genderIndex				= itemView.findViewById(R.id.genderIndex);
 		descriptionPictures[0] 	= itemView.findViewById(R.id.teamDescription1);
 		descriptionPictures[1] 	= itemView.findViewById(R.id.teamDescription2);
@@ -69,26 +64,8 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		new DownloadImageAndSetBackgroundTask(layoutPicture, 20, 250, 250).execute(pictureUrl);
 	}
 
-	public void setMemberPictures(String[] urls) {
-		for (int i = 0; i < urls.length && i < MAX_MEMBER_PICTURES; i++) {
-			memberPictures[i].setVisibility(View.VISIBLE);
-			new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(urls[i]);
-		}
-
-		// Hide member pictures that are not used
-		for (int i = urls.length; i < MAX_MEMBER_PICTURES; i++) {
-			memberPictures[i].setVisibility(View.GONE);
-		}
-
-		// Put all extra members in a circle with a number
-		if (urls.length > MAX_MEMBER_PICTURES) {
-			int nbExtraMembers = urls.length - MAX_MEMBER_PICTURES;
-			String text = layoutPicture.getResources().getString(R.string.extra_member_placeholder, nbExtraMembers);
-			extraMembers.setText(text);
-			extraMembers.setVisibility(View.VISIBLE);
-		} else {
-			extraMembers.setVisibility(View.GONE);
-		}
+	public void setMemberPictures(List<String> urls) {
+		teamMemberPictures.setMemberPictures(urls);
 	}
 
 	public void setGenderIndex(float maleProportion) {
