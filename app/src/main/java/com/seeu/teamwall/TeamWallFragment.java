@@ -45,7 +45,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		View view = inflater.inflate(R.layout.teamwall_fragment, container, false);
 
 		// TODO: get saved state from last instance of fragment
-		setupTypeTeamRecycler(view);
+		setupTeamTypeRecycler(view);
 		setupTeamRecycler(view);
 
 		return view;
@@ -66,13 +66,13 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		refreshTeams(position);
 	}
 
-	private void setupTypeTeamRecycler(View view) {
+	private void setupTeamTypeRecycler(View view) {
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		// Keep reference of the dataset (arraylist here) in the adapter
 		teamTypeRecyclerAdapter = new TeamTypeRecyclerAdapter(getActivity(), types, this);
 
 		// set up the RecyclerView for the types of team
-		RecyclerView teamTypeRecycler = view.findViewById(R.id.typeTeamRecycler);
+		RecyclerView teamTypeRecycler = view.findViewById(R.id.teamTypeRecycler);
 		teamTypeRecycler.setLayoutManager(layoutManager);
 		teamTypeRecycler.setAdapter(teamTypeRecyclerAdapter);
 	}
