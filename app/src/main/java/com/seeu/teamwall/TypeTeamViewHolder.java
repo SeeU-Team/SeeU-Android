@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.seeu.ClickListener;
+import com.seeu.common.ItemClickListener;
 import com.seeu.R;
 
 /**
@@ -18,9 +18,9 @@ class TypeTeamViewHolder extends ViewHolder implements OnClickListener {
 	private CardView rootLayout;
 	private TextView name;
 
-	private ClickListener listener;
+	private ItemClickListener listener;
 
-	public TypeTeamViewHolder(View itemView, ClickListener listener) {
+	public TypeTeamViewHolder(View itemView, ItemClickListener listener) {
 		super(itemView);
 
 		this.listener = listener;

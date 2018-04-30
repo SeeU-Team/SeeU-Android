@@ -1,9 +1,10 @@
-package com.seeu;
+package com.seeu.common.subviews;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.seeu.R;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.util.List;

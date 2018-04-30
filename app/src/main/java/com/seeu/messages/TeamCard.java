@@ -9,9 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seeu.R;
-import com.seeu.Team;
-import com.seeu.TeamMember;
-import com.seeu.TeamMemberPictures;
+import com.seeu.common.Team;
+import com.seeu.common.Member;
+import com.seeu.common.subviews.Mark;
+import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.util.ArrayList;
@@ -23,54 +24,46 @@ import java.util.List;
 
 public class TeamCard implements OnClickListener {
 
-	private ImageView teamPicture;
-	private TextView teamName;
-	private TextView teamMark;
+	private ImageView picture;
+	private TextView name;
 	private TextView nbNotReadMessages;
 
-	private TeamMemberPictures teamMemberPictures;
+	private Mark mark;
+	private TeamMemberPictures memberPictures;
 
 	public TeamCard(View itemView) {
 
-		teamPicture			= itemView.findViewById(R.id.teamPicture);
-		teamName			= itemView.findViewById(R.id.teamName);
-		teamMark			= itemView.findViewById(R.id.teamMark);
+		picture = itemView.findViewById(R.id.teamPicture);
+		name = itemView.findViewById(R.id.teamName);
 		nbNotReadMessages	= itemView.findViewById(R.id.nbNotReadMessages);
 
-		teamMemberPictures = new TeamMemberPictures(itemView);
+		TextView markView = itemView.findViewById(R.id.teamMark);
+		mark = new Mark(markView);
+		memberPictures = new TeamMemberPictures(itemView);
 
 		CardView rootElement = itemView.findViewById(R.id.teamCard);
 		rootElement.setOnClickListener(this);
 	}
 
-	public void setTeamPicture(String url) {
-		new DownloadImageAndSetBackgroundTask(teamPicture, 2, 100, 80).execute(url);
+	public void setPicture(String url) {
+		new DownloadImageAndSetBackgroundTask(picture, 2, 100, 80).execute(url);
 	}
 
-	public void setTeamName(String name) {
-		teamName.setText(name);
+	public void setName(String name) {
+		this.name.setText(name);
 	}
 
-	public void setTeamMark(int mark) {
-		StringBuilder builder = new StringBuilder();
-
-		for (int i = 0; i < 5; i++) {
-			if (i < mark) {
-				builder.append("★");
-			} else {
-				builder.append("☆");
-			}
-		}
-
-		teamMark.setText(builder.toString());
+	public void setMark(int mark) {
+		this.mark.setMark(mark);
 	}
 
 	public void setNbNotReadMessages(int nbMessages) {
-		nbNotReadMessages.setText(String.valueOf(nbMessages));
+		String text = nbNotReadMessages.getResources().getString(R.string.not_read_messages_placeholder, nbMessages);
+		nbNotReadMessages.setText(text);
 	}
 
-	public void setTeamMemberPictures(List<String> urls) {
-		teamMemberPictures.setMemberPictures(urls);
+	public void setMemberPictures(List<String> urls) {
+		memberPictures.setMemberPictures(urls);
 	}
 
 	public void setData(Team team) {
@@ -78,23 +71,23 @@ public class TeamCard implements OnClickListener {
 			return;
 		}
 
-		setTeamPicture(team.getPictureUrl());
-		setTeamName(team.getName());
-		setTeamMark(team.getMark());
+		setPicture(team.getPictureUrl());
+		setName(team.getName());
+		setMark(team.getMark());
 
 		// TODO : get nb not read messages
 		setNbNotReadMessages(21);
 
 		List<String> urls = new ArrayList<>();
-		for (TeamMember teamMember : team.getMembers()) {
-			urls.add(teamMember.getPictureUrl());
+		for (Member member : team.getMembers()) {
+			urls.add(member.getPictureUrl());
 		}
-		setTeamMemberPictures(urls);
+		setMemberPictures(urls);
 
 //		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //			urls = team.getMembers()
 //					.stream()
-//					.map(TeamMember::getPictureUrl)
+//					.map(Member::getPictureUrl)
 //					.collect(Collectors.toList());
 //		}
 	}

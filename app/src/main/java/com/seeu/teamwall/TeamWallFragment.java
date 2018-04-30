@@ -8,9 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.seeu.ClickListener;
+import com.seeu.common.ItemClickListener;
 import com.seeu.R;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.List;
  * Created by thomasfouan on 16/03/2018.
  */
 
-public class TeamWallFragment extends Fragment implements ClickListener {
+public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 	private RecyclerView typeTeamRecycler;
 	private TypeTeamRecyclerAdapter typeTeamRecyclerAdapter;

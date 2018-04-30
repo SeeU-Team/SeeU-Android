@@ -9,9 +9,9 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.seeu.ClickListener;
+import com.seeu.common.ItemClickListener;
 import com.seeu.R;
-import com.seeu.TeamMemberPictures;
+import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.util.List;
@@ -31,9 +31,9 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	private View genderIndex;
 	private ImageView[] descriptionPictures;
 
-	private ClickListener listener;
+	private ItemClickListener listener;
 
-	public TeamViewHolder(View itemView, ClickListener listener) {
+	public TeamViewHolder(View itemView, ItemClickListener listener) {
 		super(itemView);
 
 		this.listener = listener;

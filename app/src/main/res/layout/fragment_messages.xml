@@ -5,19 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--TEAM CARDVIEW -->
     <android.support.v7.widget.CardView
+        android:id="@+id/teamCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="5dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/teamCard">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,10 +32,10 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/teamPicture"
                     android:layout_width="100dp"
                     android:layout_height="80dp"
-                    android:contentDescription="Team picture"
-                    android:id="@+id/teamPicture"/>
+                    android:contentDescription="Team picture" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -44,21 +45,21 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/teamName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Les Lascars"
+                        android:text="*** ******"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:id="@+id/teamName"/>
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/teamMark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="★★★★☆"
+                        android:text="☆☆☆☆☆"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:id="@+id/teamMark"/>
+                        android:textSize="18sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -68,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 android:baselineAligned="false"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -75,36 +77,42 @@
                     layout="@layout/team_members_pictures"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"/>
+                    android:layout_marginStart="8dp" />
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/nbNotReadMessages"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:text="@string/not_read_messages_placeholder"
+                    android:textAlignment="textEnd"
+                    android:textSize="14sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:id="@+id/nbNotReadMessages"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/not_read_messages"
-                        android:textSize="16sp"/>
-
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/directMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/direct_messages"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/teamCard" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/memberRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/directMessages" />
 
 </android.support.constraint.ConstraintLayout>

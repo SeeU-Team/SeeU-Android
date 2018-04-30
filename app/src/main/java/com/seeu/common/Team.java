@@ -1,6 +1,4 @@
-package com.seeu;
-
-import com.seeu.TeamMember;
+package com.seeu.common;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ public class Team {
 	private String pictureUrl;
 	private String name;
 	private int mark;
-	private List<TeamMember> members;
+	private List<Member> members;
 
 	public Team() {
 	}
@@ -54,11 +52,11 @@ public class Team {
 		this.mark = mark;
 	}
 
-	public List<TeamMember> getMembers() {
+	public List<Member> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<TeamMember> members) {
+	public void setMembers(List<Member> members) {
 		this.members = members;
 	}
 }

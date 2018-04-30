@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.seeu.ClickListener;
+import com.seeu.common.ItemClickListener;
 import com.seeu.R;
 
 import java.util.List;
@@ -19,10 +19,10 @@ public class TypeTeamRecyclerAdapter extends Adapter<TypeTeamViewHolder> {
 
 	private LayoutInflater inflater;
 	private List<String> names;
-	private ClickListener listener;
+	private ItemClickListener listener;
 	private int selected;
 
-	public TypeTeamRecyclerAdapter(Context context, List<String> names, ClickListener listener) {
+	public TypeTeamRecyclerAdapter(Context context, List<String> names, ItemClickListener listener) {
 		this.inflater = LayoutInflater.from(context);
 		this.names = names;
 		this.listener = listener;
