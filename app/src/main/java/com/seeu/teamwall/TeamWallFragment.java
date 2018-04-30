@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.seeu.common.ItemClickListener;
 import com.seeu.R;
+import com.seeu.common.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +22,15 @@ import java.util.List;
 
 public class TeamWallFragment extends Fragment implements ItemClickListener {
 
-	private RecyclerView typeTeamRecycler;
-	private TypeTeamRecyclerAdapter typeTeamRecyclerAdapter;
+	private TeamTypeRecyclerAdapter teamTypeRecyclerAdapter;
+	private List<TeamType> types;
 
-	private RecyclerView teamRecycler;
 	private TeamRecyclerAdapter teamRecyclerAdapter;
-
-	private List<String> typeNames;
-	private List<String> teamNames;
+	private List<Team> teams;
 
 	public TeamWallFragment() {
-		typeNames = new ArrayList<>();
-		teamNames = new ArrayList<>();
+		types = new ArrayList<>();
+		teams = new ArrayList<>();
 
 		loadTypes();
 	}
@@ -62,7 +60,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 	@Override
 	public void onItemClick(View view, int position) {
-		typeTeamRecyclerAdapter.setSelected(position);
+		teamTypeRecyclerAdapter.setSelected(position);
 
 		// TODO: reload teams
 		refreshTeams(position);
@@ -71,39 +69,47 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	private void setupTypeTeamRecycler(View view) {
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		// Keep reference of the dataset (arraylist here) in the adapter
-		typeTeamRecyclerAdapter = new TypeTeamRecyclerAdapter(getActivity(), typeNames, this);
+		teamTypeRecyclerAdapter = new TeamTypeRecyclerAdapter(getActivity(), types, this);
 
 		// set up the RecyclerView for the types of team
-		typeTeamRecycler = view.findViewById(R.id.typeTeamRecycler);
-		typeTeamRecycler.setLayoutManager(layoutManager);
-		typeTeamRecycler.setAdapter(typeTeamRecyclerAdapter);
+		RecyclerView teamTypeRecycler = view.findViewById(R.id.typeTeamRecycler);
+		teamTypeRecycler.setLayoutManager(layoutManager);
+		teamTypeRecycler.setAdapter(teamTypeRecyclerAdapter);
 	}
 
 	private void setupTeamRecycler(View view) {
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teamNames);
+		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
 
-		teamRecycler = view.findViewById(R.id.teamRecycler);
+		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setLayoutManager(layoutManager);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
 	}
 
 	private void loadTypes() {
 		// TODO: make http request to get types
-		typeNames.clear();
-		typeNames.add("Popular");
-		typeNames.add("Barbecue");
-		typeNames.add("Dancing");
-		typeNames.add("Hangover");
+		String[] typeNames = {"Popular", "Barbecue", "Dancing", "Hangover"};
+		types.clear();
+
+		for (int i = 0; i < typeNames.length; i++) {
+			TeamType teamType = new TeamType();
+			teamType.setId(i);
+			teamType.setName(typeNames[i]);
+
+			types.add(teamType);
+		}
 
 		refreshTeams(0);
 	}
 
 	private void refreshTeams(int selectedType) {
 		// TODO: make http request to get data
-		teamNames.clear();
+		teams.clear();
 		for (int i = 0; i < 10; i++) {
-			teamNames.add("Team " + typeNames.get(selectedType) + " - " + i);
+			Team team = Team.getDebugTeam(i);
+			team.setName("Team " + i + " - " + types.get(selectedType).getName());
+
+			teams.add(team);
 		}
 
 		if (null != teamRecyclerAdapter) {

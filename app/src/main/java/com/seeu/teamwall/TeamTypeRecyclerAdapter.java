@@ -1,6 +1,7 @@
 package com.seeu.teamwall;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,44 +16,46 @@ import java.util.List;
  * Created by thomasfouan on 16/03/2018.
  */
 
-public class TypeTeamRecyclerAdapter extends Adapter<TypeTeamViewHolder> {
+public class TeamTypeRecyclerAdapter extends Adapter<TeamTypeViewHolder> {
 
 	private LayoutInflater inflater;
-	private List<String> names;
+	private List<TeamType> types;
 	private ItemClickListener listener;
 	private int selected;
 
-	public TypeTeamRecyclerAdapter(Context context, List<String> names, ItemClickListener listener) {
+	public TeamTypeRecyclerAdapter(Context context, @NonNull List<TeamType> types, ItemClickListener listener) {
 		this.inflater = LayoutInflater.from(context);
-		this.names = names;
+		this.types = types;
 		this.listener = listener;
-		this.selected = (0 < names.size()) ? 0 : -1;
+		this.selected = (0 < types.size()) ? 0 : -1;
 	}
 
 	@Override
-	public TypeTeamViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View view = inflater.inflate(R.layout.teamwall_layout_type_team_item, parent, false);
-		return new TypeTeamViewHolder(view, listener);
+	public TeamTypeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View view = inflater.inflate(R.layout.teamwall_layout_team_type_item, parent, false);
+		return new TeamTypeViewHolder(view, listener);
 	}
 
 	@Override
-	public void onBindViewHolder(TypeTeamViewHolder holder, int position) {
+	public void onBindViewHolder(TeamTypeViewHolder holder, int position) {
+		TeamType teamType = getItem(position);
+
 		if (selected == position) {
 			holder.setSelectedBackground();
 		} else {
 			holder.setDefaultBackground();
 		}
 
-		holder.setName(names.get(position));
+		holder.setName(teamType.getName());
 	}
 
 	@Override
 	public int getItemCount() {
-		return names.size();
+		return types.size();
 	}
 
-	public String getItem(int position) {
-		return names.get(position);
+	public TeamType getItem(int position) {
+		return types.get(position);
 	}
 
 	public int getSelected() {

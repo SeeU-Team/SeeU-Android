@@ -82,21 +82,7 @@ public class MessagesFragment extends Fragment {
 
 	private void loadTeam() {
 		// TODO: make http request to load data
-		team = new Team();
-		team.setId(1L);
-		team.setName("Ma Team <3");
-		team.setMark(3);
-		team.setPictureUrl(Team.DEBUG_PICTURE_URL);
-
-		List<Member> members = new ArrayList<>();
-		for (int i = 0; i < 7; i++) {
-			Member member = new Member();
-			member.setId(i);
-			member.setPictureUrl(Member.DEBUG_PICTURE_URL);
-
-			members.add(member);
-		}
-		team.setMembers(members);
+		team = Team.getDebugTeam(1);
 
 		// if loading the data was slower than create the view, set data here
 		if (null != teamCard) {
@@ -108,18 +94,7 @@ public class MessagesFragment extends Fragment {
 		// TODO: make http request to load data
 
 		for (int i = 0; i < 10; i++) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.DATE, -i);
-
-			Member member = new Member();
-			member.setId(i);
-			member.setPictureUrl(Member.DEBUG_PICTURE_URL);
-			member.setName("Member " + i);
-			member.setMark(i%6);
-			member.setConnected(i%2 == 0);
-			member.setLastConnection(calendar.getTime());
-
-			members.add(member);
+			members.add(Member.getDebugMember(i));
 		}
 
 		if (null != memberRecyclerAdapter) {
@@ -131,13 +106,7 @@ public class MessagesFragment extends Fragment {
 		// TODO: make http request to load data
 
 		for (int i = 0; i < 10; i++) {
-			Team team = new Team();
-			team.setId(i);
-			team.setPictureUrl(Team.DEBUG_PICTURE_URL);
-			team.setName("Team " + i);
-			team.setTags("#uno#dos#tres");
-
-			teams.add(team);
+			teams.add(Team.getDebugTeam(i));
 		}
 
 		if (null != teamRecyclerAdapter) {

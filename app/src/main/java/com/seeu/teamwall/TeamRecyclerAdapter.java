@@ -23,11 +23,11 @@ import java.util.List;
 public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements ItemClickListener {
 
 	private LayoutInflater inflater;
-	private List<String> names;
+	private List<Team> teams;
 
-	public TeamRecyclerAdapter(Context context, @NonNull List<String> names) {
+	public TeamRecyclerAdapter(Context context, @NonNull List<Team> teams) {
 		this.inflater = LayoutInflater.from(context);
-		this.names = names;
+		this.teams = teams;
 	}
 
 	@Override
@@ -38,13 +38,15 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 
 	@Override
 	public void onBindViewHolder(TeamViewHolder holder, int position) {
+		Team team = getItem(position);
+
 		List<String> memberPictures = new ArrayList<>(position);
 		for (int i = 0; i < position; i++) {
 			memberPictures.add(Member.DEBUG_PICTURE_URL);
 		}
 		float maleProportion = (position % 10) / (float) 10.0;
 
-		holder.setName(names.get(position));
+		holder.setName(team.getName());
 		holder.setTags("#uno#dos#tres");
 		holder.setPicture(Team.DEBUG_PICTURE_URL);
 		holder.setMemberPictures(memberPictures);
@@ -54,11 +56,11 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 
 	@Override
 	public int getItemCount() {
-		return names.size();
+		return teams.size();
 	}
 
-	public String getItem(int position) {
-		return names.get(position);
+	public Team getItem(int position) {
+		return teams.get(position);
 	}
 
 	@Override

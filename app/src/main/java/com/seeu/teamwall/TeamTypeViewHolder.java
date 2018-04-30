@@ -13,19 +13,19 @@ import com.seeu.R;
  * Created by thomasfouan on 16/03/2018.
  */
 
-class TypeTeamViewHolder extends ViewHolder implements OnClickListener {
+class TeamTypeViewHolder extends ViewHolder implements OnClickListener {
 
 	private CardView rootLayout;
 	private TextView name;
 
 	private ItemClickListener listener;
 
-	public TypeTeamViewHolder(View itemView, ItemClickListener listener) {
+	public TeamTypeViewHolder(View itemView, ItemClickListener listener) {
 		super(itemView);
 
 		this.listener = listener;
-		this.rootLayout = itemView.findViewById(R.id.rootLayoutTypeTeamItem);
-		this.name = itemView.findViewById(R.id.typeTeamName);
+		this.rootLayout = itemView.findViewById(R.id.rootLayoutTeamTypeItem);
+		this.name = itemView.findViewById(R.id.teamTypeName);
 
 		itemView.setOnClickListener(this);
 	}
