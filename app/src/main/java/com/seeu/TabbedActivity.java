@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.seeu.messages.MessagesFragment;
+import com.seeu.nightcenter.NightCenterFragment;
 import com.seeu.teamwall.TeamWallFragment;
 
 public class TabbedActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
