@@ -22,4 +22,5 @@
     <string name="direct_messages">MESSAGES DIRECT</string>
     <string name="member_last_connection">il y a %1$d min</string>
     <string name="teams">TEAMS</string>
+    <string name="new_message_placeholder">Write a message</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.seeu.messages;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seeu.R;
+import com.seeu.chat.ChatActivity;
 import com.seeu.common.Team;
 import com.seeu.common.Member;
 import com.seeu.common.subviews.Mark;
@@ -30,6 +33,8 @@ public class TeamCard implements OnClickListener {
 
 	private Mark mark;
 	private TeamMemberPictures memberPictures;
+
+	private long teamId;
 
 	public TeamCard(View itemView) {
 
@@ -84,6 +89,8 @@ public class TeamCard implements OnClickListener {
 		}
 		setMemberPictures(urls);
 
+		teamId = team.getId();
+
 //		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //			urls = team.getMembers()
 //					.stream()
@@ -96,8 +103,9 @@ public class TeamCard implements OnClickListener {
 	public void onClick(View v) {
 		// TODO: start new Activity for team messages screen
 		Context context = v.getContext();
-//		Intent intent = new Intent(context, ToChange.class);
-//		context.startActivity(intent);
-		Toast.makeText(context, "Team messages starts...", Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(context, ChatActivity.class);
+		intent.putExtra("TeamId", teamId);
+
+		context.startActivity(intent);
 	}
 }
