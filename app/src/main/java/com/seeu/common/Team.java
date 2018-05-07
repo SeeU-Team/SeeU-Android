@@ -1,5 +1,7 @@
 package com.seeu.common;
 
+import com.seeu.teamprofile.TeamDescription;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class Team {
 	private String tags;
 	private int mark;
 	private List<Member> members;
+	private List<TeamDescription> descriptions;
 
 	public Team() {
 	}
@@ -67,6 +70,14 @@ public class Team {
 		this.members = members;
 	}
 
+	public List<TeamDescription> getDescriptions() {
+		return descriptions;
+	}
+
+	public void setDescriptions(List<TeamDescription> descriptions) {
+		this.descriptions = descriptions;
+	}
+
 	@Override
 	public String toString() {
 		return "team " + id;
@@ -81,6 +92,11 @@ public class Team {
 			members.add(Member.getDebugMember(i));
 		}
 
+		List<TeamDescription> descriptions = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			descriptions.add(TeamDescription.getDebugTeamDescription(i));
+		}
+
 		Team team = new Team();
 		team.setId(index);
 		team.setPictureUrl(Team.DEBUG_PICTURE_URL);
@@ -88,6 +104,7 @@ public class Team {
 		team.setTags("#uno#dos#tres");
 		team.setMark(index%6);
 		team.setMembers(members);
+		team.setDescriptions(descriptions);
 
 		return team;
 	}

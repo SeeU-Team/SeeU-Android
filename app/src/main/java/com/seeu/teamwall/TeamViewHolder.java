@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.seeu.common.ItemClickListener;
 import com.seeu.R;
+import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
@@ -28,7 +29,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	private TextView tags;
 	private ConstraintLayout layoutPicture;
 	private TeamMemberPictures teamMemberPictures;
-	private View genderIndex;
+	private GenderIndex genderIndex;
 	private ImageView[] descriptionPictures;
 
 	private ItemClickListener listener;
@@ -43,11 +44,13 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		name 					= itemView.findViewById(R.id.teamName);
 		tags 					= itemView.findViewById(R.id.teamTags);
 		layoutPicture 			= itemView.findViewById(R.id.teamPicture);
-		genderIndex				= itemView.findViewById(R.id.genderIndex);
 		descriptionPictures[0] 	= itemView.findViewById(R.id.teamDescription1);
 		descriptionPictures[1] 	= itemView.findViewById(R.id.teamDescription2);
 		descriptionPictures[2] 	= itemView.findViewById(R.id.teamDescription3);
 		descriptionPictures[3] 	= itemView.findViewById(R.id.teamDescription4);
+
+		View genderIndexView = itemView.findViewById(R.id.genderIndex);
+		genderIndex = new GenderIndex(genderIndexView);
 
 		layoutPicture.setOnClickListener(this);
 	}
@@ -69,20 +72,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	}
 
 	public void setGenderIndex(float maleProportion) {
-		/*	IMPORTANT, this doesn't work :
-				GradientDrawable drawable = (GradientDrawable) layoutPicture.getResources().getDrawable(R.drawable.measure_gender);
-				drawable.mutate();
-				drawable.setGradientCenter((float) 0.5, maleProportion);
-
-			The current version of the API doesn't allow to change dynamically the center color position of a linear gradient
-		*/
-
-		GenderShaderFactory genderShaderFactory = new GenderShaderFactory(maleProportion);
-		PaintDrawable pd = new PaintDrawable();
-		pd.setShape(new RoundRectShape(new float[]{100, 100, 100, 100, 100, 100, 100, 100}, null, null));
-		pd.setShaderFactory(genderShaderFactory);
-
-		genderIndex.setBackground(pd);
+		genderIndex.setMaleProportion(maleProportion);
 	}
 
 	public void setDescriptionPictures() {

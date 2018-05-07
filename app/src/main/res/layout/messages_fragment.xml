@@ -108,11 +108,13 @@
         android:id="@+id/memberRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/directMessages" />
+        app:layout_constraintTop_toBottomOf="@id/directMessages"
+        android:clipToPadding="false"/>
 
     <TextView
         android:id="@+id/teams"
@@ -130,10 +132,12 @@
         android:id="@+id/teamRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/teams" />
+        app:layout_constraintTop_toBottomOf="@id/teams"
+        android:clipToPadding="false"/>
 
 </android.support.constraint.ConstraintLayout>
