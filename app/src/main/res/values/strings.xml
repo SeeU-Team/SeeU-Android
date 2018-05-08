@@ -24,4 +24,8 @@
     <string name="teams">TEAMS</string>
     <string name="new_message_placeholder">Write a message</string>
     <string name="mark_label">La note de ce line up est de :</string>
+    <string name="teamname_placeholder">Nom de la team</string>
+    <string name="teamplace_placeholder">Où ?</string>
+    <string name="teamtags_placeholder">Nos hashtags (3 maximum)</string>
+    <string name="teamtextdescription_placeholder">Description</string>
 </resources>

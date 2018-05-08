@@ -6,13 +6,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.seeu.R;
+import com.seeu.common.Member;
 import com.seeu.common.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.GetAndShowImageFromUriAsyncTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.ViewTreeObserver.OnPreDrawListener;
@@ -28,8 +34,23 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	private ConstraintLayout pictureChooser;
 	private ImageView pictureChosen;
 
+	private MemberRecyclerAdapter memberRecyclerAdapter;
+	private List<Member> members;
+
+	private EditText name;
+	private EditText place;
+	private EditText tags;
+	private EditText textDescription;
+
 	private Team team;
 	private boolean isPictureLayoutDrawn;
+
+	public EditTeamProfileActivity() {
+		super();
+		members = new ArrayList<>();
+		team = null;
+		isPictureLayoutDrawn = false;
+	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,17 +59,28 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 
 		pictureChooser	= findViewById(R.id.teamPictureChooser);
 		pictureChosen	= findViewById(R.id.teamPictureChosen);
+		name			= findViewById(R.id.teamName);
+		place			= findViewById(R.id.teamPlace);
+		tags			= findViewById(R.id.teamTags);
+		textDescription	= findViewById(R.id.teamTextDescription);
+
+		setupMemberRecycler();
 
 		pictureChooser.setOnClickListener(v -> {
 			startAndroidPictureChooser();
 		});
 
-
-		isPictureLayoutDrawn = false;
 		pictureChosen.getViewTreeObserver().addOnPreDrawListener(this);
 
-		team = null;
 		getInfoFromCaller();
+	}
+
+	private void setupMemberRecycler() {
+		// Keep reference of the dataset (arraylist here) in the adapter
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, members);
+
+		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
+		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
 	private void getInfoFromCaller() {
@@ -109,5 +141,9 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		}
 
 		return true;
+	}
+
+	public void onAddMemberBtnClick(View v) {
+
 	}
 }
