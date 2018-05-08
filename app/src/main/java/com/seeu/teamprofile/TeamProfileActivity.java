@@ -130,7 +130,7 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 
 	private void updateUI() {
 		if (isPictureLayoutDrawn) {
-			new DownloadImageAndSetBackgroundTask(picture, 0);
+			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
 		}
 
 		String teamDescription = "Description "

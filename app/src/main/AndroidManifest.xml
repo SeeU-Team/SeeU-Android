@@ -62,6 +62,10 @@
         <activity
             android:name=".teamprofile.TeamProfileActivity"
             android:label="@string/app_name"/>
+
+        <activity
+            android:name=".teamprofile.edit.EditTeamProfileActivity"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

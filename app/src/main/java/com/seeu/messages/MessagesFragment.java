@@ -1,16 +1,21 @@
 package com.seeu.messages;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.seeu.R;
 import com.seeu.common.Member;
 import com.seeu.common.Team;
+import com.seeu.teamprofile.edit.EditTeamProfileActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,7 +25,9 @@ import java.util.List;
  * Created by thomasfouan on 16/03/2018.
  */
 
-public class MessagesFragment extends Fragment {
+public class MessagesFragment extends Fragment implements OnClickListener {
+
+	private FloatingActionButton editTeamBtn;
 
 	private TeamCard teamCard;
 	private Team team;
@@ -50,6 +57,9 @@ public class MessagesFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.messages_fragment, container, false);
+
+		editTeamBtn = view.findViewById(R.id.editTeamBtn);
+		editTeamBtn.setOnClickListener(this);
 
 		teamCard = new TeamCard(view);
 		teamCard.setData(team);
@@ -112,5 +122,14 @@ public class MessagesFragment extends Fragment {
 		if (null != teamRecyclerAdapter) {
 			teamRecyclerAdapter.notifyDataSetChanged();
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		Context context = v.getContext();
+		Intent intent = new Intent(context, EditTeamProfileActivity.class);
+		intent.putExtra("TeamId", team.getId());
+
+		context.startActivity(intent);
 	}
 }
