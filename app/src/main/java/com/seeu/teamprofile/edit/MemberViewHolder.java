@@ -35,7 +35,7 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 	}
 
 	public void setPicture(String url) {
-		new DownloadImageAndSetBackgroundTask(picture, 40, 80, 80).execute(url);
+		new DownloadImageAndSetBackgroundTask(picture, 30, 80, 80).execute(url);
 	}
 
 	@Override

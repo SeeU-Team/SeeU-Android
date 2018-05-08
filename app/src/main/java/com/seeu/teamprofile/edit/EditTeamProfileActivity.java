@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -30,6 +31,7 @@ import static android.view.ViewTreeObserver.OnPreDrawListener;
 public class EditTeamProfileActivity extends Activity implements OnPreDrawListener {
 
 	private static final int INTENT_PICK_IMAGE = 1;
+	private static final int INTENT_ACTION_SEARCH = 2;
 
 	private ConstraintLayout pictureChooser;
 	private ImageView pictureChosen;
@@ -89,7 +91,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		if (null != bundle && bundle.containsKey("TeamId")) {
 			long teamId = bundle.getLong("TeamId");
 
-			//loadTeam(teamId);
+			loadTeam(teamId);
 		}
 	}
 
@@ -110,12 +112,28 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		// TODO: Make http request to load data
 		team = Team.getDebugTeam((int) id);
 
+		members.addAll(team.getMembers());
+		team.setMembers(members);
+
 		pictureChooser.setVisibility(GONE);
 		pictureChosen.setVisibility(View.VISIBLE);
 
 		if (isPictureLayoutDrawn) {
 			new DownloadImageAndSetBackgroundTask(pictureChosen, 10);
 		}
+	}
+
+	@Override
+	public void startActivityForResult(@RequiresPermission Intent intent, int requestCode, @Nullable Bundle options) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			int flags = intent.getFlags();
+			// We have to clear this bit (which search automatically sets) otherwise startActivityForResult will never work
+			flags &= ~Intent.FLAG_ACTIVITY_NEW_TASK;
+			intent.setFlags(flags);
+			// We override the requestCode (which will be -1 initially) with a constant of ours.
+			requestCode = INTENT_ACTION_SEARCH;
+		}
+		super.startActivityForResult(intent, requestCode, options);
 	}
 
 	@Override
@@ -128,6 +146,10 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 
 				new GetAndShowImageFromUriAsyncTask(getContentResolver(), pictureChosen, pictureChooser).execute(uri);
 			}
+		} else if (INTENT_ACTION_SEARCH == requestCode && RESULT_OK == resultCode) {
+			Member member = (Member) data.getSerializableExtra("member");
+			members.add(member);
+			memberRecyclerAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -144,6 +166,6 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	}
 
 	public void onAddMemberBtnClick(View v) {
-
+		onSearchRequested();
 	}
 }

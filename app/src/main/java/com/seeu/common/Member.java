@@ -1,5 +1,6 @@
 package com.seeu.common;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -7,7 +8,7 @@ import java.util.Date;
  * Created by thomasfouan on 30/04/2018.
  */
 
-public class Member {
+public class Member implements Serializable {
 
 	private long id;
 	private String pictureUrl;
