@@ -29,8 +29,8 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 	private List<Member> matchingMembers;
 	private List<Long> alreadyAddedMembers;
 
-	private EditText searchText;
 	private TextView emptyListLabel;
+	private RecyclerView memberRecycler;
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 
 	public MemberSearchableActivity() {
@@ -47,9 +47,9 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.member_searchable_activity);
 
-		searchText					= findViewById(R.id.searchText);
-		emptyListLabel				= findViewById(R.id.emptyListLabel);
-		RecyclerView memberRecycler	= findViewById(R.id.memberRecycler);
+		EditText searchText		= findViewById(R.id.searchText);
+		emptyListLabel			= findViewById(R.id.emptyListLabel);
+		memberRecycler			= findViewById(R.id.memberRecycler);
 
 		searchText.addTextChangedListener(this);
 
@@ -74,6 +74,14 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 					&& !alreadyAddedMembers.contains(member.getId())) {
 				matchingMembers.add(member);
 			}
+		}
+
+		if (matchingMembers.isEmpty()) {
+			emptyListLabel.setVisibility(View.VISIBLE);
+			memberRecycler.setVisibility(View.INVISIBLE);
+		} else {
+			emptyListLabel.setVisibility(View.INVISIBLE);
+			memberRecycler.setVisibility(View.VISIBLE);
 		}
 
 		memberRecyclerAdapter.notifyDataSetChanged();
