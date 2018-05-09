@@ -60,12 +60,10 @@ public class NightCenterFragment extends Fragment {
 	}
 
 	private void setupMemberRecycler(View view) {
-		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members);
 
 		RecyclerView memberRecycler = view.findViewById(R.id.memberRecycler);
-		memberRecycler.setLayoutManager(layoutManager);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 

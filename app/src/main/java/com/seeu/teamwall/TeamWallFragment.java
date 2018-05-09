@@ -67,22 +67,18 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	}
 
 	private void setupTeamTypeRecycler(View view) {
-		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		// Keep reference of the dataset (arraylist here) in the adapter
 		teamTypeRecyclerAdapter = new TeamTypeRecyclerAdapter(getActivity(), types, this);
 
 		// set up the RecyclerView for the types of team
 		RecyclerView teamTypeRecycler = view.findViewById(R.id.teamTypeRecycler);
-		teamTypeRecycler.setLayoutManager(layoutManager);
 		teamTypeRecycler.setAdapter(teamTypeRecyclerAdapter);
 	}
 
 	private void setupTeamRecycler(View view) {
-		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
-		teamRecycler.setLayoutManager(layoutManager);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
 	}
 
