@@ -14,7 +14,9 @@ public class Team {
 	private long id;
 	private String pictureUrl;
 	private String name;
+	private String place;
 	private String tags;
+	private String description;
 	private int mark;
 	private List<Member> members;
 	private List<TeamDescription> descriptions;
@@ -46,12 +48,28 @@ public class Team {
 		this.name = name;
 	}
 
+	public String getPlace() {
+		return place;
+	}
+
+	public void setPlace(String place) {
+		this.place = place;
+	}
+
 	public String getTags() {
 		return tags;
 	}
 
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public int getMark() {
@@ -97,11 +115,24 @@ public class Team {
 			descriptions.add(TeamDescription.getDebugTeamDescription(i));
 		}
 
+		String description = "Description " +
+				index +
+				". Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+				"Aenean ut imperdiet neque. " +
+				"Phasellus sed blandit odio, nec elementum nunc. " +
+				"Ut magna orci, lacinia iaculis risus nec, eleifend imperdiet mauris. " +
+				"Vestibulum erat mi, accumsan ut erat at, placerat consequat turpis. " +
+				"Donec eleifend enim ut accumsan tincidunt. " +
+				"Donec vel massa sed sapien.";
+
+
 		Team team = new Team();
 		team.setId(index);
 		team.setPictureUrl(Team.DEBUG_PICTURE_URL);
 		team.setName("Team " + index);
+		team.setPlace("A LA MAISON");
 		team.setTags("#uno#dos#tres");
+		team.setDescription(description);
 		team.setMark(index%6);
 		team.setMembers(members);
 		team.setDescriptions(descriptions);

@@ -106,7 +106,7 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		}
 
 		if (-1 == teamId) {
-			throw new IllegalStateException("TeamId have not been retrieved from caller");
+			throw new IllegalStateException("TeamId has not been retrieved from caller");
 		}
 
 		return teamId;
@@ -133,17 +133,13 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
 		}
 
-		String teamDescription = "Description "
-				+ team.getId()
-				+ ". Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut imperdiet neque. Phasellus sed blandit odio, nec elementum nunc. Ut magna orci, lacinia iaculis risus nec, eleifend imperdiet mauris. Vestibulum erat mi, accumsan ut erat at, placerat consequat turpis. Donec eleifend enim ut accumsan tincidunt. Donec vel massa sed sapien.";
-
 		float maleProportion = (team.getId() % 10) / (float) 10.0;
 
-		place.setText("a la maison");
+		place.setText(team.getPlace());
 		name.setText(team.getName());
 		tags.setText(team.getTags());
 		genderIndex.setMaleProportion(maleProportion);
-		textDescription.setText(teamDescription);
+		textDescription.setText(team.getDescription());
 		mark.setMark(team.getMark());
 	}
 

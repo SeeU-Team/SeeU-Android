@@ -16,6 +16,7 @@
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
+            android:onClick="startAndroidPictureChooser"
             app:cardCornerRadius="8dp"
             app:cardElevation="5dp"
             app:cardUseCompatPadding="true"
@@ -28,7 +29,6 @@
                 android:id="@+id/teamPictureChooser"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:onClick="startAndroidPictureChooser"
                 android:visibility="visible">
 
                 <LinearLayout
@@ -225,5 +225,36 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/lineButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lineTextDescription">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="cancelForm"
+                android:text="Annuler" />
+
+            <Space
+                android:layout_width="25dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="validForm"
+                android:text="Valider" />
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
