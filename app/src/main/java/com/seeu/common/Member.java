@@ -3,6 +3,7 @@ package com.seeu.common;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by thomasfouan on 30/04/2018.
@@ -71,6 +72,21 @@ public class Member implements Serializable {
 	@Override
 	public String toString() {
 		return "member " + id;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Member member = (Member) o;
+		return id == member.id;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(id);
 	}
 
 	// TODO: Remove the debug url

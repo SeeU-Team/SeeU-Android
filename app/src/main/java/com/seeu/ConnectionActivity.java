@@ -70,11 +70,14 @@ public class ConnectionActivity extends Activity {
 			@Override
 			public void onCancel() {
 				// App code
+				System.out.println("Facebook login canceled");
 			}
 
 			@Override
 			public void onError(FacebookException exception) {
 				// App code
+				System.out.println("Facebook login error");
+				exception.printStackTrace();
 			}
 		});
 	}

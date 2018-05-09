@@ -7,7 +7,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.CardView
             android:id="@+id/teamPictureCardView"
@@ -28,6 +28,7 @@
                 android:id="@+id/teamPictureChooser"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:onClick="startAndroidPictureChooser"
                 android:visibility="visible">
 
                 <LinearLayout
@@ -65,32 +66,47 @@
 
         </android.support.v7.widget.CardView>
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/lineMembers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/teamPictureCardView">
 
-            <ImageButton
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="onAddMemberBtnClick"
-                android:src="@drawable/ic_edit_black" />
+                android:onClick="startMemberSearchActivity"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_edit_black" />
+            </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/memberRecycler"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginStart="40dp"
                 android:layout_weight="1"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingEnd="24dp"
+                android:paddingStart="45dp"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/lineName"
@@ -115,7 +131,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/teamname_placeholder"/>
+                android:hint="@string/teamname_placeholder"
+                android:inputType="" />
 
         </LinearLayout>
 
@@ -142,7 +159,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/teamplace_placeholder"/>
+                android:hint="@string/teamplace_placeholder"
+                android:inputType="" />
 
         </LinearLayout>
 
@@ -170,7 +188,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/teamtags_placeholder"/>
+                android:hint="@string/teamtags_placeholder"
+                android:inputType="" />
 
         </LinearLayout>
 

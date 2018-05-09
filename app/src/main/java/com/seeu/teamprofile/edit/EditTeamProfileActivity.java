@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.seeu.R;
 import com.seeu.common.Member;
 import com.seeu.common.Team;
+import com.seeu.common.membersearch.MemberSearchableActivity;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.GetAndShowImageFromUriAsyncTask;
 
@@ -68,20 +69,25 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 
 		setupMemberRecycler();
 
-		pictureChooser.setOnClickListener(v -> {
-			startAndroidPictureChooser();
-		});
-
 		pictureChosen.getViewTreeObserver().addOnPreDrawListener(this);
 
 		getInfoFromCaller();
 	}
 
 	private void setupMemberRecycler() {
+		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
+		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(this, members);
+		memberRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+			@Override
+			public void onItemRangeInserted(int positionStart, int itemCount) {
+				layoutManager.smoothScrollToPosition(memberRecycler, null, memberRecyclerAdapter.getItemCount());
+			}
+		});
 
-		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
+		memberRecycler.setLayoutManager(layoutManager);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
@@ -95,7 +101,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		}
 	}
 
-	private void startAndroidPictureChooser() {
+	public void startAndroidPictureChooser(View v) {
 		Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
 		getIntent.setType("image/*");
 
@@ -106,6 +112,18 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
 
 		startActivityForResult(chooserIntent, INTENT_PICK_IMAGE);
+	}
+
+	public void startMemberSearchActivity(View v) {
+		Intent intent = new Intent(this, MemberSearchableActivity.class);
+
+		long[] ids = new long[members.size()];
+		for (int i = 0; i < members.size(); i++) {
+			ids[i] = members.get(i).getId();
+		}
+		intent.putExtra("membersId", ids);
+
+		startActivityForResult(intent, INTENT_ACTION_SEARCH);
 	}
 
 	private void loadTeam(long id) {
@@ -124,19 +142,6 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	}
 
 	@Override
-	public void startActivityForResult(@RequiresPermission Intent intent, int requestCode, @Nullable Bundle options) {
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			int flags = intent.getFlags();
-			// We have to clear this bit (which search automatically sets) otherwise startActivityForResult will never work
-			flags &= ~Intent.FLAG_ACTIVITY_NEW_TASK;
-			intent.setFlags(flags);
-			// We override the requestCode (which will be -1 initially) with a constant of ours.
-			requestCode = INTENT_ACTION_SEARCH;
-		}
-		super.startActivityForResult(intent, requestCode, options);
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -149,7 +154,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		} else if (INTENT_ACTION_SEARCH == requestCode && RESULT_OK == resultCode) {
 			Member member = (Member) data.getSerializableExtra("member");
 			members.add(member);
-			memberRecyclerAdapter.notifyDataSetChanged();
+			memberRecyclerAdapter.notifyItemInserted(memberRecyclerAdapter.getItemCount());
 		}
 	}
 
@@ -163,9 +168,5 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		}
 
 		return true;
-	}
-
-	public void onAddMemberBtnClick(View v) {
-		onSearchRequested();
 	}
 }

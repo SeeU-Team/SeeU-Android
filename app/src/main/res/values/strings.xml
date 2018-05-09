@@ -28,4 +28,6 @@
     <string name="teamplace_placeholder">Où ?</string>
     <string name="teamtags_placeholder">Nos hashtags (3 maximum)</string>
     <string name="teamtextdescription_placeholder">Description</string>
+    <string name="search_member_placeholder">Search a member</string>
+    <string name="search_member_no_result_label">There is no result for your query</string>
 </resources>
