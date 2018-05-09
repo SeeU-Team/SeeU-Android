@@ -41,19 +41,7 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 	@Override
 	public void onBindViewHolder(TeamViewHolder holder, int position) {
 		Team team = getItem(position);
-
-		List<String> memberPictures = new ArrayList<>(position);
-		for (int i = 0; i < position; i++) {
-			memberPictures.add(team.getMembers().get(i).getPictureUrl());
-		}
-		float maleProportion = (position % 10) / (float) 10.0;
-
-		holder.setName(team.getName());
-		holder.setTags("#uno#dos#tres");
-		holder.setPicture(team.getPictureUrl());
-		holder.setMemberPictures(memberPictures);
-		holder.setGenderIndex(maleProportion);
-		holder.setDescriptionPictures();
+		holder.setData(team);
 	}
 
 	@Override
@@ -67,11 +55,11 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 
 	@Override
 	public void onItemClick(View view, int position) {
+		Team team = getItem(position);
 		Context context = view.getContext();
 		Intent intent = new Intent(context, TeamProfileActivity.class);
-		intent.putExtra("TeamId", getItem(position).getId());
+		intent.putExtra(Team.INTENT_EXTRA_KEY, team);
 
 		context.startActivity(intent);
-		// Toast.makeText(context, "You clicked " + getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
 	}
 }

@@ -19,6 +19,7 @@ import com.seeu.common.subviews.Mark;
 import com.seeu.nightcenter.MemberRecyclerAdapter;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,13 +42,9 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 	private Team team;
 	private boolean isPictureLayoutDrawn;
 
-	private List<Member> members;
-	private List<TeamDescription> descriptions;
-
 	public TeamProfileActivity() {
 		super();
-		members = new ArrayList<>();
-		descriptions = new ArrayList<>();
+		isPictureLayoutDrawn = false;
 	}
 
 	@Override
@@ -67,65 +64,48 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		View genderIndexView = findViewById(R.id.genderIndex);
 		genderIndex = new GenderIndex(genderIndexView);
 
-		isPictureLayoutDrawn = false;
 		picture.getViewTreeObserver().addOnPreDrawListener(this);
+
+		setTeamFromCaller();
 
 		setupMemberRecycler();
 		setupTeamDescriptionReycler();
 
-		final long teamId = getTeamIdFromCaller();
-		loadTeam(teamId);
+		updateUI();
 	}
 
 	private void setupMemberRecycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(this, members);
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
 
-		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
-		memberRecycler.setLayoutManager(layoutManager);
 	}
 
 	private void setupTeamDescriptionReycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, descriptions);
+		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, team.getDescriptions());
 
-		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 		RecyclerView teamDescriptionRecycler	= findViewById(R.id.teamDescriptionRecycler);
 		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
-		teamDescriptionRecycler.setLayoutManager(layoutManager);
 	}
 
-	private long getTeamIdFromCaller() {
-		Bundle bundle = getIntent().getExtras();
-		long teamId = -1;
+	private void setTeamFromCaller() {
+		Serializable ser = getIntent().getSerializableExtra(Team.INTENT_EXTRA_KEY);
 
-		if (null != bundle) {
-			teamId = bundle.getLong("TeamId", -1);
+		if (null == ser) {
+			throw new IllegalStateException("No team has been provided for team profile");
 		}
 
-		if (-1 == teamId) {
-			throw new IllegalStateException("TeamId has not been retrieved from caller");
+		team = (Team) ser;
+
+		if (null == team.getMembers()) {
+			team.setMembers(new ArrayList<>());
 		}
 
-		return teamId;
-	}
-
-	private void loadTeam(long id) {
-		// TODO: make http request to load data
-		team = Team.getDebugTeam((int) id);
-
-		members.addAll(team.getMembers());
-		team.setMembers(members);
-
-		descriptions.addAll(team.getDescriptions());
-		team.setDescriptions(descriptions);
-
-		updateUI();
-
-		memberRecyclerAdapter.notifyDataSetChanged();
-		descriptionRecyclerAdapter.notifyDataSetChanged();
+		if (null == team.getDescriptions()) {
+			team.setDescriptions(new ArrayList<>());
+		}
 	}
 
 	private void updateUI() {
@@ -141,6 +121,9 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		genderIndex.setMaleProportion(maleProportion);
 		textDescription.setText(team.getDescription());
 		mark.setMark(team.getMark());
+
+		memberRecyclerAdapter.notifyDataSetChanged();
+		descriptionRecyclerAdapter.notifyDataSetChanged();
 	}
 
 	public void teamUpActionBtn(View view) {

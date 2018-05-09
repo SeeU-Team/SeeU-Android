@@ -27,7 +27,7 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 		this.members = members;
 	}
 
-	public Member getItem(int position) {
+	private Member getItem(int position) {
 		return members.get(position);
 	}
 
@@ -60,7 +60,7 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 //		context.startActivity(intent);
 	}
 
-	public void onDeleteItemClick(View v, int position) {
+	private void onDeleteItemClick(View v, int position) {
 		members.remove(getItem(position));
 		notifyDataSetChanged();
 	}

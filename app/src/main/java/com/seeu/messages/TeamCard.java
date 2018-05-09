@@ -34,7 +34,7 @@ public class TeamCard implements OnClickListener {
 	private Mark mark;
 	private TeamMemberPictures memberPictures;
 
-	private long teamId;
+	private Team team;
 
 	public TeamCard(View itemView) {
 
@@ -75,6 +75,7 @@ public class TeamCard implements OnClickListener {
 		if (null == team) {
 			return;
 		}
+		this.team = team;
 
 		setPicture(team.getPictureUrl());
 		setName(team.getName());
@@ -88,23 +89,13 @@ public class TeamCard implements OnClickListener {
 			urls.add(member.getPictureUrl());
 		}
 		setMemberPictures(urls);
-
-		teamId = team.getId();
-
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//			urls = team.getMembers()
-//					.stream()
-//					.map(Member::getPictureUrl)
-//					.collect(Collectors.toList());
-//		}
 	}
 
 	@Override
 	public void onClick(View v) {
-		// TODO: start new Activity for team messages screen
 		Context context = v.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
-		intent.putExtra("TeamId", teamId);
+		intent.putExtra(Team.INTENT_EXTRA_KEY, team);
 
 		context.startActivity(intent);
 	}

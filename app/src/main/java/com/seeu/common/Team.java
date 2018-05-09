@@ -1,15 +1,15 @@
 package com.seeu.common;
 
-import com.seeu.teamprofile.TeamDescription;
-
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by thomasfouan on 30/04/2018.
  */
 
-public class Team {
+public class Team implements Serializable {
+
+	public static final String INTENT_EXTRA_KEY = "team";
 
 	private long id;
 	private String pictureUrl;
@@ -18,10 +18,12 @@ public class Team {
 	private String tags;
 	private String description;
 	private int mark;
-	private List<Member> members;
-	private List<TeamDescription> descriptions;
+	private ArrayList<Member> members; // Use ArrayList because it is Serializable (List interface is not)
+	private ArrayList<TeamDescription> descriptions; // Use ArrayList because it is Serializable (List interface is not)
 
 	public Team() {
+		members = new ArrayList<>();
+		descriptions = new ArrayList<>();
 	}
 
 	public long getId() {
@@ -80,19 +82,19 @@ public class Team {
 		this.mark = mark;
 	}
 
-	public List<Member> getMembers() {
+	public ArrayList<Member> getMembers() {
 		return members;
 	}
 
-	public void setMembers(List<Member> members) {
+	public void setMembers(ArrayList<Member> members) {
 		this.members = members;
 	}
 
-	public List<TeamDescription> getDescriptions() {
+	public ArrayList<TeamDescription> getDescriptions() {
 		return descriptions;
 	}
 
-	public void setDescriptions(List<TeamDescription> descriptions) {
+	public void setDescriptions(ArrayList<TeamDescription> descriptions) {
 		this.descriptions = descriptions;
 	}
 
@@ -105,13 +107,13 @@ public class Team {
 	public static final String DEBUG_PICTURE_URL = "https://scontent.xx.fbcdn.net/v/t1.0-9/s720x720/28796203_2100578413291884_3128132353430932217_n.jpg?oh=cf890e20f692253214d595fd266fd73b&oe=5B3BCC27";
 
 	public static Team getDebugTeam(int index) {
-		List<Member> members = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
+		ArrayList<Member> members = new ArrayList<>();
+		for (int i = 0; i < index; i++) {
 			members.add(Member.getDebugMember(i));
 		}
 
-		List<TeamDescription> descriptions = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
+		ArrayList<TeamDescription> descriptions = new ArrayList<>();
+		for (int i = 0; i < index; i++) {
 			descriptions.add(TeamDescription.getDebugTeamDescription(i));
 		}
 

@@ -1,6 +1,7 @@
 package com.seeu.nightcenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seeu.R;
+import com.seeu.chat.ChatActivity;
 import com.seeu.common.ItemClickListener;
 import com.seeu.common.Member;
 
@@ -35,18 +37,13 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements 
 	public MemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = inflater.inflate(R.layout.nightcenter_layout_member_item, parent, false);
 
-		return new MemberViewHolder(view, this, (v, position) -> {
-			Toast.makeText(v.getContext(), "You clicked on the message action button " + getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
-		});
+		return new MemberViewHolder(view, this, this::startMessageActivity);
 	}
 
 	@Override
 	public void onBindViewHolder(MemberViewHolder holder, int position) {
 		Member member = getItem(position);
-
-		holder.setPicture(member.getPictureUrl());
-		holder.setName(member.getName());
-		holder.setMark(member.getMark());
+		holder.setData(member);
 	}
 
 	@Override
@@ -56,6 +53,16 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements 
 
 	@Override
 	public void onItemClick(View view, int position) {
+		// TODO: start member profile activity
 		Toast.makeText(view.getContext(), "You clicked " + getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
+	}
+
+	private void startMessageActivity(View v, int position) {
+		Member member = getItem(position);
+		Context context = v.getContext();
+		Intent intent = new Intent(context, ChatActivity.class);
+		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+
+		context.startActivity(intent);
 	}
 }

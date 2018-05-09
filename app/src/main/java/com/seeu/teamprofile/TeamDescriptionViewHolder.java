@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.seeu.R;
+import com.seeu.common.TeamDescription;
 
 /**
  * Created by thomasfouan on 07/05/2018.
@@ -23,11 +24,16 @@ class TeamDescriptionViewHolder extends ViewHolder {
 		name	= itemView.findViewById(R.id.teamDescriptionName);
 	}
 
-	public void setIcon(int id) {
+	private void setIcon(int id) {
 		icon.setImageResource(id);
 	}
 
-	public void setName(String name) {
+	private void setName(String name) {
 		this.name.setText(name);
+	}
+
+	public void setData(TeamDescription teamDescription) {
+		setIcon(teamDescription.getIcon());
+		setName(teamDescription.getName());
 	}
 }

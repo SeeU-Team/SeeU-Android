@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
+import com.seeu.common.Member;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 class MemberViewHolder extends ViewHolder implements OnClickListener {
@@ -27,12 +28,17 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 		itemView.setOnClickListener(this);
 	}
 
-	public void setPicture(String url) {
+	private void setPicture(String url) {
 		new DownloadImageAndSetBackgroundTask(picture, 20, 40, 40).execute(url);
 	}
 
-	public void setName(String name) {
+	private void setName(String name) {
 		this.name.setText(name);
+	}
+
+	public void setData(Member member) {
+		setPicture(member.getPictureUrl());
+		setName(member.getName());
 	}
 
 	@Override

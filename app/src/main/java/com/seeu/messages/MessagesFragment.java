@@ -27,8 +27,6 @@ import java.util.List;
 
 public class MessagesFragment extends Fragment implements OnClickListener {
 
-	private FloatingActionButton editTeamBtn;
-
 	private TeamCard teamCard;
 	private Team team;
 
@@ -58,7 +56,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.messages_fragment, container, false);
 
-		editTeamBtn = view.findViewById(R.id.editTeamBtn);
+		FloatingActionButton editTeamBtn = view.findViewById(R.id.editTeamBtn);
 		editTeamBtn.setOnClickListener(this);
 
 		teamCard = new TeamCard(view);
@@ -71,22 +69,18 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	}
 
 	private void setupMemberRecycler(View view) {
-		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members);
 
 		RecyclerView memberRecycler = view.findViewById(R.id.memberRecycler);
-		memberRecycler.setLayoutManager(layoutManager);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
 	private void setupTeamRecycler(View view) {
-		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 		// Keep reference of the dataset (arraylist here) in the adapter
 		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
-		teamRecycler.setLayoutManager(layoutManager);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
 	}
 
@@ -128,7 +122,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		Context context = v.getContext();
 		Intent intent = new Intent(context, EditTeamProfileActivity.class);
-		intent.putExtra("TeamId", team.getId());
+		intent.putExtra(Team.INTENT_EXTRA_KEY, team);
 
 		context.startActivity(intent);
 	}

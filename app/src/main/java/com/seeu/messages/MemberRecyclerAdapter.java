@@ -1,6 +1,7 @@
 package com.seeu.messages;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seeu.R;
+import com.seeu.chat.ChatActivity;
 import com.seeu.common.ItemClickListener;
 import com.seeu.common.Member;
 
@@ -27,7 +29,7 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements 
 		this.members = members;
 	}
 
-	public Member getItem(int position) {
+	private Member getItem(int position) {
 		return members.get(position);
 	}
 
@@ -40,11 +42,7 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements 
 	@Override
 	public void onBindViewHolder(MemberViewHolder holder, int position) {
 		Member member = getItem(position);
-
-		holder.setPicture(member.getPictureUrl());
-		holder.setName(member.getName());
-		holder.setMark(member.getMark());
-		holder.setStatus(member.isConnected(), member.getLastConnection());
+		holder.setData(member);
 	}
 
 	@Override
@@ -54,6 +52,11 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements 
 
 	@Override
 	public void onItemClick(View view, int position) {
-		Toast.makeText(view.getContext(), "You clicked " + getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
+		Member member = getItem(position);
+		Context context = view.getContext();
+		Intent intent = new Intent(context, ChatActivity.class);
+		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+
+		context.startActivity(intent);
 	}
 }

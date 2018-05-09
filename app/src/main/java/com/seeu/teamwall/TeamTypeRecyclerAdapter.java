@@ -39,14 +39,7 @@ public class TeamTypeRecyclerAdapter extends Adapter<TeamTypeViewHolder> {
 	@Override
 	public void onBindViewHolder(TeamTypeViewHolder holder, int position) {
 		TeamType teamType = getItem(position);
-
-		if (selected == position) {
-			holder.setSelectedBackground();
-		} else {
-			holder.setDefaultBackground();
-		}
-
-		holder.setName(teamType.getName());
+		holder.setData(teamType, selected == position);
 	}
 
 	@Override
@@ -56,10 +49,6 @@ public class TeamTypeRecyclerAdapter extends Adapter<TeamTypeViewHolder> {
 
 	public TeamType getItem(int position) {
 		return types.get(position);
-	}
-
-	public int getSelected() {
-		return selected;
 	}
 
 	public void setSelected(int newSelected) {

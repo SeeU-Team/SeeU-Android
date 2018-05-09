@@ -1,12 +1,14 @@
-package com.seeu.teamprofile;
+package com.seeu.common;
 
 import com.seeu.R;
+
+import java.io.Serializable;
 
 /**
  * Created by thomasfouan on 07/05/2018.
  */
 
-public class TeamDescription {
+public class TeamDescription implements Serializable {
 
 	private String name;
 	private int icon;

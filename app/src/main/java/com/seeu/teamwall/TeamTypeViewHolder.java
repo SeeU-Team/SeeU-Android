@@ -30,16 +30,26 @@ class TeamTypeViewHolder extends ViewHolder implements OnClickListener {
 		itemView.setOnClickListener(this);
 	}
 
-	public void setDefaultBackground() {
+	private void setDefaultBackground() {
 		this.rootLayout.setBackgroundResource(R.drawable.not_selected_type_team_background);
 	}
 
-	public void setSelectedBackground() {
+	private void setSelectedBackground() {
 		this.rootLayout.setBackgroundResource(R.drawable.selected_type_team_background);
 	}
 
-	public void setName(final String name) {
+	private void setName(final String name) {
 		this.name.setText(name);
+	}
+
+	public void setData(TeamType teamType, boolean selected) {
+		if (selected) {
+			setSelectedBackground();
+		} else {
+			setDefaultBackground();
+		}
+
+		setName(teamType.getName());
 	}
 
 	@Override

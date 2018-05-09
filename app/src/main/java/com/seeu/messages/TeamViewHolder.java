@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
+import com.seeu.common.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 /**
@@ -33,16 +34,22 @@ class TeamViewHolder extends ViewHolder implements OnClickListener {
 		this.listener = listener;
 	}
 
-	public void setName(String name) {
+	private void setName(String name) {
 		this.name.setText(name);
 	}
 
-	public void setTags(String tags) {
+	private void setTags(String tags) {
 		this.tags.setText(tags);
 	}
 
-	public void setPicture(String pictureUrl) {
+	private void setPicture(String pictureUrl) {
 		new DownloadImageAndSetBackgroundTask(layoutPicture, 0, 250, 250).execute(pictureUrl);
+	}
+
+	public void setData(Team team) {
+		setPicture(team.getPictureUrl());
+		setName(team.getName());
+		setTags(team.getTags());
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.seeu.R;
+import com.seeu.common.TeamDescription;
 
 import java.util.List;
 
@@ -37,9 +38,7 @@ class TeamDescriptionRecyclerAdapter extends Adapter<TeamDescriptionViewHolder> 
 	@Override
 	public void onBindViewHolder(TeamDescriptionViewHolder holder, int position) {
 		TeamDescription teamDescription = getItem(position);
-
-		holder.setIcon(teamDescription.getIcon());
-		holder.setName(teamDescription.getName());
+		holder.setData(teamDescription);
 	}
 
 	@Override

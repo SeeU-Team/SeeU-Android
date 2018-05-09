@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.Member;
+import com.seeu.common.Team;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,8 @@ import java.util.List;
  */
 
 public class ChatActivity extends ListActivity {
+
+	private Serializable receiver;
 
 	private EditText newMessage;
 
@@ -42,13 +46,15 @@ public class ChatActivity extends ListActivity {
 	}
 
 	private void getInfoFromCaller() {
-		Bundle bundle = getIntent().getExtras();
-		long teamId = -1;
+		receiver = getIntent().getSerializableExtra(Team.INTENT_EXTRA_KEY);
 
-		if (null != bundle) {
-			teamId = bundle.getLong("TeamId");
+		if (null == receiver) {
+			receiver = getIntent().getSerializableExtra(Member.INTENT_EXTRA_KEY);
 		}
-		System.out.println("TeamId received : " + teamId);
+
+		if (null == receiver) {
+			throw new IllegalStateException("No team nor member provided to chat activity");
+		}
 	}
 
 	private void loadMessages() {

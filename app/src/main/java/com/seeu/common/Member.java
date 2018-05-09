@@ -11,6 +11,8 @@ import java.util.Objects;
 
 public class Member implements Serializable {
 
+	public static final String INTENT_EXTRA_KEY = "member";
+
 	private long id;
 	private String pictureUrl;
 	private String name;

@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,10 +49,8 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 
 	private ConstraintLayout pictureChooser;
 	private ImageView chosenPicture;
-	private Uri chosenPictureUri;
 
 	private MemberRecyclerAdapter memberRecyclerAdapter;
-	private List<Member> members;
 
 	private EditText name;
 	private EditText place;
@@ -59,12 +58,14 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	private EditText textDescription;
 
 	private Team team;
+	private boolean isNewTeam;
 	private boolean isPictureLayoutDrawn;
+	private Uri chosenPictureUri;
 
 	public EditTeamProfileActivity() {
 		super();
-		members = new ArrayList<>();
-		team = null;
+		team = new Team();
+		isNewTeam = true;
 		isPictureLayoutDrawn = false;
 		chosenPictureUri = null;
 	}
@@ -81,11 +82,10 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		tags			= findViewById(R.id.teamTags);
 		textDescription	= findViewById(R.id.teamTextDescription);
 
-		setupMemberRecycler();
-
 		chosenPicture.getViewTreeObserver().addOnPreDrawListener(this);
 
-		getInfoFromCaller();
+		updateTeamFromCaller();
+		setupMemberRecycler();
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 			}
 		} else if (INTENT_ACTION_SEARCH == requestCode && RESULT_OK == resultCode) {
 			Member member = (Member) data.getSerializableExtra("member");
-			members.add(member);
+			team.getMembers().add(member);
 			memberRecyclerAdapter.notifyItemInserted(memberRecyclerAdapter.getItemCount());
 		}
 	}
@@ -122,7 +122,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
 		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(this, members);
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
 		memberRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -134,23 +134,23 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
-	private void getInfoFromCaller() {
-		Bundle bundle = getIntent().getExtras();
+	private void updateTeamFromCaller() {
+		Serializable ser = getIntent().getSerializableExtra(Team.INTENT_EXTRA_KEY);
 
-		if (null != bundle && bundle.containsKey("TeamId")) {
-			long teamId = bundle.getLong("TeamId");
+		// If a team was passed by the caller, get it for update
+		if (null != ser) {
+			team = (Team) ser;
+			isNewTeam = false;
 
-			loadTeam(teamId);
+			if (null == team.getMembers()) {
+				team.setMembers(new ArrayList<>());
+			}
+
+			updateUI();
 		}
 	}
 
-	private void loadTeam(long id) {
-		// TODO: Make http request to load data
-		team = Team.getDebugTeam((int) id);
-
-		members.addAll(team.getMembers());
-		team.setMembers(members);
-
+	private void updateUI() {
 		pictureChooser.setVisibility(GONE);
 		chosenPicture.setVisibility(View.VISIBLE);
 
@@ -165,13 +165,9 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	}
 
 	private boolean isTeamValid() {
-		if (null == team) {
-			if (null == chosenPictureUri) {
-				Toast.makeText(this, "You must select a picture", Toast.LENGTH_SHORT).show();
-				return false;
-			}
-
-			team = new Team();
+		if (isNewTeam && null == chosenPictureUri) {
+			Toast.makeText(this, "You must select a picture", Toast.LENGTH_SHORT).show();
+			return false;
 		}
 
 		team.setName(name.getText().toString());
@@ -179,7 +175,6 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		team.setTags(tags.getText().toString());
 		team.setDescription(textDescription.getText().toString());
 		// TODO: How to add the creator (leader) of the team ?? Via token or add him first in the list ??
-		team.setMembers(members);
 
 		return true;
 	}
@@ -207,12 +202,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	 */
 	public void startMemberSearchActivity(View v) {
 		Intent intent = new Intent(this, MemberSearchableActivity.class);
-
-		long[] ids = new long[members.size()];
-		for (int i = 0; i < members.size(); i++) {
-			ids[i] = members.get(i).getId();
-		}
-		intent.putExtra("membersId", ids);
+		intent.putExtra("members", team.getMembers());
 
 		startActivityForResult(intent, INTENT_ACTION_SEARCH);
 	}
@@ -234,12 +224,8 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 			return;
 		}
 
-		String url;
-
 		if (null != chosenPictureUri) {
 			// TODO: Get data of picture, save it on cloud and get the url of the picture to save it in our DB
-			url = Team.DEBUG_PICTURE_URL;
-
 //			HttpURLConnection urlConnection = null;
 //			try {
 //				InputStream imageStream = getContentResolver().openInputStream(chosenPictureUri);
@@ -273,13 +259,17 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 //					urlConnection.disconnect();
 //				}
 //			}
-		} else {
-			url = team.getPictureUrl();
+
+			String url = Team.DEBUG_PICTURE_URL;
+			team.setPictureUrl(url);
 		}
 
-		team.setPictureUrl(url);
+		if (isNewTeam) {
+			// TODO: make http request to save the newly created team
+		} else {
+			// TODO: make http request to save the updated team
+		}
 
-		// TODO: make http request to save the newly created team
 		finish();
 	}
 }

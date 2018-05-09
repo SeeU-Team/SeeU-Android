@@ -37,9 +37,7 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> {
 	@Override
 	public void onBindViewHolder(MemberViewHolder holder, int position) {
 		Member member = getItem(position);
-
-		holder.setPicture(member.getPictureUrl());
-		holder.setName(member.getName());
+		holder.setData(member);
 	}
 
 	@Override

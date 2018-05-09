@@ -1,7 +1,5 @@
 package com.seeu.teamwall;
 
-import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
@@ -9,12 +7,16 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.seeu.common.ItemClickListener;
 import com.seeu.R;
+import com.seeu.common.ItemClickListener;
+import com.seeu.common.Member;
+import com.seeu.common.Team;
+import com.seeu.common.TeamDescription;
 import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,31 +57,46 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		layoutPicture.setOnClickListener(this);
 	}
 
-	public void setName(String name) {
+	private void setName(String name) {
 		this.name.setText(name);
 	}
 
-	public void setTags(String tags) {
+	private void setTags(String tags) {
 		this.tags.setText(tags);
 	}
 
-	public void setPicture(String pictureUrl) {
+	private void setPicture(String pictureUrl) {
 		new DownloadImageAndSetBackgroundTask(layoutPicture, 20, 250, 250).execute(pictureUrl);
 	}
 
-	public void setMemberPictures(List<String> urls) {
+	private void setMemberPictures(List<String> urls) {
 		teamMemberPictures.setMemberPictures(urls);
 	}
 
-	public void setGenderIndex(float maleProportion) {
+	private void setGenderIndex(float maleProportion) {
 		genderIndex.setMaleProportion(maleProportion);
 	}
 
-	public void setDescriptionPictures() {
-		descriptionPictures[0].setImageResource(R.drawable.icon_beer);
-		descriptionPictures[1].setImageResource(R.drawable.icon_food);
-		descriptionPictures[2].setImageResource(R.drawable.icon_soccer_ball);
-		descriptionPictures[3].setImageResource(R.drawable.icon_swimming_pool);
+	private void setDescriptionPictures(List<TeamDescription> descriptions) {
+		for (int i = 0; i < descriptions.size() && i < 4; i++) {
+			descriptionPictures[i].setImageResource(descriptions.get(i).getIcon());
+		}
+	}
+
+	public void setData(Team team) {
+		List<String> memberPictures = new ArrayList<>();
+		for (Member member : team.getMembers()) {
+			memberPictures.add(member.getPictureUrl());
+		}
+
+		float maleProportion = (team.getId() % 10) / (float) 10.0;
+
+		setName(team.getName());
+		setTags(team.getTags());
+		setPicture(team.getPictureUrl());
+		setMemberPictures(memberPictures);
+		setGenderIndex(maleProportion);
+		setDescriptionPictures(team.getDescriptions());
 	}
 
 	@Override

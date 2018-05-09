@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
+import com.seeu.common.Member;
 import com.seeu.common.subviews.Mark;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
@@ -80,6 +81,13 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 
 		String text = lastConnection.getResources().getString(R.string.member_last_connection, diffInDays);
 		lastConnection.setText(text);
+	}
+
+	public void setData(Member member) {
+		setPicture(member.getPictureUrl());
+		setName(member.getName());
+		setMark(member.getMark());
+		setStatus(member.isConnected(), member.getLastConnection());
 	}
 
 	@Override

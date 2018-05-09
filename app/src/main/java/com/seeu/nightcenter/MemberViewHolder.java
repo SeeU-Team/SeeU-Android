@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
+import com.seeu.common.Member;
 import com.seeu.common.subviews.Mark;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
@@ -41,16 +42,22 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 		this.itemClickListener = itemClickListener;
 	}
 
-	public void setPicture(String pictureUrl) {
+	private void setPicture(String pictureUrl) {
 		new DownloadImageAndSetBackgroundTask(picture, 50, 100, 100).execute(pictureUrl);
 	}
 
-	public void setName(String name) {
+	private void setName(String name) {
 		this.name.setText(name);
 	}
 
-	public void setMark(int mark) {
+	private void setMark(int mark) {
 		this.mark.setMark(mark);
+	}
+
+	public void setData(Member member) {
+		setPicture(member.getPictureUrl());
+		setName(member.getName());
+		setMark(member.getMark());
 	}
 
 	@Override

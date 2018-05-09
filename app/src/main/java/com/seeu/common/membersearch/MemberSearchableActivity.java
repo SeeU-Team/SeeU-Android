@@ -27,7 +27,7 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 
 	private List<Member> members;
 	private List<Member> matchingMembers;
-	private List<Long> alreadyAddedMembers;
+	private List<Member> alreadyAddedMembers;
 
 	private TextView emptyListLabel;
 	private RecyclerView memberRecycler;
@@ -58,12 +58,7 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 
 		// Get the list of membersId from the intent
 		Intent intent = getIntent();
-		long[] membersId = intent.getLongArrayExtra("membersId");
-
-		alreadyAddedMembers = new ArrayList<>();
-		for (long id : membersId) {
-			alreadyAddedMembers.add(id);
-		}
+		alreadyAddedMembers = (ArrayList<Member>) intent.getSerializableExtra("members");
 	}
 
 	private void requestData(String query) {
@@ -71,7 +66,7 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 
 		for (Member member : members) {
 			if (member.getName().toLowerCase().contains(query.toLowerCase())
-					&& !alreadyAddedMembers.contains(member.getId())) {
+					&& !alreadyAddedMembers.contains(member)) {
 				matchingMembers.add(member);
 			}
 		}
@@ -89,8 +84,9 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 
 	@Override
 	public void onItemClick(View view, int position) {
+		Member member = matchingMembers.get(position);
 		Intent intent = new Intent();
-		intent.putExtra("member", matchingMembers.get(position));
+		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
 
 		setResult(RESULT_OK, intent);
 		finish();
@@ -98,12 +94,10 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
 	}
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-
 	}
 
 	@Override

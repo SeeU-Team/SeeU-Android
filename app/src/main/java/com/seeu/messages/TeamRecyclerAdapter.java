@@ -1,6 +1,7 @@
 package com.seeu.messages;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
@@ -9,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.seeu.R;
+import com.seeu.chat.ChatActivity;
 import com.seeu.common.ItemClickListener;
+import com.seeu.common.Member;
 import com.seeu.common.Team;
 
 import java.util.List;
@@ -41,10 +44,7 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 	@Override
 	public void onBindViewHolder(TeamViewHolder holder, int position) {
 		Team team = getItem(position);
-
-		holder.setPicture(team.getPictureUrl());
-		holder.setName(team.getName());
-		holder.setTags(team.getTags());
+		holder.setData(team);
 	}
 
 	@Override
@@ -54,6 +54,11 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 
 	@Override
 	public void onItemClick(View view, int position) {
-		Toast.makeText(view.getContext(), "You clicked " + getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
+		Team team = getItem(position);
+		Context context = view.getContext();
+		Intent intent = new Intent(context, ChatActivity.class);
+		intent.putExtra(Team.INTENT_EXTRA_KEY, team);
+
+		context.startActivity(intent);
 	}
 }
