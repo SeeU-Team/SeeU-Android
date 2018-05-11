@@ -22,12 +22,14 @@
     <string name="direct_messages">MESSAGES DIRECT</string>
     <string name="member_last_connection">il y a %1$d min</string>
     <string name="teams">TEAMS</string>
-    <string name="new_message_placeholder">Write a message</string>
+    <string name="new_message_placeholder">Message</string>
     <string name="mark_label">La note de ce line up est de :</string>
     <string name="teamname_placeholder">Nom de la team</string>
     <string name="teamplace_placeholder">Où ?</string>
     <string name="teamtags_placeholder">Nos hashtags (3 maximum)</string>
-    <string name="teamtextdescription_placeholder">Description</string>
-    <string name="search_member_placeholder">Search a member</string>
-    <string name="search_member_no_result_label">There is no result for your query</string>
+    <string name="description_placeholder">Description</string>
+    <string name="search_member_placeholder">Chercher un membre</string>
+    <string name="search_member_no_result_label">Pas de résultat</string>
+    <string name="catch_phrase_placeholder">Votre catch phrase</string>
+    <string name="choose_image_label">Choisir une image</string>
 </resources>

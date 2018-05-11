@@ -76,6 +76,10 @@
         <activity
             android:name=".member.profile.MemberProfileActivity"
             android:label="@string/app_name"/>
+
+        <activity
+            android:name=".member.edit.EditMemberProfileActivity"
+            android:label="@string/app_name"/>
     </application>
 
 </manifest>

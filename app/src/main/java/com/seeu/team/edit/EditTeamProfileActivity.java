@@ -1,6 +1,7 @@
 package com.seeu.team.edit;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,9 +15,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.seeu.R;
+import com.seeu.common.AbstractEditEntityActivity;
+import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
 import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
+import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.GetAndShowImageFromUriAsyncTask;
 
@@ -30,14 +34,11 @@ import static android.view.ViewTreeObserver.OnPreDrawListener;
  * Created by thomasfouan on 08/05/2018.
  */
 
-public class EditTeamProfileActivity extends Activity implements OnPreDrawListener {
+public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 
-	private static final int INTENT_PICK_IMAGE = 1;
 	private static final int INTENT_ACTION_SEARCH = 2;
 
-	private ConstraintLayout pictureChooser;
-	private ImageView chosenPicture;
-
+	private PictureChooser pictureChooser;
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 
 	private EditText name;
@@ -45,17 +46,8 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 	private EditText tags;
 	private EditText textDescription;
 
-	private Team team;
-	private boolean isNewTeam;
-	private boolean isPictureLayoutDrawn;
-	private Uri chosenPictureUri;
-
 	public EditTeamProfileActivity() {
 		super();
-		team = new Team();
-		isNewTeam = true;
-		isPictureLayoutDrawn = false;
-		chosenPictureUri = null;
 	}
 
 	@Override
@@ -63,46 +55,29 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_teamprofile_activity);
 
-		pictureChooser	= findViewById(R.id.teamPictureChooser);
-		chosenPicture = findViewById(R.id.teamPictureChosen);
+		pictureChooser = new PictureChooser();
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.replace(R.id.frame_layout_picture_chooser, pictureChooser);
+		transaction.commit();
+
 		name			= findViewById(R.id.teamName);
 		place			= findViewById(R.id.teamPlace);
 		tags			= findViewById(R.id.teamTags);
 		textDescription	= findViewById(R.id.teamTextDescription);
 
-		chosenPicture.getViewTreeObserver().addOnPreDrawListener(this);
-
-		updateTeamFromCaller();
 		setupMemberRecycler();
+		updateUI();
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (INTENT_PICK_IMAGE == requestCode && RESULT_OK == resultCode) {
-			if (null != data && null != data.getData()) {
-				chosenPictureUri = data.getData();
-
-				new GetAndShowImageFromUriAsyncTask(getContentResolver(), chosenPicture, pictureChooser).execute(chosenPictureUri);
-			}
-		} else if (INTENT_ACTION_SEARCH == requestCode && RESULT_OK == resultCode) {
-			Member member = (Member) data.getSerializableExtra("member");
-			team.getMembers().add(member);
+		if (INTENT_ACTION_SEARCH == requestCode && RESULT_OK == resultCode) {
+			Member member = (Member) data.getSerializableExtra(Member.INTENT_EXTRA_KEY);
+			entity.getMembers().add(member);
 			memberRecyclerAdapter.notifyItemInserted(memberRecyclerAdapter.getItemCount());
 		}
-	}
-
-	@Override
-	public boolean onPreDraw() {
-		isPictureLayoutDrawn = true;
-		chosenPicture.getViewTreeObserver().removeOnPreDrawListener(this);
-
-		if (null != team) {
-			new DownloadImageAndSetBackgroundTask(chosenPicture, 10).execute(team.getPictureUrl());
-		}
-
-		return true;
 	}
 
 	private void setupMemberRecycler() {
@@ -110,7 +85,7 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
 		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, entity.getMembers());
 		memberRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -122,95 +97,58 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
-	private void updateTeamFromCaller() {
-		Serializable ser = getIntent().getSerializableExtra(Team.INTENT_EXTRA_KEY);
-
-		// If a team was passed by the caller, get it for update
-		if (null != ser) {
-			team = (Team) ser;
-			isNewTeam = false;
-
-			if (null == team.getMembers()) {
-				team.setMembers(new ArrayList<>());
-			}
-
-			updateUI();
-		}
-	}
-
-	private void updateUI() {
-		pictureChooser.setVisibility(GONE);
-		chosenPicture.setVisibility(View.VISIBLE);
-
-		if (isPictureLayoutDrawn) {
-			new DownloadImageAndSetBackgroundTask(chosenPicture, 10);
-		}
-
-		name.setText(team.getName());
-		place.setText(team.getPlace());
-		tags.setText(team.getTags());
-		textDescription.setText(team.getDescription());
-	}
-
-	private boolean isTeamValid() {
-		if (isNewTeam && null == chosenPictureUri) {
-			Toast.makeText(this, "You must select a picture", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-
-		team.setName(name.getText().toString());
-		team.setPlace(place.getText().toString());
-		team.setTags(tags.getText().toString());
-		team.setDescription(textDescription.getText().toString());
-		// TODO: How to add the creator (leader) of the team ?? Via token or add him first in the list ??
-
-		return true;
-	}
-
-	/**
-	 * Handle click event on picture chooser.
-	 * @param v
-	 */
-	public void startAndroidPictureChooser(View v) {
-		Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-		getIntent.setType("image/*");
-
-		Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-		pickIntent.setType("image/*");
-
-		Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
-
-		startActivityForResult(chooserIntent, INTENT_PICK_IMAGE);
-	}
-
 	/**
 	 * Handle click event on add member's button.
 	 * @param v
 	 */
 	public void startMemberSearchActivity(View v) {
 		Intent intent = new Intent(this, MemberSearchableActivity.class);
-		intent.putExtra("members", team.getMembers());
+		intent.putExtra("members", entity.getMembers());
 
 		startActivityForResult(intent, INTENT_ACTION_SEARCH);
 	}
 
-	/**
-	 * Handle click event on cancel button.
-	 * @param v
-	 */
-	public void cancelForm(View v) {
-		finish();
+	@Override
+	protected Team getEntityInstance() {
+		return new Team();
 	}
 
-	/**
-	 * Handle click event on validation button.
-	 * @param v
-	 */
-	public void validForm(View v) {
-		if (!isTeamValid()) {
-			return;
+	@Override
+	protected void updateUI() {
+//		if (null == team.getMembers()) {
+//			team.setMembers(new ArrayList<>());
+//		}
+		pictureChooser.setCurrentPictureUrl(entity.getPictureUrl());
+
+		name.setText(entity.getName());
+		place.setText(entity.getPlace());
+		tags.setText(entity.getTags());
+		textDescription.setText(entity.getDescription());
+	}
+
+	@Override
+	protected boolean isEntityValid() {
+		if (isNewEntity
+				&& null == pictureChooser.getChosenPictureUri()) {
+			Toast.makeText(this, "You must select a picture", Toast.LENGTH_SHORT).show();
+			return false;
 		}
+
+		return true;
+	}
+
+	@Override
+	protected void updateEntity() {
+		entity.setName(name.getText().toString());
+		entity.setPlace(place.getText().toString());
+		entity.setTags(tags.getText().toString());
+		entity.setDescription(textDescription.getText().toString());
+		// TODO: How to add the creator (leader) of the team ?? Via token or add him first in the list ??
+	}
+
+	@Override
+	protected void saveEntity() {
+		Uri chosenPictureUri = pictureChooser.getChosenPictureUri();
 
 		if (null != chosenPictureUri) {
 			// TODO: Get data of picture, save it on cloud and get the url of the picture to save it in our DB
@@ -249,15 +187,14 @@ public class EditTeamProfileActivity extends Activity implements OnPreDrawListen
 //			}
 
 			String url = Team.DEBUG_PICTURE_URL;
-			team.setPictureUrl(url);
+			entity.setPictureUrl(url);
 		}
 
-		if (isNewTeam) {
+		if (isNewEntity) {
 			// TODO: make http request to save the newly created team
 		} else {
 			// TODO: make http request to save the updated team
 		}
-
-		finish();
 	}
+
 }

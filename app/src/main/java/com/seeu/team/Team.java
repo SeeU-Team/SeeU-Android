@@ -1,5 +1,6 @@
 package com.seeu.team;
 
+import com.seeu.common.Entity;
 import com.seeu.member.Member;
 
 import java.io.Serializable;
@@ -9,11 +10,8 @@ import java.util.ArrayList;
  * Created by thomasfouan on 30/04/2018.
  */
 
-public class Team implements Serializable {
+public class Team extends Entity {
 
-	public static final String INTENT_EXTRA_KEY = "team";
-
-	private long id;
 	private String pictureUrl;
 	private String name;
 	private String place;
@@ -24,16 +22,9 @@ public class Team implements Serializable {
 	private ArrayList<TeamDescription> descriptions; // Use ArrayList because it is Serializable (List interface is not)
 
 	public Team() {
+		super("team");
 		members = new ArrayList<>();
 		descriptions = new ArrayList<>();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public String getPictureUrl() {
@@ -98,11 +89,6 @@ public class Team implements Serializable {
 
 	public void setDescriptions(ArrayList<TeamDescription> descriptions) {
 		this.descriptions = descriptions;
-	}
-
-	@Override
-	public String toString() {
-		return "team " + id;
 	}
 
 	// TODO: Remove debug elements

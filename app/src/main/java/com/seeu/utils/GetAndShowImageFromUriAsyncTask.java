@@ -4,17 +4,14 @@ import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.seeu.R;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 /**
@@ -24,13 +21,11 @@ import java.lang.ref.WeakReference;
 public class GetAndShowImageFromUriAsyncTask extends AsyncTask<Uri, Void, Bitmap> {
 
 	private ContentResolver contentResolver;
-	private WeakReference<ImageView> pictureChosenWeakReference;
-	private WeakReference<View> pictureChooserWeakReference;
+	private WeakReference<ImageView> imageViewWeakReference;
 
-	public GetAndShowImageFromUriAsyncTask(ContentResolver contentResolver, ImageView pictureChosen, View pictureChooser) {
+	public GetAndShowImageFromUriAsyncTask(ContentResolver contentResolver, ImageView imageView) {
 		this.contentResolver = contentResolver;
-		this.pictureChosenWeakReference = new WeakReference<>(pictureChosen);
-		this.pictureChooserWeakReference = new WeakReference<>(pictureChooser);
+		this.imageViewWeakReference = new WeakReference<>(imageView);
 	}
 
 	@Override
@@ -38,13 +33,15 @@ public class GetAndShowImageFromUriAsyncTask extends AsyncTask<Uri, Void, Bitmap
 		Bitmap bitmap = null;
 
 		try {
-			bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uris[0]);
+			if (null != contentResolver) {
+				bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uris[0]);
+			}
 		} catch (Exception e) {
 			Log.e("Error", e.getMessage());
 			e.printStackTrace();
 			bitmap = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ic_broken_image_black);
 		} finally {
-			ImageView imageView = pictureChosenWeakReference.get();
+			ImageView imageView = imageViewWeakReference.get();
 
 			if (null != imageView && null != bitmap) {
 				bitmap = ImageUtils.resizeBitmapFitXY(bitmap, imageView.getWidth(), imageView.getHeight());
@@ -56,16 +53,11 @@ public class GetAndShowImageFromUriAsyncTask extends AsyncTask<Uri, Void, Bitmap
 
 	@Override
 	protected void onPostExecute(Bitmap bitmap) {
-		ImageView pictureChosen = pictureChosenWeakReference.get();
-		View pictureChooser = pictureChooserWeakReference.get();
+		ImageView pictureChosen = imageViewWeakReference.get();
 
 		if (null != bitmap
-				&& null != pictureChosen
-				&& null != pictureChooser) {
+				&& null != pictureChosen) {
 			pictureChosen.setImageBitmap(bitmap);
-
-			pictureChosen.setVisibility(View.VISIBLE);
-			pictureChooser.setVisibility(View.GONE);
 		}
 	}
 }

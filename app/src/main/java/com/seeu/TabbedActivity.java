@@ -2,6 +2,7 @@ package com.seeu;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -13,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.seeu.member.Member;
+import com.seeu.member.edit.EditMemberProfileActivity;
 import com.seeu.messages.MessagesFragment;
 import com.seeu.nightcenter.NightCenterFragment;
 import com.seeu.teamwall.TeamWallFragment;
@@ -107,6 +110,10 @@ public class TabbedActivity extends AppCompatActivity implements NavigationView.
 
 		if (id == R.id.nav_camera) {
 			// Handle the camera action
+			Intent intent = new Intent(this, EditMemberProfileActivity.class);
+			intent.putExtra(Member.INTENT_EXTRA_KEY, Member.getDebugMember(0));
+
+			startActivity(intent);
 		} else if (id == R.id.nav_gallery) {
 
 		} else if (id == R.id.nav_slideshow) {
