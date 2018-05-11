@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seeu.R;
+import com.seeu.common.BaseMemberViewHolder;
 import com.seeu.common.ItemClickListener;
 import com.seeu.common.Member;
 import com.seeu.common.subviews.Mark;
@@ -18,50 +19,23 @@ import com.seeu.utils.DownloadImageAndSetBackgroundTask;
  * Created by thomasfouan on 30/04/2018.
  */
 
-class MemberViewHolder extends ViewHolder implements OnClickListener {
+class MemberViewHolder extends BaseMemberViewHolder {
 
-	private ImageView picture;
-	private TextView name;
-	private Mark mark;
-
-	private ItemClickListener itemClickListener;
+	private ItemClickListener messageActionListener;
 
 	public MemberViewHolder(View itemView, ItemClickListener itemClickListener, ItemClickListener messageActionListener) {
-		super(itemView);
-
-		picture				= itemView.findViewById(R.id.memberPicture);
-		name				= itemView.findViewById(R.id.memberName);
-
-		TextView markView = itemView.findViewById(R.id.memberMark);
-		mark = new Mark(markView);
+		super(itemView, itemClickListener);
+		this.messageActionListener = messageActionListener;
 
 		AppCompatImageButton messageAction = itemView.findViewById(R.id.messageAction);
-		messageAction.setOnClickListener((View view) -> messageActionListener.onItemClick(view, getAdapterPosition()));
-
-		itemView.setOnClickListener(this);
-		this.itemClickListener = itemClickListener;
-	}
-
-	private void setPicture(String pictureUrl) {
-		new DownloadImageAndSetBackgroundTask(picture, 50, 100, 100).execute(pictureUrl);
-	}
-
-	private void setName(String name) {
-		this.name.setText(name);
-	}
-
-	private void setMark(int mark) {
-		this.mark.setMark(mark);
+		messageAction.setOnClickListener(this::onMessageBtnClick);
 	}
 
 	public void setData(Member member) {
-		setPicture(member.getPictureUrl());
-		setName(member.getName());
-		setMark(member.getMark());
+		super.setData(member);
 	}
 
-	@Override
-	public void onClick(View v) {
-		itemClickListener.onItemClick(v, getAdapterPosition());
+	public void onMessageBtnClick(View v) {
+		messageActionListener.onItemClick(v, getAdapterPosition());
 	}
 }
