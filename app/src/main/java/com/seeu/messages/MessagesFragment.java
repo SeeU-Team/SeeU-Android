@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +12,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.seeu.R;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
-import com.seeu.teamprofile.edit.EditTeamProfileActivity;
+import com.seeu.member.Member;
+import com.seeu.team.Team;
+import com.seeu.team.edit.EditTeamProfileActivity;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**

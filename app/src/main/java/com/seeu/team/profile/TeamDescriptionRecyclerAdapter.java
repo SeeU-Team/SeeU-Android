@@ -1,4 +1,4 @@
-package com.seeu.teamprofile;
+package com.seeu.team.profile;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.seeu.R;
-import com.seeu.common.TeamDescription;
+import com.seeu.team.TeamDescription;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.seeu.chat;
 
-import com.seeu.common.Member;
+import com.seeu.member.Member;
 
 /**
  * Created by thomasfouan on 06/05/2018.

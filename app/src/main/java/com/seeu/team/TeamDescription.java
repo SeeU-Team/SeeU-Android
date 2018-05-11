@@ -1,4 +1,4 @@
-package com.seeu.common;
+package com.seeu.team;
 
 import com.seeu.R;
 

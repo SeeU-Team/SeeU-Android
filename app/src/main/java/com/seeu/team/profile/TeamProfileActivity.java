@@ -1,10 +1,9 @@
-package com.seeu.teamprofile;
+package com.seeu.team.profile;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -12,16 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.seeu.R;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
 import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.Mark;
 import com.seeu.nightcenter.MemberRecyclerAdapter;
+import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by thomasfouan on 07/05/2018.

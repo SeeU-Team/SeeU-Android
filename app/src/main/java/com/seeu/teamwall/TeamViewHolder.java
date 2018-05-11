@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
-import com.seeu.common.TeamDescription;
+import com.seeu.member.Member;
+import com.seeu.team.Team;
+import com.seeu.team.TeamDescription;
 import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;

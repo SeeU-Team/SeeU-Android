@@ -1,4 +1,6 @@
-package com.seeu.common;
+package com.seeu.team;
+
+import com.seeu.member.Member;
 
 import java.io.Serializable;
 import java.util.ArrayList;

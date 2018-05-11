@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Team;
+import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 /**

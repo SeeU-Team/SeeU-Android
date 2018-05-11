@@ -1,8 +1,7 @@
-package com.seeu.teamprofile.edit;
+package com.seeu.team.edit;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,25 +14,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.seeu.R;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
+import com.seeu.member.Member;
+import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.GetAndShowImageFromUriAsyncTask;
-import com.seeu.utils.ImageUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.ViewTreeObserver.OnPreDrawListener;

@@ -2,18 +2,16 @@ package com.seeu.messages;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.seeu.R;
 import com.seeu.chat.ChatActivity;
-import com.seeu.common.Team;
-import com.seeu.common.Member;
+import com.seeu.team.Team;
+import com.seeu.member.Member;
 import com.seeu.common.subviews.Mark;
 import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;

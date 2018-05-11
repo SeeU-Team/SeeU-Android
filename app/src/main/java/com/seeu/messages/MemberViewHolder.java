@@ -6,7 +6,7 @@ import android.widget.TextView;
 import com.seeu.R;
 import com.seeu.common.BaseMemberViewHolder;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Member;
+import com.seeu.member.Member;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

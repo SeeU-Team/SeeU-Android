@@ -4,13 +4,11 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.seeu.R;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
+import com.seeu.member.Member;
+import com.seeu.team.Team;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 
+import com.seeu.member.Member;
+
 import java.util.List;
 
 public abstract class BaseMemberRecyclerAdapter extends Adapter<BaseMemberViewHolder> {

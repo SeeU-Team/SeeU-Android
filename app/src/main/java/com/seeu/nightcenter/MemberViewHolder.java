@@ -1,19 +1,12 @@
 package com.seeu.nightcenter;
 
 import android.support.v7.widget.AppCompatImageButton;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.seeu.R;
 import com.seeu.common.BaseMemberViewHolder;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Member;
-import com.seeu.common.subviews.Mark;
-import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.member.Member;
 
 /**
  * Created by thomasfouan on 30/04/2018.

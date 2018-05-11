@@ -10,7 +10,8 @@ import com.seeu.R;
 import com.seeu.chat.ChatActivity;
 import com.seeu.common.BaseMemberRecyclerAdapter;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Member;
+import com.seeu.member.Member;
+import com.seeu.member.profile.MemberProfileActivity;
 
 import java.util.List;
 
@@ -32,8 +33,12 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 
 	@Override
 	public void onItemClick(View view, int position) {
-		// TODO: start member profile activity
-		Toast.makeText(view.getContext(), "You clicked " + getItem(position) + " on item position " + position, Toast.LENGTH_SHORT).show();
+		Member member = getItem(position);
+		Context context = view.getContext();
+		Intent intent = new Intent(context, MemberProfileActivity.class);
+		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+
+		context.startActivity(intent);
 	}
 
 	private void startMessageActivity(View v, int position) {

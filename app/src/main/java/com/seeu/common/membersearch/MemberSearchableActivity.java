@@ -1,8 +1,6 @@
 package com.seeu.common.membersearch;
 
 import android.app.Activity;
-import android.app.ListActivity;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +13,9 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Member;
+import com.seeu.member.Member;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MemberSearchableActivity extends Activity implements ItemClickListener, TextWatcher {

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.subviews.Mark;
+import com.seeu.member.Member;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 public class BaseMemberViewHolder extends ViewHolder implements OnClickListener, ViewTreeObserver.OnPreDrawListener {

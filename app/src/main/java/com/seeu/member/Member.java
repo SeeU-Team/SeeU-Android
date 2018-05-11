@@ -1,4 +1,4 @@
-package com.seeu.common;
+package com.seeu.member;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -16,7 +16,11 @@ public class Member implements Serializable {
 	private long id;
 	private String pictureUrl;
 	private String name;
+	private String catchPhrase;
+	private String pictureDescriptionUrl;
+	private String pictureDescriptionLabel;
 	private int mark;
+	private String description;
 	private boolean isConnected;
 	private Date lastConnection;
 
@@ -47,12 +51,44 @@ public class Member implements Serializable {
 		this.name = name;
 	}
 
+	public String getCatchPhrase() {
+		return catchPhrase;
+	}
+
+	public void setCatchPhrase(String catchPhrase) {
+		this.catchPhrase = catchPhrase;
+	}
+
+	public String getPictureDescriptionUrl() {
+		return pictureDescriptionUrl;
+	}
+
+	public void setPictureDescriptionUrl(String pictureDescriptionUrl) {
+		this.pictureDescriptionUrl = pictureDescriptionUrl;
+	}
+
+	public String getPictureDescriptionLabel() {
+		return pictureDescriptionLabel;
+	}
+
+	public void setPictureDescriptionLabel(String pictureDescriptionLabel) {
+		this.pictureDescriptionLabel = pictureDescriptionLabel;
+	}
+
 	public int getMark() {
 		return mark;
 	}
 
 	public void setMark(int mark) {
 		this.mark = mark;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public boolean isConnected() {
@@ -102,7 +138,11 @@ public class Member implements Serializable {
 		member.setId(index);
 		member.setPictureUrl(Member.DEBUG_PICTURE_URL);
 		member.setName("Member " + index);
+		member.setCatchPhrase("Catch phrase " + index);
+		member.setPictureDescriptionUrl(Member.DEBUG_PICTURE_URL);
+		member.setPictureDescriptionLabel("Description label " + index);
 		member.setMark(index%6);
+		member.setDescription("Description " + index);
 		member.setConnected(index%2 == 0);
 		member.setLastConnection(calendar.getTime());
 

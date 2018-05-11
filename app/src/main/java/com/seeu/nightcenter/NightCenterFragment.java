@@ -3,15 +3,14 @@ package com.seeu.nightcenter;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.seeu.R;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
+import com.seeu.member.Member;
+import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.util.ArrayList;

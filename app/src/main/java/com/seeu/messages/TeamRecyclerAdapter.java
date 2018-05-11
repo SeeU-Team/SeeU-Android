@@ -7,13 +7,11 @@ import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.seeu.R;
 import com.seeu.chat.ChatActivity;
 import com.seeu.common.ItemClickListener;
-import com.seeu.common.Member;
-import com.seeu.common.Team;
+import com.seeu.team.Team;
 
 import java.util.List;
 
