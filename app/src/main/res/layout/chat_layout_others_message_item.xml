@@ -15,6 +15,7 @@
         android:id="@+id/memberPicture"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:src="@drawable/ic_broken_image_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -23,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Rose"
+        android:text="@string/lorem_ipsum_short"
         app:layout_constraintStart_toEndOf="@+id/memberPicture"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,7 +34,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/others_message"
         android:layout_marginStart="8dp"
-        android:text="Coucou tout le monde, j’ai créé un petit groupe See U pour ce soir ! Checkez les autre team qu’on pourrait inviter"
+        android:text="@string/lorem_ipsum"
         app:layout_constraintStart_toEndOf="@+id/memberPicture"
         app:layout_constraintTop_toBottomOf="@+id/memberName"
         android:elevation="2dp"

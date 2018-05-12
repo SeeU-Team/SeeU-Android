@@ -23,7 +23,7 @@
     <string name="member_last_connection">il y a %1$d min</string>
     <string name="teams">TEAMS</string>
     <string name="new_message_placeholder">Message</string>
-    <string name="mark_label">La note de ce line up est de :</string>
+    <string name="team_mark_label">La note de ce line up est de :</string>
     <string name="teamname_placeholder">Nom de la team</string>
     <string name="teamplace_placeholder">Où ?</string>
     <string name="teamtags_placeholder">Nos hashtags (3 maximum)</string>
@@ -32,4 +32,23 @@
     <string name="search_member_no_result_label">Pas de résultat</string>
     <string name="catch_phrase_placeholder">Votre catch phrase</string>
     <string name="choose_image_label">Choisir une image</string>
+    <string name="lorem_ipsum_short">Lorem ipsum dolor sit amet</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut imperdiet neque.</string>
+    <string name="lorem_ipsum_long">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Aenean ut imperdiet neque.
+        Phasellus sed blandit odio, nec elementum nunc.
+        Ut magna orci, lacinia iaculis risus nec, eleifend imperdiet mauris.
+        Vestibulum erat mi, accumsan ut erat at, placerat consequat turpis.
+        Donec eleifend enim ut accumsan tincidunt.
+        Donec vel massa sed sapien.
+    </string>
+    <string name="cancel_label">Annuler</string>
+    <string name="validation_label">Valider</string>
+    <string name="mark_label">Note</string>
+    <string name="mark_placeholder">☆☆☆☆☆</string>
+    <string name="nightcenter_list_member_label">Ils sont là ce soir</string>
+    <string name="team_category_label">TRENDING</string>
+    <string name="team_up_label">Team Up</string>
+    <string name="lorem_ipsum_short_short">Lorem ipsum</string>
 </resources>

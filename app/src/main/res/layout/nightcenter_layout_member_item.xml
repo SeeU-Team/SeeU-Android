@@ -26,12 +26,12 @@
 
         <TextView
             android:id="@+id/memberName"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Thomas"
+            android:text="@string/lorem_ipsum_short"
             android:textAlignment="center"
             android:textColor="#636363"
             android:textSize="18sp"
@@ -42,11 +42,9 @@
 
         <TextView
             android:id="@+id/memberMark"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="24dp"
-            android:text="☆☆☆☆☆"
+            android:text="@string/mark_placeholder"
             android:textAlignment="center"
             android:textColor="#FDCB6E"
             android:textSize="20sp"

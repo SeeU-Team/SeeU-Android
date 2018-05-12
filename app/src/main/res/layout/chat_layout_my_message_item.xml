@@ -17,7 +17,7 @@
         android:background="@drawable/my_message"
         android:elevation="2dp"
         android:padding="10dp"
-        android:text="Coucou"
+        android:text="@string/lorem_ipsum_short"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent" />

@@ -1,6 +1,7 @@
 package com.seeu.team.edit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
+import com.seeu.member.profile.MemberProfileActivity;
 
 import java.util.List;
 
@@ -51,17 +53,17 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 
 	@Override
 	public void onItemClick(View view, int position) {
-		Context context = view.getContext();
 		Member member = getItem(position);
-		Toast.makeText(context, "You clicked " + member + " on item position " + position, Toast.LENGTH_SHORT).show();
+		Context context = view.getContext();
+		Intent intent = new Intent(context, MemberProfileActivity.class);
+		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
 
-		// TODO: start member profile activity
-//		Intent intent = new Intent(context, ...);
-//		context.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	private void onDeleteItemClick(View v, int position) {
-		members.remove(getItem(position));
+		Member member = getItem(position);
+		members.remove(member);
 		notifyDataSetChanged();
 	}
 }

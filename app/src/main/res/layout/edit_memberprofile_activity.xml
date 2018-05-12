@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="cancelForm"
-                android:text="Annuler" />
+                android:text="@string/cancel_label" />
 
             <Space
                 android:layout_width="25dp"
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="validForm"
-                android:text="Valider" />
+                android:text="@string/validation_label" />
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

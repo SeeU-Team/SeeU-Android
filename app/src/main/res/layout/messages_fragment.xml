@@ -59,7 +59,7 @@
                         android:id="@+id/teamName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="*** ******"
+                        android:text="@string/lorem_ipsum_short"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -68,7 +68,7 @@
                         android:id="@+id/teamMark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="☆☆☆☆☆"
+                        android:text="@string/mark_placeholder"
                         android:textColor="@android:color/white"
                         android:textSize="18sp" />
 
