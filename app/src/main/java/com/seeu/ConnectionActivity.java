@@ -5,14 +5,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.seeu.common.Constants;
+import com.seeu.utils.network.CustomResponseListener;
+import com.seeu.utils.network.GsonRequest;
 
-public class ConnectionActivity extends Activity {
+import java.util.Map;
+
+public class ConnectionActivity extends Activity implements FacebookCallback<LoginResult>, CustomResponseListener<String> {
 
 	private CallbackManager callbackManager;
 
@@ -26,11 +34,46 @@ public class ConnectionActivity extends Activity {
 		final AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
 		if (null != accessToken) {
-			// Go to the main activity and skip this activity
 			Log.d("Facebook", "already logged in");
-			Log.d("Facebook", accessToken.getToken());
+			goToTeamWall(accessToken);
+		}
 
-			/*
+		callbackManager = CallbackManager.Factory.create();
+		loginButton = findViewById(R.id.login_button);
+		loginButton.setReadPermissions("public_profile", "user_photos");
+
+		// If using in a fragment
+		//loginButton.setFragment(this);
+
+		// Callback registration
+		loginButton.registerCallback(callbackManager, this);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		callbackManager.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onSuccess(LoginResult loginResult) {
+		Log.d("Facebook", "Login success");
+		goToTeamWall(loginResult.getAccessToken());
+	}
+
+	@Override
+	public void onCancel() {
+		System.out.println("Facebook login canceled");
+	}
+
+	@Override
+	public void onError(FacebookException exception) {
+		System.out.println("Facebook login error");
+		exception.printStackTrace();
+	}
+
+	private void goToTeamWall(final AccessToken accessToken) {
+		/*
 			GraphRequest request = GraphRequest.newMeRequest(
 					accessToken,
 					(object, response) -> {
@@ -43,48 +86,44 @@ public class ConnectionActivity extends Activity {
 			request.executeAsync();
 			*/
 
-			Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
-			startActivity(intent);
-			finish();
-		}
+		// Instantiate the RequestQueue.
+		RequestQueue queue = Volley.newRequestQueue(this);
+		String url = Constants.SEEU_API_URL + "/login";
 
-		callbackManager = CallbackManager.Factory.create();
-		loginButton = findViewById(R.id.login_button);
-		loginButton.setReadPermissions("public_profile", "user_photos");
+		// Request a string response from the provided URL.
+		GsonRequest<String> request = new GsonRequest<>(
+				url,
+				String.class,
+				accessToken.getToken(),
+				this);
 
-		// If using in a fragment
-		//loginButton.setFragment(this);
-
-		// Callback registration
-		loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-			@Override
-			public void onSuccess(LoginResult loginResult) {
-				// App code
-				Log.d("Facebook", "Login success");
-
-				Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
-				startActivity(intent);
-				finish();
-			}
-
-			@Override
-			public void onCancel() {
-				// App code
-				System.out.println("Facebook login canceled");
-			}
-
-			@Override
-			public void onError(FacebookException exception) {
-				// App code
-				System.out.println("Facebook login error");
-				exception.printStackTrace();
-			}
-		});
+		// Add the request to the RequestQueue.
+		queue.add(request);
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		callbackManager.onActivityResult(requestCode, resultCode, data);
-		super.onActivityResult(requestCode, resultCode, data);
+	public void onResponse(String response) {
+		System.out.println(response);
+		Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
+		startActivity(intent);
+		finish();
+	}
+
+	@Override
+	public void onHeadersResponse(Map<String, String> headers) {
+		String token = headers.get("Authorization").split(" ")[1];
+
+		// Save it in the shared preferences
+		// TODO: encrypt the token before save it
+		getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+				.edit()
+				.putString(Constants.SP_TOKEN_KEY, token)
+				.apply();
+	}
+
+	@Override
+	public void onErrorResponse(VolleyError error) {
+		error.printStackTrace();
+		System.out.println(error.getMessage());
 	}
 }
