@@ -1,19 +1,33 @@
 package com.seeu.teamwall;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.seeu.common.Constants;
 import com.seeu.common.ItemClickListener;
 import com.seeu.R;
 import com.seeu.team.Team;
+import com.seeu.utils.network.CustomResponseListener;
+import com.seeu.utils.network.GsonRequest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by thomasfouan on 16/03/2018.
@@ -27,16 +41,20 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	private TeamRecyclerAdapter teamRecyclerAdapter;
 	private List<Team> teams;
 
+	private RequestQueue requestQueue;
+
 	public TeamWallFragment() {
 		types = new ArrayList<>();
 		teams = new ArrayList<>();
-
-		loadTypes();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		requestQueue = Volley.newRequestQueue(this.getActivity());
+
+		loadTypes();
 	}
 
 	@Override
@@ -60,9 +78,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	@Override
 	public void onItemClick(View view, int position) {
 		teamTypeRecyclerAdapter.setSelected(position);
-
-		// TODO: reload teams
-		refreshTeams(position);
+		refreshTeams(types.get(position));
 	}
 
 	private void setupTeamTypeRecycler(View view) {
@@ -82,33 +98,86 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	}
 
 	private void loadTypes() {
-		// TODO: make http request to get types
-		String[] typeNames = {"Popular", "Barbecue", "Dancing", "Hangover"};
+		final Context context = this.getActivity();
 		types.clear();
 
-		for (int i = 0; i < typeNames.length; i++) {
-			TeamType teamType = new TeamType();
-			teamType.setId(i);
-			teamType.setName(typeNames[i]);
+		// TODO: make http request to get types
+		String url = Constants.SEEU_API_URL + "/teamTypes";
+		String token = this.getActivity()
+				.getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+				.getString(Constants.SP_TOKEN_KEY, null);
 
-			types.add(teamType);
-		}
+		GsonRequest<TeamType[]> request = new GsonRequest<>(
+				url,
+				Request.Method.GET,
+				TeamType[].class,
+				token,
+				null,
+				new CustomResponseListener<TeamType[]>() {
+					@Override
+					public void onHeadersResponse(Map<String, String> headers) {
+					}
 
-		refreshTeams(0);
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						Log.e("TeamWallFragment", "Error while loading TeamTypes", error);
+						Toast.makeText(context, "Error while loading TeamTypes " + error.getMessage(), Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onResponse(TeamType[] response) {
+						Collections.addAll(types, response);
+
+						if (null != teamTypeRecyclerAdapter) {
+							teamTypeRecyclerAdapter.notifyDataSetChanged();
+						}
+
+						if (response.length > 0) {
+							refreshTeams(types.get(0));
+						}
+					}
+				});
+
+		requestQueue.add(request);
 	}
 
-	private void refreshTeams(int selectedType) {
-		// TODO: make http request to get data
+	private void refreshTeams(TeamType selectedType) {
+		final Context context = this.getActivity();
 		teams.clear();
-		for (int i = 0; i < 10; i++) {
-			Team team = Team.getDebugTeam(i);
-			team.setName("Team " + i + " - " + types.get(selectedType).getName());
 
-			teams.add(team);
-		}
+		// TODO: make http request to get data
+		String url = Constants.SEEU_API_URL + "/teams?selectedTypeId=" + selectedType.getId();
+		String token = this.getActivity()
+				.getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+				.getString(Constants.SP_TOKEN_KEY, null);
 
-		if (null != teamRecyclerAdapter) {
-			teamRecyclerAdapter.notifyDataSetChanged();
-		}
+		GsonRequest<Team[]> request = new GsonRequest<>(
+				url,
+				Request.Method.GET,
+				Team[].class,
+				token,
+				null,
+				new CustomResponseListener<Team[]>() {
+					@Override
+					public void onHeadersResponse(Map<String, String> headers) {
+					}
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						Log.e("TeamWallFragment", "Error while loading Teams", error);
+						Toast.makeText(context, "Error while loading Teams " + error.getMessage(), Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onResponse(Team[] response) {
+						Collections.addAll(teams, response);
+
+						if (null != teamRecyclerAdapter) {
+							teamRecyclerAdapter.notifyDataSetChanged();
+						}
+					}
+				});
+
+		requestQueue.add(request);
 	}
 }

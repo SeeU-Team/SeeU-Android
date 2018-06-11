@@ -12,5 +12,9 @@ public class Constants {
 	 */
 	public static final String SP_TOKEN_KEY = "token";
 
-	public static final String SEEU_API_URL = "http://192.168.2.200:8001";
+	private static final String SEEU_DOMAIN_URL = "192.168.2.200:8001";
+
+	public static final String SEEU_API_URL = "http://" + SEEU_DOMAIN_URL;
+
+	public static final String SEEU_WEB_SOCKET_SERVER_URL = "ws://" + SEEU_DOMAIN_URL + "/app/test";
 }
