@@ -34,7 +34,7 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 		Member member = getItem(position);
 		Context context = view.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
-		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+		intent.putExtra(Member.STORAGE_KEY, member);
 
 		context.startActivity(intent);
 	}

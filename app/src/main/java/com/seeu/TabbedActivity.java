@@ -112,7 +112,7 @@ public class TabbedActivity extends AppCompatActivity implements NavigationView.
 		if (id == R.id.nav_camera) {
 			// Handle the camera action
 			Intent intent = new Intent(this, EditMemberProfileActivity.class);
-			intent.putExtra(Member.INTENT_EXTRA_KEY, Member.getDebugMember(0));
+			intent.putExtra(Member.STORAGE_KEY, Member.getDebugMember(0));
 
 			startActivity(intent);
 		} else if (id == R.id.nav_gallery) {

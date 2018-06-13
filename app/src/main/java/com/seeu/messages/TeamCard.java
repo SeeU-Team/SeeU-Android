@@ -84,7 +84,7 @@ public class TeamCard implements OnClickListener {
 
 		List<String> urls = new ArrayList<>();
 		for (Member member : team.getMembers()) {
-			urls.add(member.getPictureUrl());
+			urls.add(member.getProfilePhotoUrl());
 		}
 		setMemberPictures(urls);
 	}
@@ -93,7 +93,7 @@ public class TeamCard implements OnClickListener {
 	public void onClick(View v) {
 		Context context = v.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
-		intent.putExtra(Team.INTENT_EXTRA_KEY, team);
+		intent.putExtra(Team.STORAGE_KEY, team);
 
 		context.startActivity(intent);
 	}

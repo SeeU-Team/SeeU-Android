@@ -120,7 +120,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		Context context = v.getContext();
 		Intent intent = new Intent(context, EditTeamProfileActivity.class);
-		intent.putExtra(Team.INTENT_EXTRA_KEY, team);
+		intent.putExtra(Team.STORAGE_KEY, team);
 
 		context.startActivity(intent);
 	}

@@ -81,7 +81,7 @@ public class MessageListAdapter extends BaseAdapter {
 
 			// Define specific elements for others message view
 			OthersMessageViewHolder othersHolder = (OthersMessageViewHolder) holder;
-			othersHolder.setMemberPicture(message.getOwner().getPictureUrl());
+			othersHolder.setMemberPicture(message.getOwner().getProfilePhotoUrl());
 			othersHolder.setMemberName(message.getOwner().getName());
 		} else {
 			throw new IllegalStateException("Unknown type of message view type");

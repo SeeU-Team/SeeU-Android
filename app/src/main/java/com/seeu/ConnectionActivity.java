@@ -15,12 +15,14 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.seeu.common.Constants;
+import com.seeu.member.Member;
+import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
 import java.util.Map;
 
-public class ConnectionActivity extends Activity implements FacebookCallback<LoginResult>, CustomResponseListener<String> {
+public class ConnectionActivity extends Activity implements FacebookCallback<LoginResult>, CustomResponseListener<Member> {
 
 	private CallbackManager callbackManager;
 
@@ -91,9 +93,9 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 		String url = Constants.SEEU_API_URL + "/login";
 
 		// Request a string response from the provided URL.
-		GsonRequest<String> request = new GsonRequest<>(
+		GsonRequest<Member> request = new GsonRequest<>(
 				url,
-				String.class,
+				Member.class,
 				accessToken.getToken(),
 				this);
 
@@ -102,8 +104,10 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	}
 
 	@Override
-	public void onResponse(String response) {
-		System.out.println(response);
+	public void onResponse(Member response) {
+		// TODO: get user info from the response and save it
+		SharedPreferencesManager.putEntity(this, response);
+
 		Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
 		startActivity(intent);
 		finish();
@@ -115,10 +119,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 		// Save it in the shared preferences
 		// TODO: encrypt the token before save it
-		getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE)
-				.edit()
-				.putString(Constants.SP_TOKEN_KEY, token)
-				.apply();
+		SharedPreferencesManager.putToken(this, token);
 	}
 
 	@Override

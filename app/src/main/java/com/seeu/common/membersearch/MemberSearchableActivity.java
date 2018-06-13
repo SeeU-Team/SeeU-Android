@@ -81,7 +81,7 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 	public void onItemClick(View view, int position) {
 		Member member = matchingMembers.get(position);
 		Intent intent = new Intent();
-		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+		intent.putExtra(Member.STORAGE_KEY, member);
 
 		setResult(RESULT_OK, intent);
 		finish();

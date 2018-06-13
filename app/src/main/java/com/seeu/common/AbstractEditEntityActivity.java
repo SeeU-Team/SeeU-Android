@@ -25,7 +25,7 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 	}
 
 	private void updateEntityFromCaller() {
-		Serializable ser = getIntent().getSerializableExtra(T.INTENT_EXTRA_KEY);
+		Serializable ser = getIntent().getSerializableExtra(T.STORAGE_KEY);
 
 		// If an entity was passed by the caller, get it for update
 		if (null != ser) {

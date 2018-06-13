@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class GsonRequest<T> extends Request<T> {
@@ -75,6 +76,39 @@ public class GsonRequest<T> extends Request<T> {
 		this(url, method, clazz, params, responseListener);
 
 		headers.put("Authorization", "Bearer " + token);
+	}
+
+	@Override
+	public String getUrl() {
+		String url = super.getUrl();
+
+		if(getMethod() == Request.Method.GET) {
+			Map<String, String> params;
+
+			try {
+				params = getParams();
+			} catch (AuthFailureError authFailureError) {
+				params = null;
+			}
+
+			if(params != null) {
+				StringBuilder stringBuilder = new StringBuilder(getUrl());
+				Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+				int i = 0;
+				while (iterator.hasNext()) {
+					Map.Entry<String, String> entry = iterator.next();
+					if (i == 0) {
+						stringBuilder.append("?" + entry.getKey() + "=" + entry.getValue());
+					} else {
+						stringBuilder.append("&" + entry.getKey() + "=" + entry.getValue());
+					}
+					iterator.remove(); // avoids a ConcurrentModificationException
+					i++;
+				}
+				url = stringBuilder.toString();
+			}
+		}
+		return url;
 	}
 
 	@Override

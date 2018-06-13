@@ -86,7 +86,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	public void setData(Team team) {
 		List<String> memberPictures = new ArrayList<>();
 		for (Member member : team.getMembers()) {
-			memberPictures.add(member.getPictureUrl());
+			memberPictures.add(member.getProfilePhotoUrl());
 		}
 
 		float maleProportion = (team.getId() % 10) / (float) 10.0;

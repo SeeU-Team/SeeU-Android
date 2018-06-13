@@ -4,7 +4,7 @@ package com.seeu.teamwall;
  * Created by thomasfouan on 30/04/2018.
  */
 
-class TeamType {
+public class TeamType {
 
 	private long id;
 	private String name;

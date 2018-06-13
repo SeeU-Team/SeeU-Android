@@ -57,7 +57,7 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 	protected void setData(Member member) {
 		this.member = member;
 
-		setPicture(member.getPictureUrl());
+		setPicture(member.getProfilePhotoUrl());
 		setName(member.getName());
 		setMark(member.getMark());
 	}
@@ -73,7 +73,7 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 		picture.getViewTreeObserver().removeOnPreDrawListener(this);
 
 		if (null != member) {
-			new DownloadImageAndSetBackgroundTask(picture, 200).execute(member.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(picture, 200).execute(member.getProfilePhotoUrl());
 		}
 
 		return true;

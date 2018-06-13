@@ -60,10 +60,10 @@ public class ChatActivity extends ListActivity {
 	}
 
 	private void getInfoFromCaller() {
-		receiver = getIntent().getSerializableExtra(Team.INTENT_EXTRA_KEY);
+		receiver = getIntent().getSerializableExtra(Team.STORAGE_KEY);
 
 		if (null == receiver) {
-			receiver = getIntent().getSerializableExtra(Member.INTENT_EXTRA_KEY);
+			receiver = getIntent().getSerializableExtra(Member.STORAGE_KEY);
 		}
 
 		if (null == receiver) {

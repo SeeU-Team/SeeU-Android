@@ -68,7 +68,7 @@ public class MemberProfileActivity extends Activity {
 	}
 
 	private void setMember() {
-		Serializable ser = getIntent().getSerializableExtra(Member.INTENT_EXTRA_KEY);
+		Serializable ser = getIntent().getSerializableExtra(Member.STORAGE_KEY);
 
 		if (null == ser) {
 			throw new IllegalStateException("No member provided");
@@ -105,21 +105,21 @@ public class MemberProfileActivity extends Activity {
 	private void setPictureBlurred() {
 		if (isPictureBlurredLayoutDrawn
 				&& null != member) {
-			new DownloadImageAndSetBackgroundTask(pictureBlurred, 0, true).execute(member.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(pictureBlurred, 0, true).execute(member.getProfilePhotoUrl());
 		}
 	}
 
 	private void setPicture() {
 		if (isPictureLayoutDrawn
 				&& null != member) {
-			new DownloadImageAndSetBackgroundTask(picture, 140).execute(member.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(picture, 140).execute(member.getProfilePhotoUrl());
 		}
 	}
 
 	private void setPictureDescription() {
 		if (isPictureDescriptionLayoutDrawn
 				&& null != member) {
-			new DownloadImageAndSetBackgroundTask(pictureDescription, 0).execute(member.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(pictureDescription, 0).execute(member.getProfilePhotoUrl());
 		}
 	}
 
@@ -150,7 +150,7 @@ public class MemberProfileActivity extends Activity {
 	public void onMessageActionClick(View v) {
 		Context context = v.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
-		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+		intent.putExtra(Member.STORAGE_KEY, member);
 
 		context.startActivity(intent);
 	}

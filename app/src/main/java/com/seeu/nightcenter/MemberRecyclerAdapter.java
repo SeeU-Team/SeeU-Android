@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.seeu.R;
 import com.seeu.chat.ChatActivity;
@@ -36,7 +35,7 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 		Member member = getItem(position);
 		Context context = view.getContext();
 		Intent intent = new Intent(context, MemberProfileActivity.class);
-		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+		intent.putExtra(Member.STORAGE_KEY, member);
 
 		context.startActivity(intent);
 	}
@@ -45,7 +44,7 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 		Member member = getItem(position);
 		Context context = v.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
-		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+		intent.putExtra(Member.STORAGE_KEY, member);
 
 		context.startActivity(intent);
 	}

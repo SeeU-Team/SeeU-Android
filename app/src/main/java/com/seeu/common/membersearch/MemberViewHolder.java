@@ -37,7 +37,7 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 	}
 
 	public void setData(Member member) {
-		setPicture(member.getPictureUrl());
+		setPicture(member.getProfilePhotoUrl());
 		setName(member.getName());
 	}
 

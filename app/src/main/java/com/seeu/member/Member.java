@@ -2,109 +2,33 @@ package com.seeu.member;
 
 import com.seeu.common.Entity;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by thomasfouan on 30/04/2018.
  */
-
+@Getter
+@Setter
 public class Member extends Entity {
 
-	private String pictureUrl;
+	private Long facebookId;
 	private String name;
 	private String catchPhrase;
+	private String description;
+	private String profilePhotoUrl;
 	private String pictureDescriptionUrl;
 	private String pictureDescriptionLabel;
 	private int mark;
-	private String description;
 	private boolean isConnected;
 	private Date lastConnection;
 
 	public Member() {
 		super("member");
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getPictureUrl() {
-		return pictureUrl;
-	}
-
-	public void setPictureUrl(String pictureUrl) {
-		this.pictureUrl = pictureUrl;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getCatchPhrase() {
-		return catchPhrase;
-	}
-
-	public void setCatchPhrase(String catchPhrase) {
-		this.catchPhrase = catchPhrase;
-	}
-
-	public String getPictureDescriptionUrl() {
-		return pictureDescriptionUrl;
-	}
-
-	public void setPictureDescriptionUrl(String pictureDescriptionUrl) {
-		this.pictureDescriptionUrl = pictureDescriptionUrl;
-	}
-
-	public String getPictureDescriptionLabel() {
-		return pictureDescriptionLabel;
-	}
-
-	public void setPictureDescriptionLabel(String pictureDescriptionLabel) {
-		this.pictureDescriptionLabel = pictureDescriptionLabel;
-	}
-
-	public int getMark() {
-		return mark;
-	}
-
-	public void setMark(int mark) {
-		this.mark = mark;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public boolean isConnected() {
-		return isConnected;
-	}
-
-	public void setConnected(boolean connected) {
-		isConnected = connected;
-	}
-
-	public Date getLastConnection() {
-		return lastConnection;
-	}
-
-	public void setLastConnection(Date lastConnection) {
-		this.lastConnection = lastConnection;
 	}
 
 	@Override
@@ -121,7 +45,7 @@ public class Member extends Entity {
 
 		Member member = new Member();
 		member.setId(index);
-		member.setPictureUrl(Member.DEBUG_PICTURE_URL);
+		member.setProfilePhotoUrl(Member.DEBUG_PICTURE_URL);
 		member.setName("Member " + index);
 		member.setCatchPhrase("Catch phrase " + index);
 		member.setPictureDescriptionUrl(Member.DEBUG_PICTURE_URL);

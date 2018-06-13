@@ -88,7 +88,7 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 	}
 
 	private void setTeamFromCaller() {
-		Serializable ser = getIntent().getSerializableExtra(Team.INTENT_EXTRA_KEY);
+		Serializable ser = getIntent().getSerializableExtra(Team.STORAGE_KEY);
 
 		if (null == ser) {
 			throw new IllegalStateException("No team has been provided for team profile");

@@ -45,7 +45,7 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 
 	@Override
 	protected void updateUI() {
-		pictureChooser.setCurrentPictureUrl(entity.getPictureUrl());
+		pictureChooser.setCurrentPictureUrl(entity.getProfilePhotoUrl());
 		catchPhrase.setText(entity.getCatchPhrase());
 		description.setText(entity.getDescription());
 	}
@@ -107,7 +107,7 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 //			}
 
 			String url = Member.DEBUG_PICTURE_URL;
-			entity.setPictureUrl(url);
+			entity.setProfilePhotoUrl(url);
 		}
 
 		if (isNewEntity) {

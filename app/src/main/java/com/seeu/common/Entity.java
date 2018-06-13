@@ -3,22 +3,22 @@ package com.seeu.common;
 import java.io.Serializable;
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public abstract class Entity implements Serializable {
 
-	public static String INTENT_EXTRA_KEY;
+	/**
+	 * Key used when the entity is passed in an intent or store in the sharedPreferences.
+	 */
+	public static String STORAGE_KEY;
 
 	protected long id;
 
 	protected Entity(String keyName) {
-		INTENT_EXTRA_KEY = keyName;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
+		STORAGE_KEY = keyName;
 	}
 
 	@Override

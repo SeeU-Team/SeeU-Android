@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
@@ -43,7 +42,7 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 	public void onBindViewHolder(MemberViewHolder holder, int position) {
 		Member member = getItem(position);
 
-		holder.setPicture(member.getPictureUrl());
+		holder.setPicture(member.getProfilePhotoUrl());
 	}
 
 	@Override
@@ -56,7 +55,7 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 		Member member = getItem(position);
 		Context context = view.getContext();
 		Intent intent = new Intent(context, MemberProfileActivity.class);
-		intent.putExtra(Member.INTENT_EXTRA_KEY, member);
+		intent.putExtra(Member.STORAGE_KEY, member);
 
 		context.startActivity(intent);
 	}

@@ -1,17 +1,14 @@
 package com.seeu.team.edit;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.seeu.R;
@@ -20,15 +17,6 @@ import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
 import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
-import com.seeu.teamwall.TeamWallFragment;
-import com.seeu.utils.DownloadImageAndSetBackgroundTask;
-import com.seeu.utils.GetAndShowImageFromUriAsyncTask;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-
-import static android.view.View.GONE;
-import static android.view.ViewTreeObserver.OnPreDrawListener;
 
 /**
  * Created by thomasfouan on 08/05/2018.
@@ -74,7 +62,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (INTENT_ACTION_SEARCH == requestCode && RESULT_OK == resultCode) {
-			Member member = (Member) data.getSerializableExtra(Member.INTENT_EXTRA_KEY);
+			Member member = (Member) data.getSerializableExtra(Member.STORAGE_KEY);
 			entity.getMembers().add(member);
 			memberRecyclerAdapter.notifyItemInserted(memberRecyclerAdapter.getItemCount());
 		}
