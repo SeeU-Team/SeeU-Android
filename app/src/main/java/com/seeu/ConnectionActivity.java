@@ -16,6 +16,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.seeu.common.Constants;
 import com.seeu.member.Member;
+import com.seeu.member.MemberService;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
@@ -25,13 +26,16 @@ import java.util.Map;
 public class ConnectionActivity extends Activity implements FacebookCallback<LoginResult>, CustomResponseListener<Member> {
 
 	private CallbackManager callbackManager;
-
 	private LoginButton loginButton;
+
+	private MemberService memberService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connection_activity);
+
+		this.memberService = new MemberService(this);
 
 		final AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
@@ -87,20 +91,8 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 			request.setParameters(parameters);
 			request.executeAsync();
 			*/
-
-		// Instantiate the RequestQueue.
-		RequestQueue queue = Volley.newRequestQueue(this);
-		String url = Constants.SEEU_API_URL + "/login";
-
-		// Request a string response from the provided URL.
-		GsonRequest<Member> request = new GsonRequest<>(
-				url,
-				Member.class,
-				accessToken.getToken(),
-				this);
-
-		// Add the request to the RequestQueue.
-		queue.add(request);
+		SharedPreferencesManager.putFacebookToken(this, accessToken.getToken());
+		memberService.getMember(accessToken, this);
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class GsonRequest<T> extends Request<T> {
 	private final Gson gson = new Gson();
@@ -93,18 +94,17 @@ public class GsonRequest<T> extends Request<T> {
 
 			if(params != null) {
 				StringBuilder stringBuilder = new StringBuilder(getUrl());
-				Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
-				int i = 0;
-				while (iterator.hasNext()) {
-					Map.Entry<String, String> entry = iterator.next();
-					if (i == 0) {
-						stringBuilder.append("?" + entry.getKey() + "=" + entry.getValue());
-					} else {
-						stringBuilder.append("&" + entry.getKey() + "=" + entry.getValue());
-					}
+				Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
+
+				for (int i = 0; iterator.hasNext(); i++) {
+					Entry<String, String> entry = iterator.next();
+
+					stringBuilder.append((i == 0) ? "?" : "&");
+					stringBuilder.append(entry.getKey() + "=" + entry.getValue());
+
 					iterator.remove(); // avoids a ConcurrentModificationException
-					i++;
 				}
+
 				url = stringBuilder.toString();
 			}
 		}

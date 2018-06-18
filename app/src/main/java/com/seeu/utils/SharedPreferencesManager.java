@@ -18,7 +18,9 @@ public class SharedPreferencesManager {
 	/**
 	 * Name used to store the token in the Shared Preferences.
 	 */
-	private static final String TOKEN_KEY = "token";
+	private static final String SEEU_TOKEN_KEY = "seeutoken";
+
+	private static final String FACEBOOK_ACCESS_TOKEN_KEY = "facebookaccesstoken";
 
 	private static final Gson gson = new Gson();
 
@@ -27,11 +29,19 @@ public class SharedPreferencesManager {
 	}
 
 	public static void putToken(Context context, String token) {
-		putString(context, TOKEN_KEY, token);
+		putString(context, SEEU_TOKEN_KEY, token);
 	}
 
 	public static String getToken(Context context) {
-		return getString(context, TOKEN_KEY, null);
+		return getString(context, SEEU_TOKEN_KEY, null);
+	}
+
+	public static void putFacebookToken(Context context, String token) {
+		putString(context, FACEBOOK_ACCESS_TOKEN_KEY, token);
+	}
+
+	public static String getFacebookToken(Context context) {
+		return getString(context, FACEBOOK_ACCESS_TOKEN_KEY, null);
 	}
 
 	public static <T extends Entity> void putEntity(Context context, T value) {
