@@ -13,14 +13,17 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 06/05/2018.
+ *
+ * Adapter for the recycler view used to display messages in the {@link ChatActivity}.
  */
-
 public class MessageListAdapter extends BaseAdapter {
 
+	private Context context;
 	private LayoutInflater inflater;
 	private List<Message> messages;
 
 	public MessageListAdapter(Context context, @NonNull  List<Message> messages) {
+		this.context = context;
 		this.inflater = LayoutInflater.from(context);
 		this.messages = messages;
 	}
@@ -49,7 +52,7 @@ public class MessageListAdapter extends BaseAdapter {
 	public int getItemViewType(int position) {
 		Message message = (Message) getItem(position);
 
-		return message.belongsToCurrentUser() ? MessageViewType.MY_MESSAGE.getValue() : MessageViewType.OTHERS_MESSAGE.getValue();
+		return message.belongsToCurrentUser(context) ? MessageViewType.MY_MESSAGE.getValue() : MessageViewType.OTHERS_MESSAGE.getValue();
 	}
 
 	@Override

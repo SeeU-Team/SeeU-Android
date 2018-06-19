@@ -1,11 +1,20 @@
 package com.seeu.chat;
 
+import android.content.Context;
+
 import com.seeu.member.Member;
+import com.seeu.utils.SharedPreferencesManager;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by thomasfouan on 06/05/2018.
+ *
+ * Class that represents a message send between 2 entities (Team or Member).
  */
-
+@Getter
+@Setter
 public class Message {
 
 	private long id;
@@ -15,33 +24,16 @@ public class Message {
 	public Message() {
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public Member getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Member owner) {
-		this.owner = owner;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public boolean belongsToCurrentUser() {
+	/**
+	 * Check of this message belongs to the current user.
+	 * Use the shared preferences to get the current user
+	 * @param context the context to get the shared preferences from
+	 * @return true if this message has been sent by the current user
+	 */
+	public boolean belongsToCurrentUser(Context context) {
 		// TODO: Replace 0 by getting current id user from localdata
-		return 0 == owner.getId();
+		final Member currentUser = SharedPreferencesManager.getEntity(context, Member.class);
+		return currentUser.getId() == owner.getId();
 	}
 
 	public static Message getDebugMessage(int index) {

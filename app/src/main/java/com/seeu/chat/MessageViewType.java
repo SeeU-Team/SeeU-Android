@@ -5,8 +5,10 @@ import java.util.Map;
 
 /**
  * Created by thomasfouan on 06/05/2018.
+ *
+ * Enum for the type of message.
+ * It can be a message send by the user (MY_MESSAGE), or not (OTHERS_MESSAGE).
  */
-
 public enum MessageViewType {
 	MY_MESSAGE(0),
 	OTHERS_MESSAGE(1);
