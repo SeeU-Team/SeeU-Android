@@ -7,6 +7,14 @@ import android.view.View;
 
 import java.io.Serializable;
 
+/**
+ * Created by thomasfouan on 20/05/2018.
+ *
+ * Abstract Activity that provides template for {@link Entity} edition.
+ * It could be used for create an entity, or update an existing one.
+ *
+ * @param <T> the type of Entity to edit
+ */
 public abstract class AbstractEditEntityActivity<T extends Entity> extends Activity {
 
 	protected T entity;
@@ -24,6 +32,10 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 		updateEntityFromCaller();
 	}
 
+	/**
+	 * Update the entity to edit with potential one given by the caller.
+	 * If there is one, it is for update. Otherwise, it is for creation.
+	 */
 	private void updateEntityFromCaller() {
 		Serializable ser = getIntent().getSerializableExtra(T.STORAGE_KEY);
 
@@ -36,7 +48,7 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 
 	/**
 	 * Handle click event on cancel button.
-	 * @param v
+	 * @param v the view that represents the button clicked
 	 */
 	public void cancelForm(View v) {
 		finish();
@@ -44,7 +56,7 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 
 	/**
 	 * Handle click event on validation button.
-	 * @param v
+	 * @param v the view that represents the button clicked
 	 */
 	public void validForm(View v) {
 		if (!isEntityValid()) {

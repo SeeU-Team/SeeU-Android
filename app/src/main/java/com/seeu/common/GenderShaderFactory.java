@@ -7,8 +7,12 @@ import android.graphics.drawable.ShapeDrawable;
 
 /**
  * Created by thomasfouan on 20/03/2018.
+ *
+ * Shader Factory for the gender gradient. It generates a gradient based on a male proportion.
+ *
+ * It has fixed colors for the start, middle and end.
+ * It also has fixed positions for the start and end but has a variable middle based on the male proportion.
  */
-
 public class GenderShaderFactory extends ShapeDrawable.ShaderFactory {
 
 	private final int[] colors;

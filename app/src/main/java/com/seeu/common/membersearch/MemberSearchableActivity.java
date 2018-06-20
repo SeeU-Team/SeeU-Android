@@ -18,6 +18,11 @@ import com.seeu.member.Member;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by thomasfouan on 10/05/2018.
+ *
+ * Activity that manages the search of members to add in a team.
+ */
 public class MemberSearchableActivity extends Activity implements ItemClickListener, TextWatcher {
 
 	private List<Member> members;
@@ -29,6 +34,8 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 
 	public MemberSearchableActivity() {
+
+		// TODO: get members from Facebook friends of the current user
 		members = new ArrayList<>();
 		for (int i = 0; i < 20; i++) {
 			members.add(Member.getDebugMember(i));
@@ -56,6 +63,11 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 		alreadyAddedMembers = (ArrayList<Member>) intent.getSerializableExtra("members");
 	}
 
+	/**
+	 * Update the list of matching members accordingly to the query made by the user.
+	 * The matching is made on the member's name.
+	 * @param query the query made by the user
+	 */
 	private void requestData(String query) {
 		matchingMembers.clear();
 

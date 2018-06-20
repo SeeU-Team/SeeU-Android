@@ -8,8 +8,10 @@ import com.seeu.common.GenderShaderFactory;
 
 /**
  * Created by thomasfouan on 07/05/2018.
+ *
+ * Class that manages the rendering of the Gender Index on the screen.
+ * It uses a ShaderFactory to generate the gradient.
  */
-
 public class GenderIndex {
 
 	private View indexView;
@@ -18,6 +20,10 @@ public class GenderIndex {
 		this.indexView = indexView;
 	}
 
+	/**
+	 * Set the gradient based on the proportion of male in the team.
+	 * @param maleProportion the proportion of male in the team
+	 */
 	public void setMaleProportion(float maleProportion) {
 		/*	IMPORTANT, this doesn't work :
 				GradientDrawable drawable = (GradientDrawable) layoutPicture.getResources().getDrawable(R.drawable.measure_gender);

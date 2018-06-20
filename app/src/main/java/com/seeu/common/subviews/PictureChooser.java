@@ -1,7 +1,6 @@
 package com.seeu.common.subviews;
 
 import android.app.Fragment;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.seeu.R;
@@ -19,9 +19,16 @@ import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.GetAndShowImageFromUriAsyncTask;
 
 import static android.app.Activity.RESULT_OK;
-import static android.view.View.*;
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
+/**
+ * Created by thomasfouan on 10/05/2018.
+ *
+ * Class that manages the picture chooser in profile screens (Team and Member).
+ * It display the picture if there is one. Otherwise shows a message that invite the user to choose one.
+ * When the user clicks on the picture or the message, open the Android explorer to let him choose a picture in his photos.
+ */
 public class PictureChooser extends Fragment implements OnClickListener {
 
 	private static final int INTENT_PICK_IMAGE = 1;
@@ -92,6 +99,14 @@ public class PictureChooser extends Fragment implements OnClickListener {
 		startActivityForResult(chooserIntent, INTENT_PICK_IMAGE);
 	}
 
+	/**
+	 * Method called just before the system will draw the chooser layout.
+	 * This lets the fragment know when the view is drawn and avoids manipulations before it has been drawn.
+	 *
+	 * @return true to proceed the drawing. False to cancel it
+	 *
+	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
+	 */
 	public boolean onPreDrawChooser() {
 		if (!isChooserLayoutDrawn) {
 			isChooserLayoutDrawn = true;
@@ -102,6 +117,14 @@ public class PictureChooser extends Fragment implements OnClickListener {
 		return true;
 	}
 
+	/**
+	 * Method called just before the system will draw the picture.
+	 * This lets the fragment know when the view is drawn and avoids manipulations before it has been drawn.
+	 *
+	 * @return true to proceed the drawing. False to cancel it
+	 *
+	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
+	 */
 	public boolean onPreDrawPicture() {
 		if (!isPictureLayoutDrawn) {
 			isPictureLayoutDrawn = true;
@@ -112,6 +135,9 @@ public class PictureChooser extends Fragment implements OnClickListener {
 		return true;
 	}
 
+	/**
+	 * Update the UI when the views are effectively drawn, and accordingly to the state (picture chosen or not).
+	 */
 	private void updateUI() {
 		if (isChooserLayoutDrawn) {
 			if (null != currentPictureUrl) {
@@ -131,11 +157,19 @@ public class PictureChooser extends Fragment implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Set the picture that will be displayed on the screen rather than the message.
+	 * @param url the url of the picture
+	 */
 	public void setCurrentPictureUrl(String url) {
 		currentPictureUrl = url;
 		updateUI();
 	}
 
+	/**
+	 * Get the Uri of the picture chosen by the user.
+	 * @return the Uri of the picture
+	 */
 	public Uri getChosenPictureUri() {
 		return chosenPictureUri;
 	}

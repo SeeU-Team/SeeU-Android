@@ -4,8 +4,9 @@ import android.widget.TextView;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Class that manages the mark view on the screen.
  */
-
 public class Mark {
 
 	private static final int MAX_MARK = 5;
@@ -16,6 +17,10 @@ public class Mark {
 		this.markView = markView;
 	}
 
+	/**
+	 * Set the mark with stars in the textview.
+	 * @param mark the mark of the member/team
+	 */
 	public void setMark(int mark) {
 		StringBuilder builder = new StringBuilder();
 

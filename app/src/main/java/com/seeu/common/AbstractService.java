@@ -5,6 +5,11 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+/**
+ * Created by thomasfouan on 10/06/2018.
+ *
+ * Abstract class that provide template for the services that communicate with the API.
+ */
 public abstract class AbstractService {
 
 	protected Context context;

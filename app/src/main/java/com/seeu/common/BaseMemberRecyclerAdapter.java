@@ -8,6 +8,11 @@ import com.seeu.member.Member;
 
 import java.util.List;
 
+/**
+ * Created by thomasfouan on 20/05/2018.
+ *
+ * Abstract recycler adapter for the Member entity.
+ */
 public abstract class BaseMemberRecyclerAdapter extends Adapter<BaseMemberViewHolder> {
 
 	protected LayoutInflater inflater;
@@ -18,6 +23,11 @@ public abstract class BaseMemberRecyclerAdapter extends Adapter<BaseMemberViewHo
 		this.members = members;
 	}
 
+	/**
+	 * Get the member in the list of members at the given position.
+	 * @param position the position of the member in the list
+	 * @return the member
+	 */
 	protected Member getItem(int position) {
 		return members.get(position);
 	}

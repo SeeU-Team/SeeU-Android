@@ -12,6 +12,11 @@ import com.seeu.member.Member;
 
 import java.util.List;
 
+/**
+ * Created by thomasfouan on 10/05/2018.
+ *
+ * Adapter for the recycler view used to display members in {@link MemberSearchableActivity}
+ */
 public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> {
 
 	private LayoutInflater inflater;
@@ -24,6 +29,11 @@ public class MemberRecyclerAdapter extends Adapter<MemberViewHolder> {
 		this.listener = listener;
 	}
 
+	/**
+	 * Get the member in the list at the given position.
+	 * @param position the position
+	 * @return the member
+	 */
 	public Member getItem(int position) {
 		return members.get(position);
 	}
