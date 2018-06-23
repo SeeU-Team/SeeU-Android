@@ -11,6 +11,8 @@ import lombok.Setter;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Member entity. Represents a user in the application, already in a team or not.
  */
 @Getter
 @Setter

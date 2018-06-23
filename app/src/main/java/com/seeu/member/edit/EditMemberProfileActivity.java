@@ -12,6 +12,11 @@ import com.seeu.common.AbstractEditEntityActivity;
 import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
 
+/**
+ * Created by thomasfouan on 15/05/2018.
+ *
+ * Abstract activity that provide template for edit a profile member.
+ */
 public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member> {
 
 	private PictureChooser pictureChooser;
@@ -63,7 +68,8 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 
 	@Override
 	protected void updateEntity() {
-
+		entity.setCatchPhrase(catchPhrase.getText().toString());
+		entity.setDescription(description.getText().toString());
 	}
 
 	@Override
@@ -71,49 +77,18 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 		Uri chosenPictureUri = pictureChooser.getChosenPictureUri();
 
 		if (null != chosenPictureUri) {
-			// TODO: Get data of picture, save it on cloud and get the url of the picture to save it in our DB
-//			HttpURLConnection urlConnection = null;
-//			try {
-//				InputStream imageStream = getContentResolver().openInputStream(chosenPictureUri);
-//
-//				URL httpUrl = new URL("http://toto.tata.fr");
-//				urlConnection = (HttpURLConnection) httpUrl.openConnection();
-//				urlConnection.setDoInput(true);
-//				urlConnection.setDoOutput(true);
-//				urlConnection.setChunkedStreamingMode(0);
-//				urlConnection.setRequestMethod("POST");
-//				urlConnection.setRequestProperty("Content-Type", "multipart/form-data");
-//
-//				OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-//
-//				byte[] buffer = new byte[100000];
-//				while ((imageStream.read(buffer)) != -1) {
-//					out.write(buffer);
-//				}
-//
-//				InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-//				url = in.toString();
-//
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			} finally {
-//				if (null != urlConnection) {
-//					urlConnection.disconnect();
-//				}
-//			}
+			// TODO: Get data of picture
+			// InputStream imageStream = getContentResolver().openInputStream(chosenPictureUri);
 
-			String url = Member.DEBUG_PICTURE_URL;
-			entity.setProfilePhotoUrl(url);
+//			String url = Member.DEBUG_PICTURE_URL;
+//			entity.setProfilePhotoUrl(url);
 		}
 
 		if (isNewEntity) {
-			// TODO: make http request to save the newly created team
+			// TODO: make POST http request to save the newly created member. Send the picture along with member's info
 		} else {
-			// TODO: make http request to save the updated team
+			// TODO: make PUT http request to save the updated member.
+			// TODO: if the picture has changed, send the image data with the member's info
 		}
 	}
 }

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +20,11 @@ import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.io.Serializable;
 
+/**
+ * Created by thomasfouan on 26/03/2018.
+ *
+ * Activity that display member's profile.
+ */
 public class MemberProfileActivity extends Activity {
 
 	private Member member;
@@ -67,6 +73,10 @@ public class MemberProfileActivity extends Activity {
 		updateUI();
 	}
 
+	/**
+	 * Set the member entity from the intent.
+	 * Throw an exception if the member is not provided by caller.
+	 */
 	private void setMember() {
 		Serializable ser = getIntent().getSerializableExtra(Member.STORAGE_KEY);
 
@@ -77,6 +87,9 @@ public class MemberProfileActivity extends Activity {
 		member = (Member) ser;
 	}
 
+	/**
+	 * Update the UI with member's info.
+	 */
 	private void updateUI() {
 
 		if (isPictureBlurredLayoutDrawn) {
@@ -102,6 +115,9 @@ public class MemberProfileActivity extends Activity {
 		textDescription.setText(member.getDescription());
 	}
 
+	/**
+	 * Update the blurred image view with the member's picture.
+	 */
 	private void setPictureBlurred() {
 		if (isPictureBlurredLayoutDrawn
 				&& null != member) {
@@ -109,6 +125,9 @@ public class MemberProfileActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Update the image view with member's picture.
+	 */
 	private void setPicture() {
 		if (isPictureLayoutDrawn
 				&& null != member) {
@@ -116,6 +135,9 @@ public class MemberProfileActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Update the image view wit the member's description picture.
+	 */
 	private void setPictureDescription() {
 		if (isPictureDescriptionLayoutDrawn
 				&& null != member) {
@@ -123,6 +145,14 @@ public class MemberProfileActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Method called just before the system will draw the picture blurred layout.
+	 * This lets the activity know when the view is drawn and avoids manipulations before it has been drawn.
+	 *
+	 * @return true to proceed the drawing. False to cancel it
+	 *
+	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
+	 */
 	public boolean onPreDrawPictureBlurred() {
 		isPictureBlurredLayoutDrawn = true;
 		pictureBlurred.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureBlurred);
@@ -131,6 +161,14 @@ public class MemberProfileActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * Method called just before the system will draw the picture layout.
+	 * This lets the activity know when the view is drawn and avoids manipulations before it has been drawn.
+	 *
+	 * @return true to proceed the drawing. False to cancel it
+	 *
+	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
+	 */
 	public boolean onPreDrawPicture() {
 		isPictureLayoutDrawn = true;
 		picture.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPicture);
@@ -139,6 +177,14 @@ public class MemberProfileActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * Method called just before the system will draw the description picture blurred layout.
+	 * This lets the activity know when the view is drawn and avoids manipulations before it has been drawn.
+	 *
+	 * @return true to proceed the drawing. False to cancel it
+	 *
+	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
+	 */
 	public boolean onPreDrawPictureDescription() {
 		isPictureDescriptionLayoutDrawn = true;
 		pictureDescription.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureDescription);
@@ -147,6 +193,12 @@ public class MemberProfileActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * Called when th user clicks on the message button.
+	 * Starts the {@link ChatActivity}.
+	 *
+	 * @param v the button clicked
+	 */
 	public void onMessageActionClick(View v) {
 		Context context = v.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
