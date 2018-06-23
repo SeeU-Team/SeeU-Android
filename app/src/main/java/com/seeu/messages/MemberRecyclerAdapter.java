@@ -15,8 +15,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Adapter for the members list in the Messages tab.
  */
-
 public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements ItemClickListener {
 
 	public MemberRecyclerAdapter(Context context, List<Member> members) {

@@ -21,8 +21,10 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * This could be a Fragment. It represents the Card view that contains info of the member's team.
+ * Used in the Messages Fragment.
  */
-
 public class TeamCard implements OnClickListener {
 
 	private ImageView picture;
@@ -48,27 +50,51 @@ public class TeamCard implements OnClickListener {
 		rootElement.setOnClickListener(this);
 	}
 
+	/**
+	 * Set the picture of the team in the UI.
+	 * @param url the picture url
+	 */
 	public void setPicture(String url) {
 		new DownloadImageAndSetBackgroundTask(picture, 6, 100, 80).execute(url);
 	}
 
+	/**
+	 * Set the team's name in the UI.
+	 * @param name the team's name
+	 */
 	public void setName(String name) {
 		this.name.setText(name);
 	}
 
+	/**
+	 * Set the team's mark in the UI.
+	 * @param mark the team's mark
+	 */
 	public void setMark(int mark) {
 		this.mark.setMark(mark);
 	}
 
+	/**
+	 * Set the number of unread messages by the current member of the team chat in the UI.
+	 * @param nbMessages the number of unread messages
+	 */
 	public void setNbNotReadMessages(int nbMessages) {
 		String text = nbNotReadMessages.getResources().getString(R.string.not_read_messages_placeholder, nbMessages);
 		nbNotReadMessages.setText(text);
 	}
 
+	/**
+	 * Set the members' bubble pictures in the UI.
+	 * @param urls the picture urls of all members
+	 */
 	public void setMemberPictures(List<String> urls) {
 		memberPictures.setMemberPictures(urls);
 	}
 
+	/**
+	 * Update the UI with info of the team.
+	 * @param team the team to display
+	 */
 	public void setData(Team team) {
 		if (null == team) {
 			return;

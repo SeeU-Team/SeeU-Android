@@ -1,5 +1,6 @@
 package com.seeu.messages;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,8 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * View holder for a member item in the list of members in the Messages tab.
  */
-
 public class MemberViewHolder extends BaseMemberViewHolder {
 
 	private View connectedIndicator;
@@ -27,6 +29,11 @@ public class MemberViewHolder extends BaseMemberViewHolder {
 		lastConnection		= itemView.findViewById(R.id.memberLastConnection);
 	}
 
+	/**
+	 * Set the status of the member : connected or the last time he was.
+	 * @param isConnected true if the member is connected. Otherwise false.
+	 * @param lastConnectionDate the last time the member was connected
+	 */
 	private void setStatus(boolean isConnected, Date lastConnectionDate) {
 		if (isConnected) {
 			connectedIndicator.setVisibility(View.VISIBLE);
@@ -39,6 +46,10 @@ public class MemberViewHolder extends BaseMemberViewHolder {
 		}
 	}
 
+	/**
+	 * Set the last time the member was connected.
+	 * @param lastConnectionDate the Date the member was connected for the last time
+	 */
 	private void setLastConnection(Date lastConnectionDate) {
 		long diffInDays;
 
@@ -54,6 +65,7 @@ public class MemberViewHolder extends BaseMemberViewHolder {
 		lastConnection.setText(text);
 	}
 
+	@Override
 	public void setData(Member member) {
 		super.setData(member);
 		setStatus(member.isConnected(), member.getLastConnection());

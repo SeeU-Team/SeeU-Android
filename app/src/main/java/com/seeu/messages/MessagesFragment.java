@@ -21,8 +21,10 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 16/03/2018.
+ *
+ * Fragment for the Messages tab.
+ * Give access to chat with the member's team, older member's, and other team leader if the current member is leader too.
  */
-
 public class MessagesFragment extends Fragment implements OnClickListener {
 
 	private TeamCard teamCard;
@@ -42,6 +44,8 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 
 		loadTeam();
 		loadMembers();
+
+		// TODO: check if the current member is leader or not
 		loadTeams();
 	}
 
@@ -66,6 +70,11 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		return view;
 	}
 
+	/**
+	 * Setup the recycler view to display the member list.
+	 *
+	 * @param view the root view
+	 */
 	private void setupMemberRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members);
@@ -74,6 +83,11 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
+	/**
+	 * Setup the recycler view to display the team list
+	 *
+	 * @param view the root view
+	 */
 	private void setupTeamRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
@@ -82,6 +96,9 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		teamRecycler.setAdapter(teamRecyclerAdapter);
 	}
 
+	/**
+	 * Load info of the team of the member.
+	 */
 	private void loadTeam() {
 		// TODO: make http request to load data
 		team = Team.getDebugTeam(1);
@@ -92,6 +109,9 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Load all members the current member has talked with before.
+	 */
 	private void loadMembers() {
 		// TODO: make http request to load data
 
@@ -104,6 +124,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		}
 	}
 
+	/**
+	 * Load all the teams mutually liked with the team of the member.
+	 * The current member MUST be leader of his team to see the list.
+	 */
 	private void loadTeams() {
 		// TODO: make http request to load data
 
