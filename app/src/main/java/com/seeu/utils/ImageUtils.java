@@ -7,13 +7,23 @@ import android.graphics.Paint;
 
 /**
  * Created by thomasfouan on 19/03/2018.
+ *
+ * Utils for images.
  */
-
 public class ImageUtils {
 
 	private ImageUtils() {
 	}
 
+	/**
+	 * Resize the Bitmap to fit the given width and height.
+	 * Zoom in the image if needed.
+	 *
+	 * @param bitmap the bitmap to resize
+	 * @param width the expected width
+	 * @param height the expected height
+	 * @return the resized bitmap
+	 */
 	public static Bitmap resizeBitmapFitXY(Bitmap bitmap, int width, int height) {
 		Bitmap background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		float originalWidth = bitmap.getWidth();

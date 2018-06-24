@@ -18,8 +18,9 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by thomasfouan on 19/03/2018.
+ *
+ * Async task for downloading images and set it on a view.
  */
-
 public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, RoundedBitmapDrawable> {
 	private WeakReference<View> viewWeakReference;
 	private float cornerRadius;
@@ -47,6 +48,7 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 		this.blurEffect = blurEffect;
 	}
 
+	@Override
 	protected RoundedBitmapDrawable doInBackground(String... urls) {
 		Bitmap bitmap = null;
 		RoundedBitmapDrawable result;
@@ -74,6 +76,7 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 		return result;
 	}
 
+	@Override
 	protected void onPostExecute(final RoundedBitmapDrawable drawable) {
 		View view = viewWeakReference.get();
 		if (null == view) {

@@ -16,6 +16,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Created by thomasfouan on 16/05/2018.
+ *
+ * Class that manages requests to the server and parses the response with the {@link Gson} library.
+ *
+ * @param <T> the type of object expected to receive in JSON after executing the request
+ */
 public class GsonRequest<T> extends Request<T> {
 	private final Gson gson = new Gson();
 	private final Class<T> clazz;

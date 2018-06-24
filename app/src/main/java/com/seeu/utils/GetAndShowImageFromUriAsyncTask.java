@@ -16,8 +16,9 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by thomasfouan on 08/05/2018.
+ *
+ * Async task for getting images from URI and set it on an ImageView.
  */
-
 public class GetAndShowImageFromUriAsyncTask extends AsyncTask<Uri, Void, Bitmap> {
 
 	private ContentResolver contentResolver;

@@ -7,10 +7,23 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 
+/**
+ * Created by thomasfouan on 10/05/2018.
+ *
+ * Utils class for blurring images.
+ */
 public class BlurBuilder {
 	private static final float BITMAP_SCALE = 0.4f;
 	private static final float BLUR_RADIUS = 7.5f;
 
+	/**
+	 * Blur an image.
+	 * Use RenderScript to blur.
+	 *
+	 * @param context the context
+	 * @param image the image to blur
+	 * @return a Bitmap of the image blurred
+	 */
 	public static Bitmap blur(Context context, Bitmap image) {
 		int width = Math.round(image.getWidth() * BITMAP_SCALE);
 		int height = Math.round(image.getHeight() * BITMAP_SCALE);
