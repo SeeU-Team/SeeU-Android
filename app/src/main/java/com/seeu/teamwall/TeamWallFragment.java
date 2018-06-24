@@ -11,30 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.seeu.common.Constants;
-import com.seeu.common.ItemClickListener;
 import com.seeu.R;
+import com.seeu.common.ItemClickListener;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
-import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
-import com.seeu.utils.network.GsonRequest;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.Context.MODE_PRIVATE;
-
 /**
  * Created by thomasfouan on 16/03/2018.
+ *
+ * Team wall fragment to search teams by types and location.
  */
-
 public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 	private TeamTypeRecyclerAdapter teamTypeRecyclerAdapter;
@@ -45,6 +38,9 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	private List<Team> teams;
 	private TeamService teamService;
 
+	/**
+	 * Constructor
+	 */
 	public TeamWallFragment() {
 		types = new ArrayList<>();
 		teams = new ArrayList<>();
@@ -84,6 +80,10 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		refreshTeams(types.get(position));
 	}
 
+	/**
+	 * Method that set up the recycler view for the team types.
+	 * @param view the view that the recycler view belongs to
+	 */
 	private void setupTeamTypeRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		teamTypeRecyclerAdapter = new TeamTypeRecyclerAdapter(getActivity(), types, this);
@@ -93,6 +93,10 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		teamTypeRecycler.setAdapter(teamTypeRecyclerAdapter);
 	}
 
+	/**
+	 * Method that set up the recycler view for the teams.
+	 * @param view the view that the recycler view belongs to
+	 */
 	private void setupTeamRecycler(View view) {
 		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
 
@@ -100,6 +104,9 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		teamRecycler.setAdapter(teamRecyclerAdapter);
 	}
 
+	/**
+	 * Load all the types of teams. Refresh teams when received.
+	 */
 	private void loadTypes() {
 		final Context context = this.getActivity();
 		types.clear();
@@ -131,6 +138,10 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		});
 	}
 
+	/**
+	 * Refresh the teams accordingly with the new selected type.
+	 * @param selectedType the type of teams
+	 */
 	private void refreshTeams(TeamType selectedType) {
 		final Context context = this.getActivity();
 		teams.clear();

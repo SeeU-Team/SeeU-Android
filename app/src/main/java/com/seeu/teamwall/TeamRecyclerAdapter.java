@@ -17,8 +17,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 19/03/2018.
+ *
+ * Adapter for the list of team in the teamwall.
  */
-
 public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements ItemClickListener {
 
 	private LayoutInflater inflater;
@@ -46,6 +47,11 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 		return teams.size();
 	}
 
+	/**
+	 * Return the team at the given position.
+	 * @param position the position of the team in the list.
+	 * @return the team
+	 */
 	public Team getItem(int position) {
 		return teams.get(position);
 	}

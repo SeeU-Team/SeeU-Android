@@ -14,8 +14,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 16/03/2018.
+ *
+ * Adapter for the list of the team's type.
  */
-
 public class TeamTypeRecyclerAdapter extends Adapter<TeamTypeViewHolder> {
 
 	private LayoutInflater inflater;
@@ -47,10 +48,20 @@ public class TeamTypeRecyclerAdapter extends Adapter<TeamTypeViewHolder> {
 		return types.size();
 	}
 
+	/**
+	 * Return the type at the given position.
+	 * @param position the position of the type in the list.
+	 * @return the type
+	 */
 	public TeamType getItem(int position) {
 		return types.get(position);
 	}
 
+	/**
+	 * Set the selected type item of the list.
+	 * The selected item is highlighted.
+	 * @param newSelected the position of the selected type
+	 */
 	public void setSelected(int newSelected) {
 		notifyItemChanged(selected);
 		notifyItemChanged(newSelected);

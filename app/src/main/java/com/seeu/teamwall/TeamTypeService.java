@@ -9,18 +9,26 @@ import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
+/**
+ * Created by thomasfouan on 10/06/2018.
+ *
+ * Service that make requests related to the TeamType entity to the API.
+ */
 public class TeamTypeService extends AbstractService {
 
 	protected TeamTypeService(Context context) {
-		super(context);
+		super(context, "/teamTypes");
 	}
 
+	/**
+	 * Get all the team's types from the database.
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void getAllTeamTypes(CustomResponseListener<TeamType[]> listener) {
-		String url = Constants.SEEU_API_URL + "/teamTypes";
 		String token = SharedPreferencesManager.getToken(context);
 
 		GsonRequest<TeamType[]> request = new GsonRequest<>(
-				url,
+				BASE_URL,
 				Request.Method.GET,
 				TeamType[].class,
 				token,

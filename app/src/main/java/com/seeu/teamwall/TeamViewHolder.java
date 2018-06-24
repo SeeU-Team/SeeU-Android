@@ -21,8 +21,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 19/03/2018.
+ *
+ * Holder for the team.
  */
-
 public class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 	private static final int MAX_DESCRIPTION_PICTURES = 4;
@@ -57,32 +58,60 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		layoutPicture.setOnClickListener(this);
 	}
 
+	/**
+	 * Set the team's name in the UI.
+	 * @param name the team's name
+	 */
 	private void setName(String name) {
 		this.name.setText(name);
 	}
 
+	/**
+	 * Set the team's tags in the UI.
+	 * @param tags the team's tags
+	 */
 	private void setTags(String tags) {
 		this.tags.setText(tags);
 	}
 
+	/**
+	 * Set the team's picture in the UI.
+	 * @param pictureUrl the team picture's url
+	 */
 	private void setPicture(String pictureUrl) {
 		new DownloadImageAndSetBackgroundTask(layoutPicture, 20, 250, 250).execute(pictureUrl);
 	}
 
+	/**
+	 * Set the member pictures in the UI.
+	 * @param urls the member picture's urls
+	 */
 	private void setMemberPictures(List<String> urls) {
 		teamMemberPictures.setMemberPictures(urls);
 	}
 
+	/**
+	 * Set the proportion of male of the team in the UI.
+	 * @param maleProportion the proportion of male, between 0 and 1
+	 */
 	private void setGenderIndex(float maleProportion) {
 		genderIndex.setMaleProportion(maleProportion);
 	}
 
-	private void setDescriptionPictures(List<TeamDescription> descriptions) {
-		for (int i = 0; i < descriptions.size() && i < 4; i++) {
-			descriptionPictures[i].setImageResource(descriptions.get(i).getIcon());
+	/**
+	 * Set the team's descriptions in the UI.
+	 * @param teamDescriptions the team's descriptions
+	 */
+	private void setTeamDescriptions(List<TeamDescription> teamDescriptions) {
+		for (int i = 0; i < teamDescriptions.size() && i < 4; i++) {
+			descriptionPictures[i].setImageResource(teamDescriptions.get(i).getIcon());
 		}
 	}
 
+	/**
+	 * Set the team's info in the view.
+	 * @param team the team to display
+	 */
 	public void setData(Team team) {
 		List<String> memberPictures = new ArrayList<>();
 		for (Member member : team.getMembers()) {
@@ -96,7 +125,7 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		setPicture(team.getPictureUrl());
 		setMemberPictures(memberPictures);
 		setGenderIndex(maleProportion);
-		setDescriptionPictures(team.getDescriptions());
+		setTeamDescriptions(team.getDescriptions());
 	}
 
 	@Override
