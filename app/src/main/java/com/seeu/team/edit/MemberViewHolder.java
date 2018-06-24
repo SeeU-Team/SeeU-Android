@@ -12,8 +12,9 @@ import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 /**
  * Created by thomasfouan on 08/05/2018.
+ *
+ * Holder for a member item in the list.
  */
-
 class MemberViewHolder extends ViewHolder implements OnClickListener {
 
 	private ImageView picture;
@@ -34,6 +35,10 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 		this.itemClickListener = itemClickListener;
 	}
 
+	/**
+	 * Set the picture of the member in the UI.
+	 * @param url the member picture's url
+	 */
 	public void setPicture(String url) {
 		new DownloadImageAndSetBackgroundTask(picture, 30, 80, 80).execute(url);
 	}

@@ -4,32 +4,23 @@ import com.seeu.R;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by thomasfouan on 07/05/2018.
+ *
+ * Entity that represents a team's description.
+ * A description can be something that the team is or has (food, swimming pool, sports, etc.).
  */
-
+@Getter
+@Setter
 public class TeamDescription implements Serializable {
 
 	private String name;
 	private int icon;
 
 	public TeamDescription() {
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getIcon() {
-		return icon;
-	}
-
-	public void setIcon(int icon) {
-		this.icon = icon;
 	}
 
 	public static TeamDescription getDebugTeamDescription(int index) {

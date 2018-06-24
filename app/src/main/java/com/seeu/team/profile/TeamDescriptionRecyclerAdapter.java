@@ -13,8 +13,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 07/05/2018.
+ *
+ * Adapter for the list of team's description.
  */
-
 class TeamDescriptionRecyclerAdapter extends Adapter<TeamDescriptionViewHolder> {
 
 	private LayoutInflater inflater;
@@ -25,6 +26,11 @@ class TeamDescriptionRecyclerAdapter extends Adapter<TeamDescriptionViewHolder> 
 		this.teamDescriptions = teamDescriptions;
 	}
 
+	/**
+	 * Return the team description at the given position.
+	 * @param position the position of the team description in the list
+	 * @return the team description
+	 */
 	private TeamDescription getItem(int position) {
 		return teamDescriptions.get(position);
 	}

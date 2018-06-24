@@ -6,10 +6,17 @@ import com.seeu.member.Member;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Entity that represents a Team in the application.
+ * A team is the primary element of the app, with its members.
  */
-
+@Getter
+@Setter
 public class Team extends Entity {
 
 	private String pictureUrl;
@@ -25,70 +32,6 @@ public class Team extends Entity {
 		super("team");
 		members = new ArrayList<>();
 		descriptions = new ArrayList<>();
-	}
-
-	public String getPictureUrl() {
-		return pictureUrl;
-	}
-
-	public void setPictureUrl(String pictureUrl) {
-		this.pictureUrl = pictureUrl;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getPlace() {
-		return place;
-	}
-
-	public void setPlace(String place) {
-		this.place = place;
-	}
-
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(String tags) {
-		this.tags = tags;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public int getMark() {
-		return mark;
-	}
-
-	public void setMark(int mark) {
-		this.mark = mark;
-	}
-
-	public ArrayList<Member> getMembers() {
-		return members;
-	}
-
-	public void setMembers(ArrayList<Member> members) {
-		this.members = members;
-	}
-
-	public ArrayList<TeamDescription> getDescriptions() {
-		return descriptions;
-	}
-
-	public void setDescriptions(ArrayList<TeamDescription> descriptions) {
-		this.descriptions = descriptions;
 	}
 
 	// TODO: Remove debug elements

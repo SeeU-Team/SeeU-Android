@@ -14,12 +14,22 @@ import com.seeu.utils.network.GsonRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Created by thomasfouan on 10/06/2018.
+ *
+ * Service that make requests related to the Team entity to the API.
+ */
 public class TeamService extends AbstractService {
 
 	public TeamService(Context context) {
 		super(context, "/teams");
 	}
 
+	/**
+	 * Get all the teams of the type passed in parameter.
+	 * @param teamType the type of the teams
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void getTeams(TeamType teamType, CustomResponseListener<Team[]> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
@@ -36,6 +46,11 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	/**
+	 * Get the team of the current user if he belongs to one. Otherwise, return NOT_FOUND (404) status.
+	 * @param member the member for which we want the team
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void getTeam(Member member, CustomResponseListener<Team> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
@@ -52,6 +67,11 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	/**
+	 * Get the team that the team passed in parameter has merged with.
+	 * @param team the team for which we want the get the merged team
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void getMergedTeam(Team team, CustomResponseListener<Team> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
@@ -68,6 +88,11 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	/**
+	 * Save the new team passed in parameter in the Database.
+	 * @param team the team to save
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void createTeam(Team team, CustomResponseListener<Team> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
@@ -85,6 +110,11 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	/**
+	 * Like the team. The user (leader)'s token provided along with the request allows the API to get the team he belongs to.
+	 * @param likedTeam the team that the leader liked
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void likeTeam(Team likedTeam, CustomResponseListener<Void> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
@@ -101,6 +131,11 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	/**
+	 * Merge the team of the user (leader) with the team passed in parameter.
+	 * @param teamToMerge the team the leader wants to merge with
+	 * @param listener callback listener called when the response is available from the server
+	 */
 	public void mergeTeam(Team teamToMerge, CustomResponseListener<Void> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);

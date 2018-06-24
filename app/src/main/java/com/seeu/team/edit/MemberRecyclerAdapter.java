@@ -16,8 +16,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 08/05/2018.
+ *
+ * Adapter for the recycler view that display the list of members in the team.
  */
-
 class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemClickListener {
 
 	private LayoutInflater inflater;
@@ -60,6 +61,11 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 		context.startActivity(intent);
 	}
 
+	/**
+	 * Delete the member in the team when the user clicks on the delete member's button.
+	 * @param v the button clicked
+	 * @param position the position of the item where the button has been clicked
+	 */
 	private void onDeleteItemClick(View v, int position) {
 		Member member = getItem(position);
 		members.remove(member);

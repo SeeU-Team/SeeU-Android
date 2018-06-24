@@ -20,8 +20,9 @@ import com.seeu.common.membersearch.MemberSearchableActivity;
 
 /**
  * Created by thomasfouan on 08/05/2018.
+ *
+ * Activity that display the edition of team's profile.
  */
-
 public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 
 	private static final int INTENT_ACTION_SEARCH = 2;
@@ -68,6 +69,9 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 		}
 	}
 
+	/**
+	 * Setup the recycler view to display the member list.
+	 */
 	private void setupMemberRecycler() {
 		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -86,8 +90,8 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 	}
 
 	/**
-	 * Handle click event on add member's button.
-	 * @param v
+	 * Starts the member search activity when the user clicks on add member's button.
+	 * @param v the button clicked
 	 */
 	public void startMemberSearchActivity(View v) {
 		Intent intent = new Intent(this, MemberSearchableActivity.class);

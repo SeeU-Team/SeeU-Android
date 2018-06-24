@@ -22,8 +22,9 @@ import java.util.ArrayList;
 
 /**
  * Created by thomasfouan on 07/05/2018.
+ *
+ * Activity that display the team's profile.
  */
-
 public class TeamProfileActivity extends Activity implements ViewTreeObserver.OnPreDrawListener {
 
 	private ConstraintLayout picture;
@@ -71,6 +72,9 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		updateUI();
 	}
 
+	/**
+	 * Method that set up the recycler view for the members.
+	 */
 	private void setupMemberRecycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
@@ -79,6 +83,9 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
+	/**
+	 * Method that set up the recycler view for the team descriptions.
+	 */
 	private void setupTeamDescriptionReycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, team.getDescriptions());
@@ -87,6 +94,10 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
 	}
 
+	/**
+	 * Set the team from the intent provided by the caller.
+	 * If the caller does not provide a team, throws an exception.
+	 */
 	private void setTeamFromCaller() {
 		Serializable ser = getIntent().getSerializableExtra(Team.STORAGE_KEY);
 
@@ -105,6 +116,9 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		}
 	}
 
+	/**
+	 * Update the UI with info from the team entity.
+	 */
 	private void updateUI() {
 		if (isPictureLayoutDrawn) {
 			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
@@ -123,6 +137,11 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		descriptionRecyclerAdapter.notifyDataSetChanged();
 	}
 
+	/**
+	 * Handle clicks on the team up button.
+	 * Notify the other team's leader that this team liked his.
+	 * @param view
+	 */
 	public void teamUpActionBtn(View view) {
 		Toast.makeText(view.getContext(), "You clicked on team up button", Toast.LENGTH_SHORT).show();
 	}
