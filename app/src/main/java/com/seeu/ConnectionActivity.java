@@ -5,24 +5,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.seeu.common.Constants;
 import com.seeu.member.Member;
 import com.seeu.member.MemberService;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
-import com.seeu.utils.network.GsonRequest;
 
 import java.util.Map;
 
+/**
+ * Created by thomasfouan on 16/02/2018.
+ *
+ * The starting activity of the application. Display the Facebook Login required to access to the application.
+ */
 public class ConnectionActivity extends Activity implements FacebookCallback<LoginResult>, CustomResponseListener<Member> {
 
 	private CallbackManager callbackManager;
@@ -41,7 +42,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 		if (null != accessToken) {
 			Log.d("Facebook", "already logged in");
-			goToTeamWall(accessToken);
+			loadMemberInfo(accessToken);
 		}
 
 		callbackManager = CallbackManager.Factory.create();
@@ -64,7 +65,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	@Override
 	public void onSuccess(LoginResult loginResult) {
 		Log.d("Facebook", "Login success");
-		goToTeamWall(loginResult.getAccessToken());
+		loadMemberInfo(loginResult.getAccessToken());
 	}
 
 	@Override
@@ -78,7 +79,12 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 		exception.printStackTrace();
 	}
 
-	private void goToTeamWall(final AccessToken accessToken) {
+	/**
+	 * Load information about the connected user with the access token provided by Facebook.
+	 * Start the main activity when the request is done.
+	 * @param accessToken the access token provided by Facebook
+	 */
+	private void loadMemberInfo(final AccessToken accessToken) {
 		/*
 			GraphRequest request = GraphRequest.newMeRequest(
 					accessToken,
@@ -97,7 +103,6 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 	@Override
 	public void onResponse(Member response) {
-		// TODO: get user info from the response and save it
 		SharedPreferencesManager.putEntity(this, response);
 
 		Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);

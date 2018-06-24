@@ -15,7 +15,7 @@ import com.seeu.member.Member;
 /**
  * Created by thomasfouan on 15/05/2018.
  *
- * Abstract activity that provide template for edit a profile member.
+ * Activity that display the edition of member's profile.
  */
 public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member> {
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,9 +22,20 @@ import com.seeu.messages.MessagesFragment;
 import com.seeu.nightcenter.NightCenterFragment;
 import com.seeu.teamwall.TeamWallFragment;
 
+/**
+ * Created by thomasfouan on 16/03/2018.
+ *
+ * Main activity of the application. This activity manages the bottom navigation menu where the user can switch between :
+ * 		- the teamwall
+ * 		- the messages
+ * 		- the night center
+ */
 public class TabbedActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
+	/**
+	 * Listener for the bottom navigation menu. Switch between the fragments on user clicks.
+	 */
+	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
 		Fragment selectedFragment = null;
 		switch (item.getItemId()) {
 			case R.id.navigation_teamwall:

@@ -69,13 +69,32 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 		finish();
 	}
 
+	/**
+	 * Return a new entity of T.
+	 *
+	 * @return the newly created entity
+	 */
 	protected abstract T getEntityInstance();
 
+	/**
+	 * Called to update the UI with data from entity.
+	 */
 	protected abstract void updateUI();
 
+	/**
+	 * Check if the entity is valid when the user wants to save the changes.
+	 *
+	 * @return true if it is valid. Otherwise, return false
+	 */
 	protected abstract boolean isEntityValid();
 
+	/**
+	 * Update the entity info from UI.
+	 */
 	protected abstract void updateEntity();
 
+	/**
+	 * Save the changes in the database.
+	 */
 	protected abstract void saveEntity();
 }
