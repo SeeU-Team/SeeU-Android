@@ -10,8 +10,9 @@ import com.seeu.member.Member;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Holder for a member item in the list of members in the night center.
  */
-
 class MemberViewHolder extends BaseMemberViewHolder {
 
 	private ItemClickListener messageActionListener;
@@ -24,10 +25,16 @@ class MemberViewHolder extends BaseMemberViewHolder {
 		messageAction.setOnClickListener(this::onMessageBtnClick);
 	}
 
+	@Override
 	public void setData(Member member) {
 		super.setData(member);
 	}
 
+	/**
+	 * Method called when the user clicked on the message button.
+	 * Calls the listener method to notify it that the button has benn clicked the user.
+	 * @param v the view clicked
+	 */
 	public void onMessageBtnClick(View v) {
 		messageActionListener.onItemClick(v, getAdapterPosition());
 	}

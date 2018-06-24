@@ -18,8 +18,11 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 16/03/2018.
+ *
+ * Fragment for the night center.
+ * The night center appears for members of 2 teams that merged.
+ * Display information about the teams and their members.
  */
-
 public class NightCenterFragment extends Fragment {
 
 	private CardView firstTeamCardView;
@@ -58,6 +61,12 @@ public class NightCenterFragment extends Fragment {
 		return view;
 	}
 
+
+	/**
+	 * Setup the recycler view to display the member list.
+	 *
+	 * @param view the root view
+	 */
 	private void setupMemberRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members);
@@ -66,6 +75,9 @@ public class NightCenterFragment extends Fragment {
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 	}
 
+	/**
+	 * Load teams info from the database.
+	 */
 	private void loadTeams() {
 		// TODO: make http request to load data
 
@@ -75,6 +87,9 @@ public class NightCenterFragment extends Fragment {
 		applyPicture();
 	}
 
+	/**
+	 * Load all members info of the 2 teams from the database.
+	 */
 	private void loadMembers() {
 		// TODO: make http request to load data
 
@@ -87,6 +102,11 @@ public class NightCenterFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * Set the picture of each team in UI.
+	 * This method is called 2 times, one when the view is loaded, and one when the request to the API is done.
+	 * The reason is that we do not know which event is the longer, depending on the phone and the network connection.
+	 */
 	private void applyPicture() {
 		if (null != firstTeamCardView && null != firstTeam) {
 			new DownloadImageAndSetBackgroundTask(firstTeamCardView, 150, 150, 150).execute(firstTeam.getPictureUrl());

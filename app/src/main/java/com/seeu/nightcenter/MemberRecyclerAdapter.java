@@ -16,8 +16,9 @@ import java.util.List;
 
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Adapter for recycler view that display list of members in the night center.
  */
-
 public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements ItemClickListener {
 
 	public MemberRecyclerAdapter(Context context, List<Member> members) {
@@ -40,6 +41,11 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 		context.startActivity(intent);
 	}
 
+	/**
+	 * Method called when the user clicks on the message button on a member item.
+	 * @param v the view clicked by the user
+	 * @param position the position of the view where the user clicked
+	 */
 	private void startMessageActivity(View v, int position) {
 		Member member = getItem(position);
 		Context context = v.getContext();
