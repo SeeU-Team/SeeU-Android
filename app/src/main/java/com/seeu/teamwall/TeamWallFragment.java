@@ -14,10 +14,15 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
+import com.seeu.member.Member;
+import com.seeu.member.MemberHasTeam;
+import com.seeu.member.MemberStatus;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
+import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +34,9 @@ import java.util.Map;
  * Team wall fragment to search teams by types and location.
  */
 public class TeamWallFragment extends Fragment implements ItemClickListener {
+
+	private Member currentUser;
+	private MemberHasTeam memberHasTeam;
 
 	private TeamTypeRecyclerAdapter teamTypeRecyclerAdapter;
 	private List<TeamType> types;
@@ -53,7 +61,8 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		this.teamService = new TeamService(this.getActivity());
 		this.teamTypeService = new TeamTypeService(this.getActivity());
 
-		loadTypes();
+		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.class);
+		loadMemberTeam();
 	}
 
 	@Override
@@ -102,6 +111,31 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
+	}
+
+	private void loadMemberTeam() {
+		teamService.getTeam(currentUser, new CustomResponseListener<MemberHasTeam>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if (HttpURLConnection.HTTP_NOT_FOUND == error.networkResponse.statusCode) {
+					memberHasTeam = MemberHasTeam.builder()
+							.memberId(currentUser.getId())
+							.status(MemberStatus.ALONE)
+							.build();
+				}
+			}
+
+			@Override
+			public void onResponse(MemberHasTeam response) {
+				memberHasTeam = response;
+
+				loadTypes();
+			}
+		});
 	}
 
 	/**

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.facebook.AccessToken;
@@ -14,7 +15,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.seeu.member.AuthenticationService;
 import com.seeu.member.Member;
-import com.seeu.member.MemberService;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -29,6 +29,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 	private CallbackManager callbackManager;
 	private LoginButton loginButton;
+	private TextView errorView;
 
 	private AuthenticationService authenticationService;
 
@@ -40,7 +41,6 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 		this.authenticationService = new AuthenticationService(this);
 
 		final AccessToken accessToken = AccessToken.getCurrentAccessToken();
-
 		if (null != accessToken) {
 			Log.d("Facebook", "already logged in");
 			loadMemberInfo(accessToken);
@@ -49,12 +49,10 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 		callbackManager = CallbackManager.Factory.create();
 		loginButton = findViewById(R.id.login_button);
 		loginButton.setReadPermissions("public_profile", "user_photos");
-
-		// If using in a fragment
-		//loginButton.setFragment(this);
-
 		// Callback registration
 		loginButton.registerCallback(callbackManager, this);
+
+		errorView = findViewById(R.id.error_login);
 	}
 
 	@Override
@@ -78,6 +76,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	public void onError(FacebookException exception) {
 		System.out.println("Facebook login error");
 		exception.printStackTrace();
+		errorView.setText(exception.toString());
 	}
 
 	/**
@@ -123,6 +122,6 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	@Override
 	public void onErrorResponse(VolleyError error) {
 		error.printStackTrace();
-		System.out.println(error.getMessage());
+		errorView.setText(error.getLocalizedMessage());
 	}
 }

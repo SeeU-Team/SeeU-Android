@@ -15,7 +15,9 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.member.Member;
+import com.seeu.member.MemberHasTeam;
 import com.seeu.member.MemberService;
+import com.seeu.member.MemberStatus;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
 import com.seeu.team.edit.EditTeamProfileActivity;
@@ -36,9 +38,10 @@ import java.util.Map;
 public class MessagesFragment extends Fragment implements OnClickListener {
 
 	private Member currentMember;
+	private MemberHasTeam memberHasTeam;
 
+	private FloatingActionButton editTeamBtn;
 	private TeamCard teamCard;
-	private Team team;
 	private TeamService teamService;
 
 	private MemberRecyclerAdapter memberRecyclerAdapter;
@@ -50,7 +53,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 
 	public MessagesFragment() {
 		teamCard = null;
-		team = null;
+		memberHasTeam = null;
 		members = new ArrayList<>();
 		teams = new ArrayList<>();
 	}
@@ -71,11 +74,15 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.messages_fragment, container, false);
 
-		FloatingActionButton editTeamBtn = view.findViewById(R.id.editTeamBtn);
+		editTeamBtn = view.findViewById(R.id.editTeamBtn);
 		editTeamBtn.setOnClickListener(this);
+		editTeamBtn.setVisibility(View.GONE);
 
 		teamCard = new TeamCard(view);
-		teamCard.setData(team);
+
+		if (null != memberHasTeam) {
+			teamCard.setData(memberHasTeam.getTeam());
+		}
 
 		setupMemberRecycler(view);
 		setupTeamRecycler(view);
@@ -113,7 +120,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	 * Load info of the team of the member.
 	 */
 	private void loadTeam() {
-		teamService.getTeam(currentMember, new CustomResponseListener<Team>() {
+		teamService.getTeam(currentMember, new CustomResponseListener<MemberHasTeam>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
@@ -125,16 +132,18 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 			}
 
 			@Override
-			public void onResponse(Team response) {
-				team = response;
+			public void onResponse(MemberHasTeam response) {
+				memberHasTeam = response;
 
 				// if loading the data was slower than create the view, set data here
 				if (null != teamCard) {
-					teamCard.setData(team);
+					teamCard.setData(memberHasTeam.getTeam());
 				}
 
-				// TODO: check if the current member is leader or not
-				loadTeams();
+				if (MemberStatus.LEADER.equals(memberHasTeam.getStatus())) {
+					loadTeams();
+					editTeamBtn.setVisibility(View.VISIBLE);
+				}
 			}
 		});
 	}
@@ -171,7 +180,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	 */
 	private void loadTeams() {
 
-		teamService.getLikedTeams(team, new CustomResponseListener<Team[]>() {
+		teamService.getLikedTeams(memberHasTeam.getTeam(), new CustomResponseListener<Team[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
@@ -197,7 +206,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		Context context = v.getContext();
 		Intent intent = new Intent(context, EditTeamProfileActivity.class);
-		intent.putExtra(Team.STORAGE_KEY, team);
+		intent.putExtra(Team.STORAGE_KEY, memberHasTeam.getTeam());
 
 		context.startActivity(intent);
 	}

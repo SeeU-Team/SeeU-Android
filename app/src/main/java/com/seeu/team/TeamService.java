@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.seeu.common.AbstractService;
 import com.seeu.member.Member;
+import com.seeu.member.MemberHasTeam;
 import com.seeu.teamwall.TeamType;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
@@ -50,15 +51,15 @@ public class TeamService extends AbstractService {
 	 * @param member the member for which we want the team
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getTeam(Member member, CustomResponseListener<Team> listener) {
+	public void getTeam(Member member, CustomResponseListener<MemberHasTeam> listener) {
 		Map<String, String> params = new HashMap<>(1);
-		params.put("userId", String.valueOf(member.getId()));
+		params.put("memberId", String.valueOf(member.getId()));
 
 		// TODO: send the member in the request or the token is enough ????
-		GsonRequest<Team> request = new GsonRequest<>(
+		GsonRequest<MemberHasTeam> request = new GsonRequest<>(
 				BASE_URL,
 				Request.Method.GET,
-				Team.class,
+				MemberHasTeam.class,
 				getToken(),
 				params,
 				listener);

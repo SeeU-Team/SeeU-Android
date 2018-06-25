@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.member.Member;
+import com.seeu.member.MemberHasTeam;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
@@ -32,9 +33,9 @@ import java.util.Map;
 public class NightCenterFragment extends Fragment {
 
 	private Member currentUser;
+	private MemberHasTeam memberHasTeam;
 
 	private CardView myTeamCardView;
-	private Team myTeam;
 	private boolean myTeamPictureSet;
 
 	private CardView mergedTeamCardView;
@@ -47,7 +48,7 @@ public class NightCenterFragment extends Fragment {
 	private List<Member> members;
 
 	public NightCenterFragment() {
-		myTeam = null;
+		memberHasTeam = null;
 		myTeamPictureSet = false;
 
 		mergedTeam = null;
@@ -97,7 +98,7 @@ public class NightCenterFragment extends Fragment {
 	 * Load teams info from the database.
 	 */
 	private void loadMyTeam() {
-		teamService.getTeam(currentUser, new CustomResponseListener<Team>() {
+		teamService.getTeam(currentUser, new CustomResponseListener<MemberHasTeam>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
@@ -109,13 +110,13 @@ public class NightCenterFragment extends Fragment {
 			}
 
 			@Override
-			public void onResponse(Team response) {
-				myTeam = response;
+			public void onResponse(MemberHasTeam response) {
+				memberHasTeam = response;
 				applyPicture();
 
 				loadMergedTeam();
 
-				members.addAll(myTeam.getMembers());
+				members.addAll(memberHasTeam.getTeam().getMembers());
 				if (null != memberRecyclerAdapter) {
 					memberRecyclerAdapter.notifyDataSetChanged();
 				}
@@ -124,7 +125,7 @@ public class NightCenterFragment extends Fragment {
 	}
 
 	private void loadMergedTeam() {
-		teamService.getMergedTeam(myTeam, new CustomResponseListener<Team>() {
+		teamService.getMergedTeam(memberHasTeam.getTeam(), new CustomResponseListener<Team>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
@@ -156,9 +157,9 @@ public class NightCenterFragment extends Fragment {
 	private void applyPicture() {
 		if (!myTeamPictureSet
 				&& null != myTeamCardView
-				&& null != myTeam) {
+				&& null != memberHasTeam) {
 			myTeamPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(myTeamCardView, 150, 150, 150).execute(myTeam.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(myTeamCardView, 150, 150, 150).execute(memberHasTeam.getTeam().getPictureUrl());
 		}
 
 		if (!mergedTeamPictureSet

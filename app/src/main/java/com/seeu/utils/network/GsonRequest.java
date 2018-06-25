@@ -100,7 +100,7 @@ public class GsonRequest<T> extends Request<T> {
 			}
 
 			if(params != null) {
-				StringBuilder stringBuilder = new StringBuilder(getUrl());
+				StringBuilder stringBuilder = new StringBuilder(url);
 				Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
 
 				for (int i = 0; iterator.hasNext(); i++) {
