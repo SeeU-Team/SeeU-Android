@@ -12,6 +12,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.seeu.member.AuthenticationService;
 import com.seeu.member.Member;
 import com.seeu.member.MemberService;
 import com.seeu.utils.SharedPreferencesManager;
@@ -29,14 +30,14 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	private CallbackManager callbackManager;
 	private LoginButton loginButton;
 
-	private MemberService memberService;
+	private AuthenticationService authenticationService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connection_activity);
 
-		this.memberService = new MemberService(this);
+		this.authenticationService = new AuthenticationService(this);
 
 		final AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
@@ -98,7 +99,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 			request.executeAsync();
 			*/
 		SharedPreferencesManager.putFacebookToken(this, accessToken.getToken());
-		memberService.getMember(accessToken, this);
+		authenticationService.getMember(accessToken, this);
 	}
 
 	@Override

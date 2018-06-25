@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by thomasfouan on 19/03/2018.
@@ -46,6 +49,20 @@ public class ImageUtils {
 		paint.setFilterBitmap(true);
 		canvas.drawBitmap(bitmap, transformation, paint);
 		return background;
+	}
+
+	/**
+	 * Get the image data from a Bitmap to a Base64-encoded String.
+	 * @param bmp the image
+	 * @return the image data as Base64-encoded String
+	 */
+	public static String getStringImage(Bitmap bmp) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+		byte[] imageBytes = baos.toByteArray();
+		return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
 	}
 
 	public static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {

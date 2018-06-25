@@ -10,14 +10,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.member.Member;
+import com.seeu.member.MemberService;
 import com.seeu.team.Team;
+import com.seeu.team.TeamService;
 import com.seeu.team.edit.EditTeamProfileActivity;
+import com.seeu.utils.SharedPreferencesManager;
+import com.seeu.utils.network.CustomResponseListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by thomasfouan on 16/03/2018.
@@ -27,11 +35,15 @@ import java.util.List;
  */
 public class MessagesFragment extends Fragment implements OnClickListener {
 
+	private Member currentMember;
+
 	private TeamCard teamCard;
 	private Team team;
+	private TeamService teamService;
 
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 	private List<Member> members;
+	private MemberService memberService;
 
 	private TeamRecyclerAdapter teamRecyclerAdapter;
 	private List<Team> teams;
@@ -41,17 +53,18 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 		team = null;
 		members = new ArrayList<>();
 		teams = new ArrayList<>();
-
-		loadTeam();
-		loadMembers();
-
-		// TODO: check if the current member is leader or not
-		loadTeams();
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		this.teamService = new TeamService(getActivity());
+		this.memberService = new MemberService(getActivity());
+		this.currentMember = SharedPreferencesManager.getEntity(getActivity(), Member.class);
+
+		loadTeam();
+		loadMembers();
 	}
 
 	@Override
@@ -100,28 +113,56 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	 * Load info of the team of the member.
 	 */
 	private void loadTeam() {
-		// TODO: make http request to load data
-		team = Team.getDebugTeam(1);
+		teamService.getTeam(currentMember, new CustomResponseListener<Team>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
 
-		// if loading the data was slower than create the view, set data here
-		if (null != teamCard) {
-			teamCard.setData(team);
-		}
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.printStackTrace();
+				Toast.makeText(getActivity(),"An error occurred while trying to retrieve my team", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onResponse(Team response) {
+				team = response;
+
+				// if loading the data was slower than create the view, set data here
+				if (null != teamCard) {
+					teamCard.setData(team);
+				}
+
+				// TODO: check if the current member is leader or not
+				loadTeams();
+			}
+		});
 	}
 
 	/**
 	 * Load all members the current member has talked with before.
 	 */
 	private void loadMembers() {
-		// TODO: make http request to load data
+		memberService.getFriends(currentMember, new CustomResponseListener<Member[]>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
 
-		for (int i = 0; i < 10; i++) {
-			members.add(Member.getDebugMember(i));
-		}
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.printStackTrace();
+				Toast.makeText(getActivity(),"An error occurred while trying to retrieve members", Toast.LENGTH_SHORT).show();
+			}
 
-		if (null != memberRecyclerAdapter) {
-			memberRecyclerAdapter.notifyDataSetChanged();
-		}
+			@Override
+			public void onResponse(Member[] response) {
+				Collections.addAll(members, response);
+
+				if (null != memberRecyclerAdapter) {
+					memberRecyclerAdapter.notifyDataSetChanged();
+				}
+			}
+		});
 	}
 
 	/**
@@ -129,15 +170,27 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	 * The current member MUST be leader of his team to see the list.
 	 */
 	private void loadTeams() {
-		// TODO: make http request to load data
 
-		for (int i = 0; i < 10; i++) {
-			teams.add(Team.getDebugTeam(i));
-		}
+		teamService.getLikedTeams(team, new CustomResponseListener<Team[]>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
 
-		if (null != teamRecyclerAdapter) {
-			teamRecyclerAdapter.notifyDataSetChanged();
-		}
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.printStackTrace();
+				Toast.makeText(getActivity(),"An error occurred while trying to retrieve teams", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onResponse(Team[] response) {
+				Collections.addAll(teams, response);
+
+				if (null != teamRecyclerAdapter) {
+					teamRecyclerAdapter.notifyDataSetChanged();
+				}
+			}
+		});
 	}
 
 	@Override

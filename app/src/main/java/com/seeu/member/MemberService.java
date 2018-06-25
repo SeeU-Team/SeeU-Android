@@ -2,37 +2,72 @@ package com.seeu.member;
 
 import android.content.Context;
 
+import com.android.volley.Request;
 import com.facebook.AccessToken;
+import com.google.gson.Gson;
 import com.seeu.common.AbstractService;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by thomasfouan on 14/06/2018.
  *
- * Service that communicate with the API for Member entity.
+ * Service that communicates with the API for Member entity.
  */
 public class MemberService extends AbstractService {
 
 	public MemberService(Context context) {
-		// TODO: to change with /members. Create Authentication Service ?
-		super(context, "/login");
+		super(context, "/members");
 	}
 
 	/**
-	 * Authenticate the user from its Facebook token and return its info.
-	 * In addition, it returns a token in the headers to provide for future calls to the SeeU API.
-	 * @param accessToken the Facebook API get with Facebook Login
-	 * @param listener listener that will retrieve the data after the request completes
+	 * Save the updated member passed in parameter in the Database.
+	 * @param member the member to save
+	 * @param imageBase64 the new profile picture encoded in Base64. May be null if not updated
+	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getMember(AccessToken accessToken, CustomResponseListener<Member> listener) {
+	public void updateMember(Member member, String imageBase64, CustomResponseListener<Member> listener) {
+		Map<String, String> params = new HashMap<>(2);
+		Gson gson = new Gson();
+		params.put("member", gson.toJson(member));
+
+		if (null != imageBase64) {
+			params.put("profilePicture", imageBase64);
+		}
+
 		GsonRequest<Member> request = new GsonRequest<>(
 				BASE_URL,
+				Request.Method.PUT,
 				Member.class,
-				accessToken.getToken(),
+				getToken(),
+				params,
 				listener);
 
-		// Add the request to the RequestQueue.
+		queue.add(request);
+	}
+
+	/**
+	 * Get friends of a member.
+	 * A friend is a member that had a previous discussion with the current member.
+	 * @param currentMember the member we want his friends
+	 * @param listener listener that will retrieve the data after the request completes
+	 */
+	public void getFriends(Member currentMember, CustomResponseListener<Member[]> listener) {
+		Map<String, String> params = new HashMap<>(1);
+		params.put("memberId", String.valueOf(currentMember.getId()));
+
+		// TODO: send the member in the request or the token is enough ????
+		GsonRequest<Member[]> request = new GsonRequest<>(
+				BASE_URL,
+				Request.Method.GET,
+				Member[].class,
+				getToken(),
+				params,
+				listener);
+
 		queue.add(request);
 	}
 }

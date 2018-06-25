@@ -7,25 +7,32 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.Mark;
+import com.seeu.member.Member;
 import com.seeu.nightcenter.MemberRecyclerAdapter;
 import com.seeu.team.Team;
+import com.seeu.team.TeamService;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.SharedPreferencesManager;
+import com.seeu.utils.network.CustomResponseListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by thomasfouan on 07/05/2018.
  *
- * Activity that display the team's profile.
+ * Activity that displays the team's profile.
  */
-public class TeamProfileActivity extends Activity implements ViewTreeObserver.OnPreDrawListener {
+public class TeamProfileActivity extends Activity implements OnPreDrawListener, CustomResponseListener<Void> {
 
 	private ConstraintLayout picture;
 	private TextView place;
@@ -38,6 +45,7 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 	private TextView textDescription;
 
 	private Team team;
+	private TeamService teamService;
 	private boolean isPictureLayoutDrawn;
 
 	public TeamProfileActivity() {
@@ -49,6 +57,8 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.teamprofile_activity);
+
+		this.teamService = new TeamService(this);
 
 		picture = findViewById(R.id.teamPicture);
 		place = findViewById(R.id.teamPlace);
@@ -90,7 +100,7 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		// Keep reference of the dataset (arraylist here) in the adapter
 		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, team.getDescriptions());
 
-		RecyclerView teamDescriptionRecycler	= findViewById(R.id.teamDescriptionRecycler);
+		RecyclerView teamDescriptionRecycler = findViewById(R.id.teamDescriptionRecycler);
 		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
 	}
 
@@ -140,10 +150,12 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 	/**
 	 * Handle clicks on the team up button.
 	 * Notify the other team's leader that this team liked his.
-	 * @param view
+	 * @param view the view clicked
 	 */
 	public void teamUpActionBtn(View view) {
-		Toast.makeText(view.getContext(), "You clicked on team up button", Toast.LENGTH_SHORT).show();
+		// TODO: if the member is leader, like the team. Otherwise, send notification to the leader
+		teamService.likeTeam(team, this);
+//		Toast.makeText(view.getContext(), "You clicked on team up button", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -156,5 +168,20 @@ public class TeamProfileActivity extends Activity implements ViewTreeObserver.On
 		}
 
 		return true;
+	}
+
+	@Override
+	public void onHeadersResponse(Map<String, String> headers) {
+	}
+
+	@Override
+	public void onErrorResponse(VolleyError error) {
+		Toast.makeText(this, "An error occurred while trying to team up", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onResponse(Void response) {
+		// End this activity when the team up has been successfully made
+		finish();
 	}
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.seeu.utils.SharedPreferencesManager;
 
 /**
  * Created by thomasfouan on 10/06/2018.
@@ -20,5 +21,9 @@ public abstract class AbstractService {
 		this.context = context;
 		this.queue = Volley.newRequestQueue(context);
 		this.BASE_URL = Constants.SEEU_API_URL + rootEndPointUrl;
+	}
+
+	protected String getToken() {
+		return SharedPreferencesManager.getToken(context);
 	}
 }

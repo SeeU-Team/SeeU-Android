@@ -1,13 +1,13 @@
 package com.seeu.team;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.seeu.common.AbstractService;
 import com.seeu.member.Member;
 import com.seeu.teamwall.TeamType;
-import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
@@ -31,7 +31,6 @@ public class TeamService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void getTeams(TeamType teamType, CustomResponseListener<Team[]> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("selectedTypeId", String.valueOf(teamType.getId()));
 
@@ -39,7 +38,7 @@ public class TeamService extends AbstractService {
 				BASE_URL,
 				Request.Method.GET,
 				Team[].class,
-				token,
+				getToken(),
 				params,
 				listener);
 
@@ -52,15 +51,88 @@ public class TeamService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void getTeam(Member member, CustomResponseListener<Team> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("userId", String.valueOf(member.getId()));
 
+		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<Team> request = new GsonRequest<>(
 				BASE_URL,
 				Request.Method.GET,
 				Team.class,
-				token,
+				getToken(),
+				params,
+				listener);
+
+		queue.add(request);
+	}
+
+	/**
+	 * Save the new team passed in parameter in the Database.
+	 * @param team the team to save
+	 * @param imageBase64 the profile picture encoded in Base64
+	 * @param listener callback listener called when the response is available from the server
+	 */
+	public void createTeam(Team team, String imageBase64, CustomResponseListener<Team> listener) {
+		if (null == imageBase64) {
+			throw new IllegalArgumentException("The image must not be null");
+		}
+
+		Map<String, String> params = new HashMap<>(2);
+		Gson gson = new Gson();
+		params.put("team", gson.toJson(team));
+		params.put("profilePicture", imageBase64);
+
+		GsonRequest<Team> request = new GsonRequest<>(
+				BASE_URL,
+				Request.Method.POST,
+				Team.class,
+				getToken(),
+				params,
+				listener);
+
+		queue.add(request);
+	}
+
+	/**
+	 * Save the updated team passed in parameter in the Database.
+	 * @param team the team to save
+	 * @param imageBase64 the new profile picture encoded in Base64. May be null if not updated
+	 * @param listener callback listener called when the response is available from the server
+	 */
+	public void updateTeam(Team team, String imageBase64, CustomResponseListener<Team> listener) {
+		Map<String, String> params = new HashMap<>(2);
+		Gson gson = new Gson();
+		params.put("team", gson.toJson(team));
+
+		if (null != imageBase64) {
+			params.put("profilePicture", imageBase64);
+		}
+
+		GsonRequest<Team> request = new GsonRequest<>(
+				BASE_URL,
+				Request.Method.PUT,
+				Team.class,
+				getToken(),
+				params,
+				listener);
+
+		queue.add(request);
+	}
+
+	/**
+	 * Get all teams that the team passed in parameter has mutually liked.
+	 * @param team the team for which we want the get the liked teams
+	 * @param listener callback listener called when the response is available from the server
+	 */
+	public void getLikedTeams(Team team, CustomResponseListener<Team[]> listener) {
+		Map<String, String> params = new HashMap<>(1);
+		params.put("teamId", String.valueOf(team.getId()));
+
+		GsonRequest<Team[]> request = new GsonRequest<>(
+				BASE_URL + "/liked",
+				Request.Method.GET,
+				Team[].class,
+				getToken(),
 				params,
 				listener);
 
@@ -73,15 +145,14 @@ public class TeamService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void getMergedTeam(Team team, CustomResponseListener<Team> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
 		GsonRequest<Team> request = new GsonRequest<>(
-				BASE_URL,
+				BASE_URL + "/merged",
 				Request.Method.GET,
 				Team.class,
-				token,
+				getToken(),
 				params,
 				listener);
 
@@ -89,34 +160,12 @@ public class TeamService extends AbstractService {
 	}
 
 	/**
-	 * Save the new team passed in parameter in the Database.
-	 * @param team the team to save
-	 * @param listener callback listener called when the response is available from the server
-	 */
-	public void createTeam(Team team, CustomResponseListener<Team> listener) {
-		String token = SharedPreferencesManager.getToken(context);
-		Map<String, String> params = new HashMap<>(1);
-		Gson gson = new Gson();
-		params.put("team", gson.toJson(team));
-
-		GsonRequest<Team> request = new GsonRequest<>(
-				BASE_URL,
-				Request.Method.POST,
-				Team.class,
-				token,
-				params,
-				listener);
-
-		queue.add(request);
-	}
-
-	/**
-	 * Like the team. The user (leader)'s token provided along with the request allows the API to get the team he belongs to.
+	 * Like the team if the current member is leader, or send notification to leader if not.
+	 * The user's token provided along with the request allows the API to get the team he belongs to, and his status (leader or not).
 	 * @param likedTeam the team that the leader liked
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void likeTeam(Team likedTeam, CustomResponseListener<Void> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("likedTeamId", String.valueOf(likedTeam.getId()));
 
@@ -124,7 +173,7 @@ public class TeamService extends AbstractService {
 				BASE_URL,
 				Request.Method.POST,
 				Void.class,
-				token,
+				getToken(),
 				params,
 				listener);
 
@@ -137,7 +186,6 @@ public class TeamService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void mergeTeam(Team teamToMerge, CustomResponseListener<Void> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamToMergeId", String.valueOf(teamToMerge.getId()));
 
@@ -145,7 +193,7 @@ public class TeamService extends AbstractService {
 				BASE_URL,
 				Request.Method.POST,
 				Void.class,
-				token,
+				getToken(),
 				params,
 				listener);
 

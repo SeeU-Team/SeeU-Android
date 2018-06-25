@@ -111,7 +111,6 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		final Context context = this.getActivity();
 		types.clear();
 
-		// TODO: make http request to get types
 		teamTypeService.getAllTeamTypes(new CustomResponseListener<TeamType[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
@@ -146,7 +145,6 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		final Context context = this.getActivity();
 		teams.clear();
 
-		// TODO: make http request to get data
 		teamService.getTeams(selectedType, new CustomResponseListener<Team[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {

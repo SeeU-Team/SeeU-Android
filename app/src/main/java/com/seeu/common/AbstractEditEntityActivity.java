@@ -22,7 +22,7 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 
 	protected AbstractEditEntityActivity() {
 		this.entity = getEntityInstance();
-		this.isNewEntity = false;
+		this.isNewEntity = true;
 	}
 
 	@Override

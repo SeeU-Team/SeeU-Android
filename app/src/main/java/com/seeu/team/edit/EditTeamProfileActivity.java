@@ -2,8 +2,10 @@ package com.seeu.team.edit;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,19 +13,28 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.common.AbstractEditEntityActivity;
 import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
 import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
+import com.seeu.team.TeamService;
+import com.seeu.utils.ImageUtils;
+import com.seeu.utils.network.CustomResponseListener;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Created by thomasfouan on 08/05/2018.
  *
  * Activity that display the edition of team's profile.
  */
-public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
+public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> implements CustomResponseListener<Team> {
 
 	private static final int INTENT_ACTION_SEARCH = 2;
 
@@ -35,6 +46,8 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 	private EditText tags;
 	private EditText textDescription;
 
+	private TeamService teamService;
+
 	public EditTeamProfileActivity() {
 		super();
 	}
@@ -43,6 +56,8 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_teamprofile_activity);
+
+		this.teamService = new TeamService(this);
 
 		pictureChooser = new PictureChooser();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -141,52 +156,44 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> {
 	@Override
 	protected void saveEntity() {
 		Uri chosenPictureUri = pictureChooser.getChosenPictureUri();
+		String imageBase64 = null;
 
 		if (null != chosenPictureUri) {
-			// TODO: Get data of picture, save it on cloud and get the url of the picture to save it in our DB
-//			HttpURLConnection urlConnection = null;
-//			try {
-//				InputStream imageStream = getContentResolver().openInputStream(chosenPictureUri);
-//
-//				URL httpUrl = new URL("http://toto.tata.fr");
-//				urlConnection = (HttpURLConnection) httpUrl.openConnection();
-//				urlConnection.setDoInput(true);
-//				urlConnection.setDoOutput(true);
-//				urlConnection.setChunkedStreamingMode(0);
-//				urlConnection.setRequestMethod("POST");
-//				urlConnection.setRequestProperty("Content-Type", "multipart/form-data");
-//
-//				OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-//
-//				byte[] buffer = new byte[100000];
-//				while ((imageStream.read(buffer)) != -1) {
-//					out.write(buffer);
-//				}
-//
-//				InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-//				url = in.toString();
-//
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			} finally {
-//				if (null != urlConnection) {
-//					urlConnection.disconnect();
-//				}
-//			}
-
-			String url = Team.DEBUG_PICTURE_URL;
-			entity.setPictureUrl(url);
+			try {
+				// Get data of picture
+				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), chosenPictureUri);
+				//encoding image to string
+				imageBase64 = ImageUtils.getStringImage(bitmap);
+			} catch (IOException e) {
+				e.printStackTrace();
+				imageBase64 = null;
+			}
 		}
 
 		if (isNewEntity) {
-			// TODO: make http request to save the newly created team
+			// Save the newly created team with its picture
+			teamService.createTeam(entity, imageBase64, this);
 		} else {
-			// TODO: make http request to save the updated team
+			// Save the updated team with its new picture or not
+			teamService.updateTeam(entity, imageBase64, this);
 		}
 	}
 
+	@Override
+	public void onHeadersResponse(Map<String, String> headers) {
+	}
+
+	@Override
+	public void onErrorResponse(VolleyError error) {
+		error.printStackTrace();
+		String message = "An error occurred while trying to " + ((isNewEntity) ? "create" : "update") + " the team";
+
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onResponse(Team response) {
+		// End this activity when successfully save the team
+		finish();
+	}
 }
