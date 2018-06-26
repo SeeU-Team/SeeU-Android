@@ -86,7 +86,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 			throw new IllegalStateException("No team nor member provided to chat activity");
 		}
 
-		this.currentUser = SharedPreferencesManager.getEntity(this, Member.class);
+		this.currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
 	}
 
 	/**

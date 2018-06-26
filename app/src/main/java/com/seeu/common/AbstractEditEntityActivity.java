@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.seeu.member.Member;
+import com.seeu.team.Team;
+
 import java.io.Serializable;
 
 /**
@@ -37,7 +40,10 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 	 * If there is one, it is for update. Otherwise, it is for creation.
 	 */
 	private void updateEntityFromCaller() {
-		Serializable ser = getIntent().getSerializableExtra(T.STORAGE_KEY);
+		Serializable ser = getIntent().getSerializableExtra(Member.STORAGE_KEY);
+		if (null == ser) {
+			ser = getIntent().getSerializableExtra(Team.STORAGE_KEY);
+		}
 
 		// If an entity was passed by the caller, get it for update
 		if (null != ser) {
@@ -66,7 +72,7 @@ public abstract class AbstractEditEntityActivity<T extends Entity> extends Activ
 		updateEntity();
 		saveEntity();
 
-		finish();
+//		finish();
 	}
 
 	/**

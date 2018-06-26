@@ -138,7 +138,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 
 		place.setText(team.getPlace());
 		name.setText(team.getName());
-		tags.setText(team.getTags());
+		tags.setText(team.getTagsAsString());
 		genderIndex.setMaleProportion(maleProportion);
 		textDescription.setText(team.getDescription());
 		mark.setMark(team.getMark());

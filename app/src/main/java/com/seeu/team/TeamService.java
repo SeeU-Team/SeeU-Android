@@ -23,7 +23,7 @@ import java.util.Map;
 public class TeamService extends AbstractService {
 
 	public TeamService(Context context) {
-		super(context, "/teams");
+		super(context, "/api/teams");
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class TeamService extends AbstractService {
 		params.put("selectedTypeId", String.valueOf(teamType.getId()));
 
 		GsonRequest<Team[]> request = new GsonRequest<>(
-				BASE_URL,
+				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				Team[].class,
 				getToken(),
@@ -57,7 +57,7 @@ public class TeamService extends AbstractService {
 
 		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<MemberHasTeam> request = new GsonRequest<>(
-				BASE_URL,
+				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				MemberHasTeam.class,
 				getToken(),
@@ -81,7 +81,7 @@ public class TeamService extends AbstractService {
 		Map<String, String> params = new HashMap<>(2);
 		Gson gson = new Gson();
 		params.put("team", gson.toJson(team));
-		params.put("profilePicture", imageBase64);
+		params.put("profilePicture", "\"" + imageBase64 + "\"");
 
 		GsonRequest<Team> request = new GsonRequest<>(
 				BASE_URL,
@@ -129,8 +129,9 @@ public class TeamService extends AbstractService {
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
+		// TODO: get full url with params
 		GsonRequest<Team[]> request = new GsonRequest<>(
-				BASE_URL + "/liked",
+				getFullGETUrl(BASE_URL + "/liked", params),
 				Request.Method.GET,
 				Team[].class,
 				getToken(),
@@ -149,8 +150,9 @@ public class TeamService extends AbstractService {
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
+		// TODO: get full url with params
 		GsonRequest<Team> request = new GsonRequest<>(
-				BASE_URL + "/merged",
+				getFullGETUrl(BASE_URL + "/merged", params),
 				Request.Method.GET,
 				Team.class,
 				getToken(),

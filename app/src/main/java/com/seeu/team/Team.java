@@ -19,19 +19,45 @@ import lombok.Setter;
 @Setter
 public class Team extends Entity {
 
+	/**
+	 * Key used when the entity is passed in an intent or store in the sharedPreferences.
+	 */
+	public static final String STORAGE_KEY = "team";
+
 	private String pictureUrl;
 	private String name;
 	private String place;
-	private String tags;
+	private ArrayList<String> tags;
 	private String description;
 	private int mark;
 	private ArrayList<Member> members; // Use ArrayList because it is Serializable (List interface is not)
 	private ArrayList<TeamDescription> descriptions; // Use ArrayList because it is Serializable (List interface is not)
 
 	public Team() {
-		super("team");
+		tags = new ArrayList<>();
 		members = new ArrayList<>();
 		descriptions = new ArrayList<>();
+	}
+
+	public void setTagsFromString(String tags) {
+		String[] tagsArray = tags.split("#");
+		this.tags.clear();
+
+		for (String s : tagsArray) {
+			if (!s.trim().isEmpty()) {
+				this.tags.add(s);
+			}
+		}
+	}
+
+	public String getTagsAsString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (String s : tags) {
+			stringBuilder.append("#");
+			stringBuilder.append(s);
+		}
+
+		return stringBuilder.toString();
 	}
 
 	// TODO: Remove debug elements
@@ -58,13 +84,17 @@ public class Team extends Entity {
 				"Donec eleifend enim ut accumsan tincidunt. " +
 				"Donec vel massa sed sapien.";
 
+		ArrayList<String> tags = new ArrayList<>();
+		tags.add("uno");
+		tags.add("dos");
+		tags.add("tres");
 
 		Team team = new Team();
 		team.setId(index);
 		team.setPictureUrl(Team.DEBUG_PICTURE_URL);
 		team.setName("Team " + index);
 		team.setPlace("A LA MAISON");
-		team.setTags("#uno#dos#tres");
+		team.setTags(tags);
 		team.setDescription(description);
 		team.setMark(index%6);
 		team.setMembers(members);

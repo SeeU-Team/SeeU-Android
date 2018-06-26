@@ -51,4 +51,6 @@
     <string name="team_category_label">TRENDING</string>
     <string name="team_up_label">Team Up</string>
     <string name="lorem_ipsum_short_short">Lorem ipsum</string>
+    <string name="no_team_title">No team, no party !</string>
+    <string name="no_team_description">"You have no team, \nplease create a team"</string>
 </resources>

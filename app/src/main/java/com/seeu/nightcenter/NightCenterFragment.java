@@ -62,7 +62,7 @@ public class NightCenterFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		this.teamService = new TeamService(getActivity());
-		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.class);
+		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 
 		loadMyTeam();
 	}

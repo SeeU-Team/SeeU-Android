@@ -16,13 +16,11 @@ import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
-import com.seeu.member.MemberStatus;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,8 +59,8 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		this.teamService = new TeamService(this.getActivity());
 		this.teamTypeService = new TeamTypeService(this.getActivity());
 
-		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.class);
-		loadMemberTeam();
+		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
+		memberHasTeam = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, MemberHasTeam.class);
 	}
 
 	@Override
@@ -111,31 +109,6 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
-	}
-
-	private void loadMemberTeam() {
-		teamService.getTeam(currentUser, new CustomResponseListener<MemberHasTeam>() {
-			@Override
-			public void onHeadersResponse(Map<String, String> headers) {
-			}
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				if (HttpURLConnection.HTTP_NOT_FOUND == error.networkResponse.statusCode) {
-					memberHasTeam = MemberHasTeam.builder()
-							.memberId(currentUser.getId())
-							.status(MemberStatus.ALONE)
-							.build();
-				}
-			}
-
-			@Override
-			public void onResponse(MemberHasTeam response) {
-				memberHasTeam = response;
-
-				loadTypes();
-			}
-		});
 	}
 
 	/**

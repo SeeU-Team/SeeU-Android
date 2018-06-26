@@ -127,7 +127,7 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 	@Override
 	public void onResponse(Member response) {
 		// Save the updated member in the shared preferences
-		SharedPreferencesManager.putEntity(this, response);
+		SharedPreferencesManager.putEntity(this, Member.STORAGE_KEY, response);
 		// End this activity when successfully save the member
 		finish();
 	}

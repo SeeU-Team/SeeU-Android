@@ -103,7 +103,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 	@Override
 	public void onResponse(Member response) {
-		SharedPreferencesManager.putEntity(this, response);
+		SharedPreferencesManager.putEntity(this, Member.STORAGE_KEY, response);
 
 		Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
 		startActivity(intent);

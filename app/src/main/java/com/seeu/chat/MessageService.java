@@ -21,7 +21,7 @@ import java.util.Map;
 public class MessageService extends AbstractService {
 
 	public MessageService(Context context) {
-		super(context, "/messages");
+		super(context, "/api/messages");
 	}
 
 	/**

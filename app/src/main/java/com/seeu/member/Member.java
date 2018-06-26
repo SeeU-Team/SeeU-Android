@@ -18,6 +18,11 @@ import lombok.Setter;
 @Setter
 public class Member extends Entity {
 
+	/**
+	 * Key used when the entity is passed in an intent or store in the sharedPreferences.
+	 */
+	public static final String STORAGE_KEY = "member";
+
 	private Long facebookId;
 	private String name;
 	private String catchPhrase;
@@ -30,7 +35,6 @@ public class Member extends Entity {
 	private Date lastConnection;
 
 	public Member() {
-		super("member");
 	}
 
 	@Override

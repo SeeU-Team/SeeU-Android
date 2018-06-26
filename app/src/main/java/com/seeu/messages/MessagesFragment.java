@@ -64,7 +64,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 
 		this.teamService = new TeamService(getActivity());
 		this.memberService = new MemberService(getActivity());
-		this.currentMember = SharedPreferencesManager.getEntity(getActivity(), Member.class);
+		this.currentMember = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 
 		loadTeam();
 		loadMembers();

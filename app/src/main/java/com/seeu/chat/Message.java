@@ -31,7 +31,7 @@ public class Message {
 	 * @return true if this message has been sent by the current user
 	 */
 	public boolean belongsToCurrentUser(Context context) {
-		final Member currentUser = SharedPreferencesManager.getEntity(context, Member.class);
+		final Member currentUser = SharedPreferencesManager.getEntity(context, Member.STORAGE_KEY, Member.class);
 		return currentUser.getId() == owner.getId();
 	}
 

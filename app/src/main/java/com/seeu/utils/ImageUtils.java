@@ -61,7 +61,7 @@ public class ImageUtils {
 		bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
 		byte[] imageBytes = baos.toByteArray();
-		return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+		return Base64.encodeToString(imageBytes, Base64.NO_WRAP | Base64.URL_SAFE);
 
 	}
 

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Created by thomasfouan on 16/05/2018.
@@ -87,38 +88,6 @@ public class GsonRequest<T> extends Request<T> {
 	}
 
 	@Override
-	public String getUrl() {
-		String url = super.getUrl();
-
-		if(getMethod() == Request.Method.GET) {
-			Map<String, String> params;
-
-			try {
-				params = getParams();
-			} catch (AuthFailureError authFailureError) {
-				params = null;
-			}
-
-			if(params != null) {
-				StringBuilder stringBuilder = new StringBuilder(url);
-				Iterator<Entry<String, String>> iterator = params.entrySet().iterator();
-
-				for (int i = 0; iterator.hasNext(); i++) {
-					Entry<String, String> entry = iterator.next();
-
-					stringBuilder.append((i == 0) ? "?" : "&");
-					stringBuilder.append(entry.getKey() + "=" + entry.getValue());
-
-					iterator.remove(); // avoids a ConcurrentModificationException
-				}
-
-				url = stringBuilder.toString();
-			}
-		}
-		return url;
-	}
-
-	@Override
 	public Map<String, String> getHeaders() throws AuthFailureError {
 		return headers != null ? headers : super.getHeaders();
 	}
@@ -130,12 +99,42 @@ public class GsonRequest<T> extends Request<T> {
 
 	@Override
 	public String getBodyContentType() {
-		return (null != rawData) ? "text/plain; charset=" + getParamsEncoding() : super.getBodyContentType();
+		return (null != rawData) ? "text/plain; charset=" + getParamsEncoding() : "application/json";
 	}
 
 	@Override
-	public byte[] getBody() throws AuthFailureError {
-		return (null != rawData) ? rawData.getBytes() : super.getBody();
+	public byte[] getBody() {
+		return (null != rawData)
+				? rawData.getBytes()
+				: getRawJsonBody();
+	}
+
+	private byte[] getRawJsonBody() {
+		if (null == params || params.size() == 0) {
+			return null;
+		}
+
+		Set<Entry<String, String>> entrySet = params.entrySet();
+		Iterator<Entry<String, String>> iterator = entrySet.iterator();
+
+		if (entrySet.size() == 1) {
+			return iterator.next().getValue().getBytes();
+		}
+
+		StringBuilder stringBuilder = new StringBuilder("{");
+
+		for (int i = 0; iterator.hasNext(); i++) {
+			if (i > 0) {
+				stringBuilder.append(",");
+			}
+
+			Entry<String, String> entry = iterator.next();
+			String line = "\"" + entry.getKey() + "\":" + entry.getValue();
+			stringBuilder.append(line);
+		}
+		stringBuilder.append("}");
+
+		return stringBuilder.toString().getBytes();
 	}
 
 	@Override

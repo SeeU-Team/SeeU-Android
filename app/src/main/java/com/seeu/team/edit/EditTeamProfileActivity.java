@@ -1,5 +1,6 @@
 package com.seeu.team.edit;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,6 +23,7 @@ import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
 import com.seeu.team.TeamService;
 import com.seeu.utils.ImageUtils;
+import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
 import java.io.FileNotFoundException;
@@ -129,16 +131,20 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 		name.setText(entity.getName());
 		place.setText(entity.getPlace());
-		tags.setText(entity.getTags());
+		tags.setText(entity.getTagsAsString());
 		textDescription.setText(entity.getDescription());
 	}
 
 	@Override
 	protected boolean isEntityValid() {
-		if (isNewEntity
-				&& null == pictureChooser.getChosenPictureUri()) {
-			Toast.makeText(this, "You must select a picture", Toast.LENGTH_SHORT).show();
-			return false;
+		if (isNewEntity) {
+			if (null == pictureChooser.getChosenPictureUri()) {
+				Toast.makeText(this, "You must select a picture", Toast.LENGTH_SHORT).show();
+				return false;
+			} else if (name.getText().toString().trim().isEmpty()) {
+				Toast.makeText(this, "You must enter a name", Toast.LENGTH_SHORT).show();
+				return false;
+			}
 		}
 
 		return true;
@@ -148,9 +154,12 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	protected void updateEntity() {
 		entity.setName(name.getText().toString());
 		entity.setPlace(place.getText().toString());
-		entity.setTags(tags.getText().toString());
+		entity.setTagsFromString(tags.getText().toString());
 		entity.setDescription(textDescription.getText().toString());
-		// TODO: How to add the creator (leader) of the team ?? Via token or add him first in the list ??
+
+		// Add the current user first in the list of members to make him LEADER
+		Member currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
+		entity.getMembers().add(0, currentUser);
 	}
 
 	@Override
@@ -193,7 +202,12 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 	@Override
 	public void onResponse(Team response) {
+		SharedPreferencesManager.putEntity(this, Team.STORAGE_KEY, response);
 		// End this activity when successfully save the team
+
+		Intent returnIntent = new Intent();
+		returnIntent.putExtra("result", "ok");
+		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
 	}
 }

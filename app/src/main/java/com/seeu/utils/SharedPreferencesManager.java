@@ -74,22 +74,24 @@ public class SharedPreferencesManager {
 	/**
 	 * Put an {@link Entity} in the shared preferences.
 	 * @param context the context needed to get the shared preferences
+	 * @param key the key assigned to the value
 	 * @param value the entity to store
 	 * @param <T> the type of the entity to store
 	 */
-	public static <T extends Entity> void putEntity(Context context, T value) {
-		putObject(context, T.STORAGE_KEY, value);
+	public static <T extends Entity> void putEntity(Context context, String key, T value) {
+		putObject(context, key, value);
 	}
 
 	/**
 	 * Get the {@link Entity} from the shared preferences.
 	 * @param context the context needed to get the shared preferences
+	 * @param key the key assigned to the value
 	 * @param clazz the class of the entity to retrieve
 	 * @param <T> the type of the entity to retrieve
 	 * @return the entity
 	 */
-	public static <T extends Entity> T getEntity(Context context, Class<T> clazz) {
-		return getObject(context, T.STORAGE_KEY, clazz);
+	public static <T extends Entity> T getEntity(Context context, String key, Class<T> clazz) {
+		return getObject(context, key, clazz);
 	}
 
 	/**

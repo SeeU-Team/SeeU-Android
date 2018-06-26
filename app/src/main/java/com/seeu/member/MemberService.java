@@ -20,7 +20,7 @@ import java.util.Map;
 public class MemberService extends AbstractService {
 
 	public MemberService(Context context) {
-		super(context, "/members");
+		super(context, "/api/members");
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class MemberService extends AbstractService {
 
 		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<Member[]> request = new GsonRequest<>(
-				BASE_URL,
+				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				Member[].class,
 				getToken(),

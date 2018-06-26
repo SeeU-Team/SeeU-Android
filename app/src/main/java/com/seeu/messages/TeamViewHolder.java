@@ -11,6 +11,8 @@ import com.seeu.common.ItemClickListener;
 import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
+import java.util.ArrayList;
+
 /**
  * Created by thomasfouan on 30/04/2018.
  *
@@ -66,7 +68,7 @@ class TeamViewHolder extends ViewHolder implements OnClickListener {
 	public void setData(Team team) {
 		setPicture(team.getPictureUrl());
 		setName(team.getName());
-		setTags(team.getTags());
+		setTags(team.getTagsAsString());
 	}
 
 	@Override

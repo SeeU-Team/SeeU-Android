@@ -16,16 +16,7 @@ import lombok.Setter;
 @Setter
 public abstract class Entity implements Serializable {
 
-	/**
-	 * Key used when the entity is passed in an intent or store in the sharedPreferences.
-	 */
-	public static String STORAGE_KEY;
-
 	protected long id;
-
-	protected Entity(String keyName) {
-		STORAGE_KEY = keyName;
-	}
 
 	@Override
 	public String toString() {
