@@ -61,6 +61,8 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 		memberHasTeam = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, MemberHasTeam.class);
+
+		loadTypes();
 	}
 
 	@Override
@@ -127,6 +129,19 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 			public void onErrorResponse(VolleyError error) {
 				Log.e("TeamWallFragment", "Error while loading TeamTypes", error);
 				Toast.makeText(context, "Error while loading TeamTypes " + error.getMessage(), Toast.LENGTH_LONG).show();
+
+
+//				TeamType teamType = new TeamType();
+//				teamType.setId(0);
+//				teamType.setName("Type Bar");
+//				types.clear();
+//				types.add(teamType);
+//
+//				if (null != teamTypeRecyclerAdapter) {
+//					teamTypeRecyclerAdapter.setSelected(0);
+//					teamTypeRecyclerAdapter.notifyDataSetChanged();
+//				}
+//				refreshTeams(types.get(0));
 			}
 
 			@Override
@@ -134,6 +149,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 				Collections.addAll(types, response);
 
 				if (null != teamTypeRecyclerAdapter) {
+					teamTypeRecyclerAdapter.setSelected(0);
 					teamTypeRecyclerAdapter.notifyDataSetChanged();
 				}
 
@@ -161,6 +177,13 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 			public void onErrorResponse(VolleyError error) {
 				Log.e("TeamWallFragment", "Error while loading Teams", error);
 				Toast.makeText(context, "Error while loading Teams " + error.getMessage(), Toast.LENGTH_LONG).show();
+
+//				teams.clear();
+//				teams.add(Team.getDebugTeam(1));
+//
+//				if (null != teamRecyclerAdapter) {
+//					teamRecyclerAdapter.notifyDataSetChanged();
+//				}
 			}
 
 			@Override

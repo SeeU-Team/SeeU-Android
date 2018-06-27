@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static android.view.View.GONE;
 
 /**
  * Created by thomasfouan on 16/03/2018.
@@ -78,7 +81,7 @@ public class MessagesFragment extends Fragment {
 		setupTeamCard();
 
 		setupMemberRecycler(view);
-		setupTeamRecycler(view);
+		setupTeamsParts(view);
 
 		return view;
 	}
@@ -107,6 +110,27 @@ public class MessagesFragment extends Fragment {
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
+	}
+
+	/**
+	 * Setup the teams parts (title and recycler view).
+	 * If the user is not leader, do nothing because all is hidden by default.
+	 * Otherwise, display the "Teams" title and setup the recycler view
+	 *
+	 * @param view the root view
+	 */
+	private void setupTeamsParts(View view) {
+		// Display all teams parts if the view is initialized, the data is loaded, and the member is the leader
+		if (null == view
+				|| null == memberHasTeam
+				|| !MemberStatus.LEADER.equals(memberHasTeam.getStatus())) {
+			return;
+		}
+
+		TextView teamsTitle = view.findViewById(R.id.teams);
+		teamsTitle.setVisibility(View.VISIBLE);
+
+		setupTeamRecycler(view);
 	}
 
 	/**
@@ -160,6 +184,7 @@ public class MessagesFragment extends Fragment {
 
 				if (MemberStatus.LEADER.equals(memberHasTeam.getStatus())) {
 					loadTeams();
+					setupTeamsParts(getView());
 				}
 			}
 		});
