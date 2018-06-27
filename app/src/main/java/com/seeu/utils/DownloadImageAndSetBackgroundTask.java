@@ -64,8 +64,8 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 				bitmap = BlurBuilder.blur(view.getContext(), bitmap);
 			}
 		} catch (Exception e) {
-			Log.e("Error", e.getMessage());
-			e.printStackTrace();
+			Log.e(this.getClass().getName() + " : Error : ", e.getMessage());
+			Log.i(this.getClass().getName(), "Use default image");
 			bitmap = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ic_broken_image_black);
 		} finally {
 			// BitmapDrawable drawable = new BitmapDrawable(Resources.getSystem(), result);

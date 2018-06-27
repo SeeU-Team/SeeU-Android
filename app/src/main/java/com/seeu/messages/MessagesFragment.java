@@ -1,6 +1,7 @@
 package com.seeu.messages;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.seeu.team.edit.EditTeamProfileActivity;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,14 +37,13 @@ import java.util.Map;
  * Fragment for the Messages tab.
  * Give access to chat with the member's team, older member's, and other team leader if the current member is leader too.
  */
-public class MessagesFragment extends Fragment implements OnClickListener {
+public class MessagesFragment extends Fragment {
 
-	private Member currentMember;
+	private Member currentUser;
 	private MemberHasTeam memberHasTeam;
-
-	private FloatingActionButton editTeamBtn;
-	private TeamCard teamCard;
 	private TeamService teamService;
+
+	private boolean isTeamCardFragmentAlreadySetup;
 
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 	private List<Member> members;
@@ -52,8 +53,8 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	private List<Team> teams;
 
 	public MessagesFragment() {
-		teamCard = null;
 		memberHasTeam = null;
+		isTeamCardFragmentAlreadySetup = false;
 		members = new ArrayList<>();
 		teams = new ArrayList<>();
 	}
@@ -64,7 +65,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 
 		this.teamService = new TeamService(getActivity());
 		this.memberService = new MemberService(getActivity());
-		this.currentMember = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
+		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 
 		loadTeam();
 		loadMembers();
@@ -74,15 +75,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.messages_fragment, container, false);
 
-		editTeamBtn = view.findViewById(R.id.editTeamBtn);
-		editTeamBtn.setOnClickListener(this);
-		editTeamBtn.setVisibility(View.GONE);
-
-		teamCard = new TeamCard(view);
-
-		if (null != memberHasTeam) {
-			teamCard.setData(memberHasTeam.getTeam());
-		}
+		setupTeamCard();
 
 		setupMemberRecycler(view);
 		setupTeamRecycler(view);
@@ -104,7 +97,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	}
 
 	/**
-	 * Setup the recycler view to display the team list
+	 * Setup the recycler view to display the team list.
 	 *
 	 * @param view the root view
 	 */
@@ -117,18 +110,45 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	}
 
 	/**
+	 * Display the team card if the current user has a team.
+	 */
+	private void setupTeamCard() {
+		if (!isTeamCardFragmentAlreadySetup
+				&& null != memberHasTeam
+				&& !MemberStatus.ALONE.equals(memberHasTeam.getStatus())) {
+			isTeamCardFragmentAlreadySetup = true;
+
+			Bundle bundle = new Bundle();
+			bundle.putSerializable(MemberHasTeam.STORAGE_KEY, memberHasTeam);
+
+			TeamCardFragment teamCardFragment = new TeamCardFragment();
+			teamCardFragment.setArguments(bundle);
+
+			FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+			fragmentTransaction.replace(R.id.teamcard_frame_layout, teamCardFragment);
+			fragmentTransaction.commit();
+		}
+	}
+
+	/**
 	 * Load info of the team of the member.
 	 */
 	private void loadTeam() {
-		teamService.getTeam(currentMember, new CustomResponseListener<MemberHasTeam>() {
+		teamService.getTeam(currentUser, new CustomResponseListener<MemberHasTeam>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
 
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				error.printStackTrace();
-				Toast.makeText(getActivity(),"An error occurred while trying to retrieve my team", Toast.LENGTH_SHORT).show();
+				if (HttpURLConnection.HTTP_NOT_FOUND == error.networkResponse.statusCode) {
+					memberHasTeam = new MemberHasTeam();
+					memberHasTeam.setMemberId(currentUser.getId());
+					memberHasTeam.setStatus(MemberStatus.ALONE);
+				} else {
+					error.printStackTrace();
+					Toast.makeText(getActivity(), "An error occurred while trying to retrieve my team", Toast.LENGTH_SHORT).show();
+				}
 			}
 
 			@Override
@@ -136,13 +156,10 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				memberHasTeam = response;
 
 				// if loading the data was slower than create the view, set data here
-				if (null != teamCard) {
-					teamCard.setData(memberHasTeam.getTeam());
-				}
+				setupTeamCard();
 
 				if (MemberStatus.LEADER.equals(memberHasTeam.getStatus())) {
 					loadTeams();
-					editTeamBtn.setVisibility(View.VISIBLE);
 				}
 			}
 		});
@@ -152,7 +169,7 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 	 * Load all members the current member has talked with before.
 	 */
 	private void loadMembers() {
-		memberService.getFriends(currentMember, new CustomResponseListener<Member[]>() {
+		memberService.getFriends(currentUser, new CustomResponseListener<Member[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
@@ -200,14 +217,5 @@ public class MessagesFragment extends Fragment implements OnClickListener {
 				}
 			}
 		});
-	}
-
-	@Override
-	public void onClick(View v) {
-		Context context = v.getContext();
-		Intent intent = new Intent(context, EditTeamProfileActivity.class);
-		intent.putExtra(Team.STORAGE_KEY, memberHasTeam.getTeam());
-
-		context.startActivity(intent);
 	}
 }

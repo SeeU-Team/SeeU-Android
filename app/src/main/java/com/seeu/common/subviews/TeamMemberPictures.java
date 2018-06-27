@@ -5,12 +5,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.seeu.R;
+import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.util.List;
 
+
 /**
  * Created by thomasfouan on 30/04/2018.
+ *
+ * Important : there is 2 classes that do the same thing.
+ * This one is used inside a View Holder in a list, and cannot be a fragment.
  *
  * Class that manages the displaying of the small Member pictures for a Team.
  * It can display at most 5 members.
@@ -38,22 +43,27 @@ public class TeamMemberPictures {
 	 * Set the urls of the member pictures that will be displayed.
 	 * If there are less than 5 members, hide useless image views.
 	 * If there are more than 5 members, increment a counter that will be displayed in the extra members bubble.
-	 * @param urls the urls of the member pictures
 	 */
 	public void setMemberPictures(List<String> urls) {
-		for (int i = 0; i < urls.size() && i < memberPictures.length; i++) {
+		int nbMembers = urls.size();
+
+		for (int i = 0; i < nbMembers && i < memberPictures.length; i++) {
 			memberPictures[i].setVisibility(View.VISIBLE);
-			new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(urls.get(i));
+
+			String url = urls.get(i);
+			if (null != url) {
+				new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(url);
+			}
 		}
 
 		// Hide member pictures that are not used
-		for (int i = urls.size(); i < memberPictures.length; i++) {
+		for (int i = nbMembers; i < memberPictures.length; i++) {
 			memberPictures[i].setVisibility(View.GONE);
 		}
 
 		// Put all extra members in a bubble with a number
-		if (urls.size() > memberPictures.length) {
-			int nbExtraMembers = urls.size() - memberPictures.length;
+		if (nbMembers > memberPictures.length) {
+			int nbExtraMembers = nbMembers - memberPictures.length;
 			String text = extraMembers.getResources().getString(R.string.extra_member_placeholder, nbExtraMembers);
 
 			extraMembers.setText(text);
