@@ -155,7 +155,6 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	public void teamUpActionBtn(View view) {
 		// TODO: if the member is leader, like the team. Otherwise, send notification to the leader
 		teamService.likeTeam(team, this);
-//		Toast.makeText(view.getContext(), "You clicked on team up button", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

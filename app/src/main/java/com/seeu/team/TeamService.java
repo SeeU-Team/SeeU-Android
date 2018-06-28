@@ -129,7 +129,6 @@ public class TeamService extends AbstractService {
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
-		// TODO: get full url with params
 		GsonRequest<Team[]> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL + "/liked", params),
 				Request.Method.GET,
