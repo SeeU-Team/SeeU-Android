@@ -48,7 +48,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 		callbackManager = CallbackManager.Factory.create();
 		loginButton = findViewById(R.id.login_button);
-		loginButton.setReadPermissions("public_profile", "user_photos");
+		loginButton.setReadPermissions("public_profile", "user_photos", "user_friends");
 		// Callback registration
 		loginButton.registerCallback(callbackManager, this);
 
@@ -85,18 +85,18 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	 * @param accessToken the access token provided by Facebook
 	 */
 	private void loadMemberInfo(final AccessToken accessToken) {
-		/*
-			GraphRequest request = GraphRequest.newMeRequest(
-					accessToken,
-					(object, response) -> {
-						Log.d("Facebook Graph", object.toString());
-					});
 
-			Bundle parameters = new Bundle();
-			parameters.putString("fields", "id,name,link,albums,picture.type(large),cover");
-			request.setParameters(parameters);
-			request.executeAsync();
-			*/
+//		GraphRequest request = GraphRequest.newMeRequest(
+//				accessToken,
+//				(object, response) -> {
+//					Log.d("Facebook Graph", object.toString());
+//				});
+//
+//		Bundle parameters = new Bundle();
+//		parameters.putString("fields", "id,name,link,picture.type(large),cover,friends");
+//		request.setParameters(parameters);
+//		request.executeAsync();
+
 		SharedPreferencesManager.putFacebookToken(this, accessToken.getToken());
 		authenticationService.getMember(accessToken, this);
 	}

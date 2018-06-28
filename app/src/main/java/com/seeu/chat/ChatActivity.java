@@ -44,6 +44,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 	private StompClient stompClient;
 	private Gson gson = new Gson();
+	private String sendingPath;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +69,9 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	protected void onDestroy() {
 		super.onDestroy();
 
-		stompClient.disconnect();
+		if (null != stompClient) {
+			stompClient.disconnect();
+		}
 	}
 
 	/**
@@ -76,10 +79,10 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	 * The receiver could be a Team or a Member.
 	 */
 	private void getInfoFromCaller() {
-		receiver = (Entity) getIntent().getSerializableExtra(Team.STORAGE_KEY);
+		receiver = (Entity) getIntent().getSerializableExtra(Member.STORAGE_KEY);
 
 		if (null == receiver) {
-			receiver = (Entity) getIntent().getSerializableExtra(Member.STORAGE_KEY);
+			receiver = (Entity) getIntent().getSerializableExtra(Team.STORAGE_KEY);
 		}
 
 		if (null == receiver) {
@@ -93,10 +96,10 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	 * Load messages from API.
 	 */
 	private void loadMessages() {
-		if (receiver instanceof Team) {
-			messageService.getMessages(currentUser, (Team) receiver, this);
-		} else {
+		if (receiver instanceof Member) {
 			messageService.getMessages(currentUser, (Member) receiver, this);
+		} else {
+			messageService.getMessages((Team) receiver, this);
 		}
 	}
 
@@ -107,10 +110,18 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, Constants.SEEU_WEB_SOCKET_SERVER_URL);
 		stompClient.connect();
 
+		String destinationPath = "/topic";
+		if (receiver instanceof Member) {
+			destinationPath += "/user/" + receiver.getId();
+			sendingPath = "/toUser/" + receiver.getId();
+		} else {
+			destinationPath += "/team/" + receiver.getId();
+			sendingPath = "/toTeam/" + receiver.getId();
+		}
+
 		// TODO: change channel with discussion's id to have one channel per discussion
-		stompClient.topic("/topic/greetings").subscribe(topicMessage -> {
+		stompClient.topic(destinationPath).subscribe(topicMessage -> {
 			Message message = gson.fromJson(topicMessage.getPayload(), Message.class);
-			message.setOwner(Member.getDebugMember(0));
 			runOnUiThread(() -> addMessage(message));
 		});
 	}
@@ -130,7 +141,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 			message.setOwner(currentUser);
 
 			// TODO: change channel with discussion's id to have one channel per discussion
-			stompClient.send("/app/hello", gson.toJson(message)).subscribe();
+			stompClient.send("/app" + sendingPath, gson.toJson(message)).subscribe();
 		}
 	}
 

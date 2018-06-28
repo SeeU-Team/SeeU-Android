@@ -20,7 +20,7 @@ import java.util.Map;
 public class MemberService extends AbstractService {
 
 	public MemberService(Context context) {
-		super(context, "/api/members");
+		super(context, "/api/users");
 	}
 
 	/**
@@ -56,12 +56,33 @@ public class MemberService extends AbstractService {
 	 * @param listener listener that will retrieve the data after the request completes
 	 */
 	public void getFriends(Member currentMember, CustomResponseListener<Member[]> listener) {
-		Map<String, String> params = new HashMap<>(1);
-		params.put("memberId", String.valueOf(currentMember.getId()));
+		String fullUrl = BASE_URL + "/" + currentMember.getId() + "/friends";
 
 		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<Member[]> request = new GsonRequest<>(
-				getFullGETUrl(BASE_URL, params),
+				fullUrl,
+				Request.Method.GET,
+				Member[].class,
+				getToken(),
+				null,
+				listener);
+
+		queue.add(request);
+	}
+
+	/**
+	 * Get Facebook friends of a member that uses the application.
+	 *
+	 * @param accessToken the facebook user's we want his Facebook friends
+	 * @param listener listener that will retrieve the data after the request completes
+	 */
+	public void getFacebookFriends(String accessToken, CustomResponseListener<Member[]> listener) {
+		Map<String, String> params = new HashMap<>(1);
+		params.put("access_token", accessToken);
+
+		// TODO: send the member in the request or the token is enough ????
+		GsonRequest<Member[]> request = new GsonRequest<>(
+				getFullGETUrl(BASE_URL + "/facebookFriends", params),
 				Request.Method.GET,
 				Member[].class,
 				getToken(),

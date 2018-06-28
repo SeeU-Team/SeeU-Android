@@ -10,21 +10,29 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
+import com.seeu.member.MemberService;
+import com.seeu.utils.SharedPreferencesManager;
+import com.seeu.utils.network.CustomResponseListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by thomasfouan on 10/05/2018.
  *
  * Activity that manages the search of members to add in a team.
  */
-public class MemberSearchableActivity extends Activity implements ItemClickListener, TextWatcher {
+public class MemberSearchableActivity extends Activity implements ItemClickListener, TextWatcher, CustomResponseListener<Member[]> {
 
+	private MemberService memberService;
 	private List<Member> members;
 	private List<Member> matchingMembers;
 	private List<Member> alreadyAddedMembers;
@@ -35,13 +43,12 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 
 	public MemberSearchableActivity() {
 
-		// TODO: get members from Facebook friends of the current user
-		members = new ArrayList<>();
-		for (int i = 0; i < 20; i++) {
-			members.add(Member.getDebugMember(i));
-		}
-
 		matchingMembers = new ArrayList<>();
+		members = new ArrayList<>();
+//		for (int i = 0; i < 20; i++) {
+//			members.add(Member.getDebugMember(i));
+//		}
+
 	}
 
 	@Override
@@ -58,9 +65,18 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 		memberRecyclerAdapter = new MemberRecyclerAdapter(this, matchingMembers, this);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
 
+		// Get all Facebook friends of the current user that uses the application
+		memberService = new MemberService(this);
+		getFacebookFriends();
+
 		// Get the list of membersId from the intent
 		Intent intent = getIntent();
 		alreadyAddedMembers = (ArrayList<Member>) intent.getSerializableExtra("members");
+	}
+
+	private void getFacebookFriends() {
+		String accessToken = SharedPreferencesManager.getFacebookToken(this);
+		memberService.getFacebookFriends(accessToken, this);
 	}
 
 	/**
@@ -110,5 +126,20 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 	@Override
 	public void afterTextChanged(Editable s) {
 		requestData(s.toString());
+	}
+
+	@Override
+	public void onHeadersResponse(Map<String, String> headers) {
+	}
+
+	@Override
+	public void onErrorResponse(VolleyError error) {
+		error.printStackTrace();
+		Toast.makeText(this, "An error occurred while retrieving Facebook friends", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onResponse(Member[] response) {
+		Collections.addAll(members, response);
 	}
 }

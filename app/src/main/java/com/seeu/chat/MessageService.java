@@ -37,11 +37,11 @@ public class MessageService extends AbstractService {
 		params.put("secondUserId", String.valueOf(otherUser.getId()));
 
 		GsonRequest<Message[]> request = new GsonRequest<>(
-				BASE_URL,
+				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				Message[].class,
 				token,
-				params,
+				null,
 				listener);
 
 		// Add the request to the RequestQueue.
@@ -49,23 +49,21 @@ public class MessageService extends AbstractService {
 	}
 
 	/**
-	 * Get the messages between the current user and a team.
-	 * @param currentUser the current user
+	 * Get the messages of a team.
 	 * @param team the team
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getMessages(Member currentUser, Team team, CustomResponseListener<Message[]> listener) {
+	public void getMessages(Team team, CustomResponseListener<Message[]> listener) {
 		String token = SharedPreferencesManager.getToken(context);
-		Map<String, String> params = new HashMap<>(2);
-		params.put("userId", String.valueOf(currentUser.getId()));
+		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
 		GsonRequest<Message[]> request = new GsonRequest<>(
-				BASE_URL,
+				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				Message[].class,
 				token,
-				params,
+				null,
 				listener);
 
 		// Add the request to the RequestQueue.
