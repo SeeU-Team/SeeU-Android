@@ -1,14 +1,13 @@
 package com.seeu.team;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.seeu.common.AbstractService;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
-import com.seeu.teamwall.TeamType;
+import com.seeu.teamwall.Category;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
@@ -27,20 +26,20 @@ public class TeamService extends AbstractService {
 	}
 
 	/**
-	 * Get all the teams of the type passed in parameter.
-	 * @param teamType the type of the teams
+	 * Get all the teams of the category passed in parameter.
+	 * @param category the category of the teams to load
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getTeams(TeamType teamType, CustomResponseListener<Team[]> listener) {
+	public void getTeams(Category category, CustomResponseListener<Team[]> listener) {
 		Map<String, String> params = new HashMap<>(1);
-		params.put("selectedTypeId", String.valueOf(teamType.getId()));
+		params.put("categoryId", String.valueOf(category.getId()));
 
 		GsonRequest<Team[]> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				Team[].class,
 				getToken(),
-				params,
+				null,
 				listener);
 
 		queue.add(request);
@@ -61,7 +60,7 @@ public class TeamService extends AbstractService {
 				Request.Method.GET,
 				MemberHasTeam.class,
 				getToken(),
-				params,
+				null,
 				listener);
 
 		queue.add(request);
@@ -134,7 +133,7 @@ public class TeamService extends AbstractService {
 				Request.Method.GET,
 				Team[].class,
 				getToken(),
-				params,
+				null,
 				listener);
 
 		queue.add(request);
@@ -155,7 +154,7 @@ public class TeamService extends AbstractService {
 				Request.Method.GET,
 				Team.class,
 				getToken(),
-				params,
+				null,
 				listener);
 
 		queue.add(request);

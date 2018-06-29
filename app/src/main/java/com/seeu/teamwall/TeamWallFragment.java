@@ -29,16 +29,16 @@ import java.util.Map;
 /**
  * Created by thomasfouan on 16/03/2018.
  *
- * Team wall fragment to search teams by types and location.
+ * Team wall fragment to search teams by category and location.
  */
 public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 	private Member currentUser;
 	private MemberHasTeam memberHasTeam;
 
-	private TeamTypeRecyclerAdapter teamTypeRecyclerAdapter;
-	private List<TeamType> types;
-	private TeamTypeService teamTypeService;
+	private CategoryRecyclerAdapter categoryRecyclerAdapter;
+	private List<Category> categories;
+	private CategoryService categoryService;
 
 	private TeamRecyclerAdapter teamRecyclerAdapter;
 	private List<Team> teams;
@@ -48,7 +48,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	 * Constructor
 	 */
 	public TeamWallFragment() {
-		types = new ArrayList<>();
+		categories = new ArrayList<>();
 		teams = new ArrayList<>();
 	}
 
@@ -57,12 +57,12 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 		super.onCreate(savedInstanceState);
 
 		this.teamService = new TeamService(this.getActivity());
-		this.teamTypeService = new TeamTypeService(this.getActivity());
+		this.categoryService = new CategoryService(this.getActivity());
 
 		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 		memberHasTeam = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, MemberHasTeam.class);
 
-		loadTypes();
+		loadCategories();
 	}
 
 	@Override
@@ -85,21 +85,21 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 
 	@Override
 	public void onItemClick(View view, int position) {
-		teamTypeRecyclerAdapter.setSelected(position);
-		refreshTeams(types.get(position));
+		categoryRecyclerAdapter.setSelected(position);
+		refreshTeams(categories.get(position));
 	}
 
 	/**
-	 * Method that set up the recycler view for the team types.
+	 * Method that set up the recycler view for the team categories.
 	 * @param view the view that the recycler view belongs to
 	 */
 	private void setupTeamTypeRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		teamTypeRecyclerAdapter = new TeamTypeRecyclerAdapter(getActivity(), types, this);
+		categoryRecyclerAdapter = new CategoryRecyclerAdapter(getActivity(), categories, this);
 
-		// set up the RecyclerView for the types of team
-		RecyclerView teamTypeRecycler = view.findViewById(R.id.teamTypeRecycler);
-		teamTypeRecycler.setAdapter(teamTypeRecyclerAdapter);
+		// set up the RecyclerView for the categories of team
+		RecyclerView teamTypeRecycler = view.findViewById(R.id.categoryRecycler);
+		teamTypeRecycler.setAdapter(categoryRecyclerAdapter);
 	}
 
 	/**
@@ -114,57 +114,56 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	}
 
 	/**
-	 * Load all the types of teams. Refresh teams when received.
+	 * Load all the categories of teams. Refresh teams when received.
 	 */
-	private void loadTypes() {
+	private void loadCategories() {
 		final Context context = this.getActivity();
-		types.clear();
+		categories.clear();
 
-		teamTypeService.getAllTeamTypes(new CustomResponseListener<TeamType[]>() {
+		categoryService.getAllCategories(new CustomResponseListener<Category[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
 
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.e("TeamWallFragment", "Error while loading TeamTypes", error);
-				Toast.makeText(context, "Error while loading TeamTypes " + error.getMessage(), Toast.LENGTH_LONG).show();
+				Log.e("TeamWallFragment", "Error while loading categories", error);
+				Toast.makeText(context, "Error while loading categories " + error.getMessage(), Toast.LENGTH_LONG).show();
 
-
-//				TeamType teamType = new TeamType();
+//				Category teamType = new Category();
 //				teamType.setId(0);
 //				teamType.setName("Type Bar");
-//				types.clear();
-//				types.add(teamType);
+//				categories.clear();
+//				categories.add(teamType);
 //
-//				if (null != teamTypeRecyclerAdapter) {
-//					teamTypeRecyclerAdapter.setSelected(0);
-//					teamTypeRecyclerAdapter.notifyDataSetChanged();
+//				if (null != categoryRecyclerAdapter) {
+//					categoryRecyclerAdapter.setSelected(0);
+//					categoryRecyclerAdapter.notifyDataSetChanged();
 //				}
-//				refreshTeams(types.get(0));
+//				refreshTeams(categories.get(0));
 			}
 
 			@Override
-			public void onResponse(TeamType[] response) {
-				Collections.addAll(types, response);
+			public void onResponse(Category[] response) {
+				Collections.addAll(categories, response);
 
-				if (null != teamTypeRecyclerAdapter) {
-					teamTypeRecyclerAdapter.setSelected(0);
-					teamTypeRecyclerAdapter.notifyDataSetChanged();
+				if (null != categoryRecyclerAdapter) {
+					categoryRecyclerAdapter.setSelected(0);
+					categoryRecyclerAdapter.notifyDataSetChanged();
 				}
 
 				if (response.length > 0) {
-					refreshTeams(types.get(0));
+					refreshTeams(categories.get(0));
 				}
 			}
 		});
 	}
 
 	/**
-	 * Refresh the teams accordingly with the new selected type.
-	 * @param selectedType the type of teams
+	 * Refresh the teams accordingly with the new selected category.
+	 * @param selectedType the category of teams
 	 */
-	private void refreshTeams(TeamType selectedType) {
+	private void refreshTeams(Category selectedType) {
 		final Context context = this.getActivity();
 		teams.clear();
 

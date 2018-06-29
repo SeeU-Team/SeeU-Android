@@ -128,7 +128,7 @@
             style="@android:style/Widget.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/selected_type_team_background"
+            android:background="@drawable/selected_category_background"
             android:minHeight="40dip"
             android:text="@string/team_up_label"
             android:textAppearance="@android:style/TextAppearance.Material.Small"
