@@ -50,7 +50,7 @@ public class Member extends Entity {
 		calendar.add(Calendar.DATE, -index);
 
 		Member member = new Member();
-		member.setId(index);
+		member.setId((long) index);
 		member.setProfilePhotoUrl(Member.DEBUG_PICTURE_URL);
 		member.setName("Member " + index);
 		member.setCatchPhrase("Catch phrase " + index);

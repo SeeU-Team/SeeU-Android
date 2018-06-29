@@ -112,17 +112,24 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 		String destinationPath = "/topic";
 		if (receiver instanceof Member) {
-			destinationPath += "/user/" + receiver.getId();
+			destinationPath += "/user/" + currentUser.getId();
 			sendingPath = "/toUser/" + receiver.getId();
 		} else {
 			destinationPath += "/team/" + receiver.getId();
 			sendingPath = "/toTeam/" + receiver.getId();
 		}
+		// TODO: manage discussion between leaders ??
 
-		// TODO: change channel with discussion's id to have one channel per discussion
 		stompClient.topic(destinationPath).subscribe(topicMessage -> {
 			Message message = gson.fromJson(topicMessage.getPayload(), Message.class);
-			runOnUiThread(() -> addMessage(message));
+
+			// Display only messages sent by me or the receiver of this conversation, or my team
+			if (receiver instanceof Team
+					|| receiver.equals(message.getOwner())
+					|| currentUser.equals(message.getOwner())) {
+
+				runOnUiThread(() -> addMessage(message));
+			}
 		});
 	}
 

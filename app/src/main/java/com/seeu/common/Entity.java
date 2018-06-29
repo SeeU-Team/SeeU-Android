@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public abstract class Entity implements Serializable {
 
-	protected long id;
+	protected Long id;
 
 	@Override
 	public String toString() {
@@ -29,7 +29,7 @@ public abstract class Entity implements Serializable {
 		if (o == null || getClass() != o.getClass()) return false;
 
 		Entity entity = (Entity) o;
-		return id == entity.id;
+		return id.equals(entity.id);
 	}
 
 	@Override

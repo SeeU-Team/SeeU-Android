@@ -90,7 +90,7 @@ public class Team extends Entity {
 		tags.add("tres");
 
 		Team team = new Team();
-		team.setId(index);
+		team.setId((long) index);
 		team.setPictureUrl(Team.DEBUG_PICTURE_URL);
 		team.setName("Team " + index);
 		team.setPlace("A LA MAISON");
