@@ -92,15 +92,9 @@ public class MemberProfileActivity extends Activity {
 	 */
 	private void updateUI() {
 
-		if (isPictureBlurredLayoutDrawn) {
-			setPictureBlurred();
-		}
-		if (isPictureLayoutDrawn) {
-			setPicture();
-		}
-		if (isPictureDescriptionLayoutDrawn) {
-			setPictureDescription();
-		}
+		setPictureBlurred();
+		setPicture();
+		setPictureDescription();
 
 		if (member.isConnected()) {
 			connectedStatus.setVisibility(View.VISIBLE);
@@ -154,10 +148,12 @@ public class MemberProfileActivity extends Activity {
 	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
 	 */
 	public boolean onPreDrawPictureBlurred() {
-		isPictureBlurredLayoutDrawn = true;
-		pictureBlurred.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureBlurred);
+		if (!isPictureBlurredLayoutDrawn) {
+			isPictureBlurredLayoutDrawn = true;
+			pictureBlurred.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureBlurred);
 
-		setPictureBlurred();
+			setPictureBlurred();
+		}
 		return true;
 	}
 
@@ -170,10 +166,12 @@ public class MemberProfileActivity extends Activity {
 	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
 	 */
 	public boolean onPreDrawPicture() {
-		isPictureLayoutDrawn = true;
-		picture.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPicture);
+		if (!isPictureLayoutDrawn) {
+			isPictureLayoutDrawn = true;
+			picture.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPicture);
 
-		setPicture();
+			setPicture();
+		}
 		return true;
 	}
 
@@ -186,10 +184,12 @@ public class MemberProfileActivity extends Activity {
 	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
 	 */
 	public boolean onPreDrawPictureDescription() {
-		isPictureDescriptionLayoutDrawn = true;
-		pictureDescription.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureDescription);
+		if (!isPictureDescriptionLayoutDrawn) {
+			isPictureDescriptionLayoutDrawn = true;
+			pictureDescription.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureDescription);
 
-		setPictureDescription();
+			setPictureDescription();
+		}
 		return true;
 	}
 

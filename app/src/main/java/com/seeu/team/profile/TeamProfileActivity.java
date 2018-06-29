@@ -130,9 +130,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	 * Update the UI with info from the team entity.
 	 */
 	private void updateUI() {
-		if (isPictureLayoutDrawn) {
-			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
-		}
+		setPicture();
 
 		float maleProportion = (team.getId() % 10) / (float) 10.0;
 
@@ -147,6 +145,13 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		descriptionRecyclerAdapter.notifyDataSetChanged();
 	}
 
+	private void setPicture() {
+		if (isPictureLayoutDrawn
+				&& null != team) {
+			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
+		}
+	}
+
 	/**
 	 * Handle clicks on the team up button.
 	 * Notify the other team's leader that this team liked his.
@@ -159,11 +164,11 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 
 	@Override
 	public boolean onPreDraw() {
-		isPictureLayoutDrawn = true;
-		picture.getViewTreeObserver().removeOnPreDrawListener(this);
+		if (!isPictureLayoutDrawn) {
+			isPictureLayoutDrawn = true;
+			picture.getViewTreeObserver().removeOnPreDrawListener(this);
 
-		if (null != team) {
-			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
+			setPicture();
 		}
 
 		return true;
