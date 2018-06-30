@@ -1,12 +1,12 @@
 package com.seeu.team.profile;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,10 +15,12 @@ import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.Mark;
-import com.seeu.member.Member;
+import com.seeu.member.MemberHasTeam;
 import com.seeu.nightcenter.MemberRecyclerAdapter;
 import com.seeu.team.Team;
-import com.seeu.team.TeamService;
+import com.seeu.team.like.Like;
+import com.seeu.team.like.LikeService;
+import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
@@ -32,7 +34,9 @@ import java.util.Map;
  *
  * Activity that displays the team's profile.
  */
-public class TeamProfileActivity extends Activity implements OnPreDrawListener, CustomResponseListener<Void> {
+public class TeamProfileActivity extends Activity implements OnPreDrawListener, CustomResponseListener<Like> {
+
+	public static final String TEAM_UP_RESULT_NAME = "result";
 
 	private ConstraintLayout picture;
 	private TextView place;
@@ -45,7 +49,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	private TextView textDescription;
 
 	private Team team;
-	private TeamService teamService;
+	private LikeService likeService;
 	private boolean isPictureLayoutDrawn;
 
 	public TeamProfileActivity() {
@@ -58,7 +62,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.teamprofile_activity);
 
-		this.teamService = new TeamService(this);
+		this.likeService = new LikeService(this);
 
 		picture = findViewById(R.id.teamPicture);
 		place = findViewById(R.id.teamPlace);
@@ -159,7 +163,8 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	 */
 	public void teamUpActionBtn(View view) {
 		// TODO: if the member is leader, like the team. Otherwise, send notification to the leader
-		teamService.likeTeam(team, this);
+		MemberHasTeam memberHasTeam = SharedPreferencesManager.getEntity(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+		likeService.likeTeam(memberHasTeam.getTeam(), team, this);
 	}
 
 	@Override
@@ -184,8 +189,12 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	}
 
 	@Override
-	public void onResponse(Void response) {
-		// End this activity when the team up has been successfully made
+	public void onResponse(Like response) {
+		// End this activity when the team up has been successfully made.
+		// Notify the caller that this team was team up (for the TeamWall to remove it from the list)
+		Intent intent = new Intent();
+		intent.putExtra(TEAM_UP_RESULT_NAME, team);
+		setResult(RESULT_OK, intent);
 		finish();
 	}
 }

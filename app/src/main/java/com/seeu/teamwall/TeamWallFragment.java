@@ -2,6 +2,7 @@ package com.seeu.teamwall;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +14,11 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.seeu.R;
-import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
+import com.seeu.team.profile.TeamProfileActivity;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -26,12 +27,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by thomasfouan on 16/03/2018.
  *
  * Team wall fragment to search teams by category and location.
  */
-public class TeamWallFragment extends Fragment implements ItemClickListener {
+public class TeamWallFragment extends Fragment {
+
+	public static final int INTENT_TEAM_PROFILE = 4;
 
 	private Member currentUser;
 	private MemberHasTeam memberHasTeam;
@@ -80,13 +85,28 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		// TODO: save the state of the fragment before it is destroy
-
 	}
 
 	@Override
-	public void onItemClick(View view, int position) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (INTENT_TEAM_PROFILE == requestCode && RESULT_OK == resultCode) {
+			Team team = (Team) data.getSerializableExtra(TeamProfileActivity.TEAM_UP_RESULT_NAME);
+			teams.remove(team);
+			teamRecyclerAdapter.notifyDataSetChanged();
+		}
+	}
+
+	public void onCategoryClick(View view, int position) {
 		categoryRecyclerAdapter.setSelected(position);
 		refreshTeams(categories.get(position));
+	}
+
+	public void onTeamClick(View view, int position) {
+		Team team = teams.get(position);
+		Intent intent = new Intent(getActivity(), TeamProfileActivity.class);
+		intent.putExtra(Team.STORAGE_KEY, team);
+
+		startActivityForResult(intent, INTENT_TEAM_PROFILE);
 	}
 
 	/**
@@ -95,7 +115,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	 */
 	private void setupTeamTypeRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		categoryRecyclerAdapter = new CategoryRecyclerAdapter(getActivity(), categories, this);
+		categoryRecyclerAdapter = new CategoryRecyclerAdapter(getActivity(), categories, this::onCategoryClick);
 
 		// set up the RecyclerView for the categories of team
 		RecyclerView teamTypeRecycler = view.findViewById(R.id.categoryRecycler);
@@ -107,7 +127,7 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 	 * @param view the view that the recycler view belongs to
 	 */
 	private void setupTeamRecycler(View view) {
-		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams);
+		teamRecyclerAdapter = new TeamRecyclerAdapter(getActivity(), teams, this::onTeamClick);
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
@@ -129,18 +149,6 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 			public void onErrorResponse(VolleyError error) {
 				Log.e("TeamWallFragment", "Error while loading categories", error);
 				Toast.makeText(context, "Error while loading categories " + error.getMessage(), Toast.LENGTH_LONG).show();
-
-//				Category teamType = new Category();
-//				teamType.setId(0);
-//				teamType.setName("Type Bar");
-//				categories.clear();
-//				categories.add(teamType);
-//
-//				if (null != categoryRecyclerAdapter) {
-//					categoryRecyclerAdapter.setSelected(0);
-//					categoryRecyclerAdapter.notifyDataSetChanged();
-//				}
-//				refreshTeams(categories.get(0));
 			}
 
 			@Override
@@ -176,13 +184,6 @@ public class TeamWallFragment extends Fragment implements ItemClickListener {
 			public void onErrorResponse(VolleyError error) {
 				Log.e("TeamWallFragment", "Error while loading Teams", error);
 				Toast.makeText(context, "Error while loading Teams " + error.getMessage(), Toast.LENGTH_LONG).show();
-
-//				teams.clear();
-//				teams.add(Team.getDebugTeam(1));
-//
-//				if (null != teamRecyclerAdapter) {
-//					teamRecyclerAdapter.notifyDataSetChanged();
-//				}
 			}
 
 			@Override

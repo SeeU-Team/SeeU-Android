@@ -4,6 +4,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ import java.util.List;
  *
  * Holder for the team.
  */
-public class TeamViewHolder extends ViewHolder implements OnClickListener {
+public class TeamViewHolder extends ViewHolder {
 
 	private static final int MAX_DESCRIPTION_PICTURES = 4;
 
@@ -35,12 +36,14 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 	private GenderIndex genderIndex;
 	private ImageView[] descriptionPictures;
 
-	private ItemClickListener listener;
+	private ItemClickListener itemClickListener;
+	private ItemClickListener teamUpBtnClickListener;
 
-	public TeamViewHolder(View itemView, ItemClickListener listener) {
+	public TeamViewHolder(View itemView, ItemClickListener itemClickListener, ItemClickListener teamUpBtnClickListener) {
 		super(itemView);
 
-		this.listener = listener;
+		this.itemClickListener = itemClickListener;
+		this.teamUpBtnClickListener = teamUpBtnClickListener;
 		teamMemberPictures = new TeamMemberPictures(itemView);
 		descriptionPictures = new ImageView[MAX_DESCRIPTION_PICTURES];
 
@@ -55,7 +58,10 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		View genderIndexView = itemView.findViewById(R.id.genderIndex);
 		genderIndex = new GenderIndex(genderIndexView);
 
-		layoutPicture.setOnClickListener(this);
+		Button button = itemView.findViewById(R.id.teamUpBtn);
+		button.setOnClickListener(this::onTeamUpBtnClick);
+
+		layoutPicture.setOnClickListener(this::onClick);
 	}
 
 	/**
@@ -128,8 +134,11 @@ public class TeamViewHolder extends ViewHolder implements OnClickListener {
 		setTeamDescriptions(team.getDescriptions());
 	}
 
-	@Override
+	public void onTeamUpBtnClick(View v) {
+		teamUpBtnClickListener.onItemClick(v, getAdapterPosition());
+	}
+
 	public void onClick(View v) {
-		listener.onItemClick(v, getAdapterPosition());
+		itemClickListener.onItemClick(v, getAdapterPosition());
 	}
 }

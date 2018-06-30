@@ -15,6 +15,7 @@ import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
+import com.seeu.team.like.LikeService;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
@@ -43,6 +44,7 @@ public class NightCenterFragment extends Fragment {
 	private boolean mergedTeamPictureSet;
 
 	private TeamService teamService;
+	private LikeService likeService;
 
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 	private List<Member> members;
@@ -62,6 +64,7 @@ public class NightCenterFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		this.teamService = new TeamService(getActivity());
+		this.likeService = new LikeService(getActivity());
 		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 
 		loadMyTeam();
@@ -125,7 +128,7 @@ public class NightCenterFragment extends Fragment {
 	}
 
 	private void loadMergedTeam() {
-		teamService.getMergedTeam(memberHasTeam.getTeam(), new CustomResponseListener<Team>() {
+		likeService.getMergedTeam(memberHasTeam.getTeam(), new CustomResponseListener<Team>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}

@@ -2,14 +2,10 @@ package com.seeu.messages;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +18,7 @@ import com.seeu.member.MemberService;
 import com.seeu.member.MemberStatus;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
-import com.seeu.team.edit.EditTeamProfileActivity;
+import com.seeu.team.like.LikeService;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -31,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static android.view.View.GONE;
 
 /**
  * Created by thomasfouan on 16/03/2018.
@@ -45,6 +39,7 @@ public class MessagesFragment extends Fragment {
 	private Member currentUser;
 	private MemberHasTeam memberHasTeam;
 	private TeamService teamService;
+	private LikeService likeService;
 
 	private boolean isTeamCardFragmentAlreadySetup;
 
@@ -68,6 +63,7 @@ public class MessagesFragment extends Fragment {
 
 		this.teamService = new TeamService(getActivity());
 		this.memberService = new MemberService(getActivity());
+		this.likeService = new LikeService(getActivity());
 		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
 
 		loadTeam();
@@ -110,6 +106,7 @@ public class MessagesFragment extends Fragment {
 
 		RecyclerView teamRecycler = view.findViewById(R.id.teamRecycler);
 		teamRecycler.setAdapter(teamRecyclerAdapter);
+		teamRecycler.setVisibility(View.VISIBLE);
 	}
 
 	/**
@@ -222,7 +219,7 @@ public class MessagesFragment extends Fragment {
 	 */
 	private void loadTeams() {
 
-		teamService.getLikedTeams(memberHasTeam.getTeam(), new CustomResponseListener<Team[]>() {
+		likeService.getLikedTeams(memberHasTeam.getTeam(), new CustomResponseListener<Team[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
