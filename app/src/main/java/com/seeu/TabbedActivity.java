@@ -55,7 +55,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		switch (item.getItemId()) {
 			case R.id.navigation_teamwall:
-				MemberHasTeam memberHasTeam = SharedPreferencesManager.getEntity(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+				MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 				if (null == memberHasTeam) {
 					return false;
 				}
@@ -200,7 +200,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 			memberHasTeam.setMemberId(currentUser.getId());
 			memberHasTeam.setStatus(MemberStatus.ALONE);
 
-			SharedPreferencesManager.putEntity(this, MemberHasTeam.STORAGE_KEY, memberHasTeam);
+			SharedPreferencesManager.putObject(this, MemberHasTeam.STORAGE_KEY, memberHasTeam);
 
 			//Manually displaying the NoTeam fragment - one time only
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -211,7 +211,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 	@Override
 	public void onResponse(MemberHasTeam response) {
-		SharedPreferencesManager.putEntity(this, MemberHasTeam.STORAGE_KEY, response);
+		SharedPreferencesManager.putObject(this, MemberHasTeam.STORAGE_KEY, response);
 
 		// Show the night center menu
 		//navigationView.getMenu().add(nightCenterMenuItem.getGroupId(), nightCenterMenuItem.getItemId(), nightCenterMenuItem.getOrder(), nightCenterMenuItem.getTitle())

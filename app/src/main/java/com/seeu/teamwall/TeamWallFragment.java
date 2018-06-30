@@ -65,7 +65,7 @@ public class TeamWallFragment extends Fragment {
 		this.categoryService = new CategoryService(this.getActivity());
 
 		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
-		memberHasTeam = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, MemberHasTeam.class);
+		memberHasTeam = SharedPreferencesManager.getObject(getActivity(), Member.STORAGE_KEY, MemberHasTeam.class);
 
 		loadCategories();
 	}

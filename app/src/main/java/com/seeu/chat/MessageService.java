@@ -30,16 +30,16 @@ public class MessageService extends AbstractService {
 	 * @param otherUser the other user
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getMessages(Member currentUser, Member otherUser, CustomResponseListener<Message[]> listener) {
+	public void getMessages(Member currentUser, Member otherUser, CustomResponseListener<MemberMessage[]> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(2);
 		params.put("firstUserId", String.valueOf(currentUser.getId()));
 		params.put("secondUserId", String.valueOf(otherUser.getId()));
 
-		GsonRequest<Message[]> request = new GsonRequest<>(
+		GsonRequest<MemberMessage[]> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
-				Message[].class,
+				MemberMessage[].class,
 				token,
 				null,
 				listener);
@@ -53,15 +53,33 @@ public class MessageService extends AbstractService {
 	 * @param team the team
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getMessages(Team team, CustomResponseListener<Message[]> listener) {
+	public void getMessages(Team team, CustomResponseListener<MemberMessage[]> listener) {
 		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
-		GsonRequest<Message[]> request = new GsonRequest<>(
+		GsonRequest<MemberMessage[]> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
-				Message[].class,
+				MemberMessage[].class,
+				token,
+				null,
+				listener);
+
+		// Add the request to the RequestQueue.
+		queue.add(request);
+	}
+
+	public void getMessages(Team myTeam, Team likedTeam, CustomResponseListener<TeamMessage[]> listener) {
+		String token = SharedPreferencesManager.getToken(context);
+		Map<String, String> params = new HashMap<>(2);
+		params.put("firstTeamId", String.valueOf(myTeam.getId()));
+		params.put("secondTeamId", String.valueOf(likedTeam.getId()));
+
+		GsonRequest<TeamMessage[]> request = new GsonRequest<>(
+				getFullGETUrl(BASE_URL, params),
+				Request.Method.GET,
+				TeamMessage[].class,
 				token,
 				null,
 				listener);

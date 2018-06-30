@@ -128,7 +128,7 @@ public class TeamViewHolder extends ViewHolder {
 
 		setName(team.getName());
 		setTags(team.getTagsAsString());
-		setPicture(team.getPictureUrl());
+		setPicture(team.getProfilePhotoUrl());
 		setMemberPictures(memberPictures);
 		setGenderIndex(maleProportion);
 		setTeamDescriptions(team.getDescriptions());

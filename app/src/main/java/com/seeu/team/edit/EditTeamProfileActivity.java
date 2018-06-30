@@ -127,7 +127,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 //		if (null == team.getMembers()) {
 //			team.setMembers(new ArrayList<>());
 //		}
-		pictureChooser.setCurrentPictureUrl(entity.getPictureUrl());
+		pictureChooser.setCurrentPictureUrl(entity.getProfilePhotoUrl());
 
 		name.setText(entity.getName());
 		place.setText(entity.getPlace());

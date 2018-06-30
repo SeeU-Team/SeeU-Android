@@ -28,7 +28,7 @@ public class OthersMessageViewHolder extends MessageViewHolder {
 	 * Set the picture of the member that sent the message.
 	 * @param url the url of the member's picture
 	 */
-	public void setMemberPicture(String url) {
+	private void setMemberPicture(String url) {
 		new DownloadImageAndSetBackgroundTask(memberPicture, 32, 32, 32).execute(url);
 	}
 
@@ -36,7 +36,12 @@ public class OthersMessageViewHolder extends MessageViewHolder {
 	 * Set the name of the member that sent the message.
 	 * @param name the member's name
 	 */
-	public void setMemberName(String name) {
+	private void setMemberName(String name) {
 		memberName.setText(name);
+	}
+
+	public void setData(Message message) {
+		setMemberName(message.getOwner().getName());
+		setMemberPicture(message.getOwner().getProfilePhotoUrl());
 	}
 }

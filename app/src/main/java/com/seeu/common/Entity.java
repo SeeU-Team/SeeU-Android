@@ -10,13 +10,15 @@ import lombok.Setter;
  * Created by thomasfouan on 15/05/2018.
  *
  * Abstract class that provide template for all entities in the application.
- * An entity has a unique id, and a common key for temporary storage (shared preferences, intent).
+ * An entity has a unique id, a name and a profile picture.
  */
 @Getter
 @Setter
 public abstract class Entity implements Serializable {
 
 	protected Long id;
+	protected String name;
+	protected String profilePhotoUrl;
 
 	@Override
 	public String toString() {

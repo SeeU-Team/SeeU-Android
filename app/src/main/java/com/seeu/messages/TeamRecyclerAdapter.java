@@ -62,6 +62,7 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Item
 		Context context = view.getContext();
 		Intent intent = new Intent(context, ChatActivity.class);
 		intent.putExtra(Team.STORAGE_KEY, team);
+		intent.putExtra(ChatActivity.INTENT_IS_BEFORE_CONV, true);
 
 		context.startActivity(intent);
 	}

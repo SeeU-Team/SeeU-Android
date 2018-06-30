@@ -1,8 +1,9 @@
 package com.seeu.teamwall;
 
-import com.seeu.common.Entity;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -13,12 +14,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Category extends Entity {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Category {
 
+	private Long id;
 	private String name;
-
-	public Category() {
-	}
 
 	@Override
 	public String toString() {

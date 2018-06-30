@@ -152,7 +152,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	private void setPicture() {
 		if (isPictureLayoutDrawn
 				&& null != team) {
-			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getProfilePhotoUrl());
 		}
 	}
 
@@ -163,7 +163,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	 */
 	public void teamUpActionBtn(View view) {
 		// TODO: if the member is leader, like the team. Otherwise, send notification to the leader
-		MemberHasTeam memberHasTeam = SharedPreferencesManager.getEntity(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 		likeService.likeTeam(memberHasTeam.getTeam(), team, this);
 	}
 

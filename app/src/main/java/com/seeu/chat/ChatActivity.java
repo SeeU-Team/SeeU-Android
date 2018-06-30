@@ -1,6 +1,7 @@
 package com.seeu.chat;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.seeu.R;
 import com.seeu.common.Constants;
 import com.seeu.common.Entity;
 import com.seeu.member.Member;
+import com.seeu.member.MemberHasTeam;
 import com.seeu.team.Team;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
@@ -31,10 +33,14 @@ import ua.naiksoftware.stomp.client.StompClient;
  * Activity that manages the chat.
  * Use web socket for real time message exchanges.
  */
-public class ChatActivity extends ListActivity implements CustomResponseListener<Message[]> {
+public class ChatActivity extends ListActivity implements CustomResponseListener<MemberMessage[]> {
+
+	public static final String INTENT_IS_BEFORE_CONV = "beforeConversation";
 
 	private Member currentUser;
+	private MemberHasTeam memberHasTeam;
 	private Entity receiver;
+	private boolean isBeforeConv;
 
 	private EditText newMessage;
 
@@ -52,6 +58,8 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		setContentView(R.layout.chat_activity);
 
 		this.messageService = new MessageService(this);
+		this.currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
+		this.memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 
 		newMessage = findViewById(R.id.newMessage);
 		// NOTE: the class ListActivity find itself the listView if its id is 'list'
@@ -79,6 +87,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	 * The receiver could be a Team or a Member.
 	 */
 	private void getInfoFromCaller() {
+		isBeforeConv = getIntent().getBooleanExtra(INTENT_IS_BEFORE_CONV, false);
 		receiver = (Entity) getIntent().getSerializableExtra(Member.STORAGE_KEY);
 
 		if (null == receiver) {
@@ -88,8 +97,6 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		if (null == receiver) {
 			throw new IllegalStateException("No team nor member provided to chat activity");
 		}
-
-		this.currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
 	}
 
 	/**
@@ -98,8 +105,26 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	private void loadMessages() {
 		if (receiver instanceof Member) {
 			messageService.getMessages(currentUser, (Member) receiver, this);
-		} else {
+		} else if (!isBeforeConv) {
 			messageService.getMessages((Team) receiver, this);
+		} else {
+			Context context = this;
+			messageService.getMessages(memberHasTeam.getTeam(), (Team) receiver, new CustomResponseListener<TeamMessage[]>() {
+				@Override
+				public void onHeadersResponse(Map<String, String> headers) {
+				}
+
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					error.printStackTrace();
+					Toast.makeText(context, "An error occurred while trying to retrieve all messages", Toast.LENGTH_SHORT).show();
+				}
+
+				@Override
+				public void onResponse(TeamMessage[] response) {
+					onReceivedMessages(response);
+				}
+			});
 		}
 	}
 
@@ -114,14 +139,16 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		if (receiver instanceof Member) {
 			destinationPath += "/user/" + currentUser.getId();
 			sendingPath = "/toUser/" + receiver.getId();
-		} else {
+		} else if (!isBeforeConv) {
 			destinationPath += "/team/" + receiver.getId();
 			sendingPath = "/toTeam/" + receiver.getId();
+		} else {
+			destinationPath += "/leader/" + memberHasTeam.getTeam().getId();
+			sendingPath = "/toBefore/" + receiver.getId();
 		}
-		// TODO: manage discussion between leaders ??
 
 		stompClient.topic(destinationPath).subscribe(topicMessage -> {
-			Message message = gson.fromJson(topicMessage.getPayload(), Message.class);
+			Message message = gson.fromJson(topicMessage.getPayload(), isBeforeConv ? TeamMessage.class : MemberMessage.class);
 
 			// Display only messages sent by me or the receiver of this conversation, or my team
 			if (receiver instanceof Team
@@ -142,12 +169,19 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		newMessage.getText().clear();
 
 		if (!text.isEmpty()) {
-			Message message = new Message();
-//			message.setId(messages.size());
-			message.setContent(text);
-			message.setOwner(currentUser);
+			Message message;
+			if (isBeforeConv) {
+				message = TeamMessage.builder()
+						.content(text)
+						.owner(memberHasTeam.getTeam())
+						.build();
+			} else {
+				message = MemberMessage.builder()
+						.content(text)
+						.owner(currentUser)
+						.build();
+			}
 
-			// TODO: change channel with discussion's id to have one channel per discussion
 			stompClient.send("/app" + sendingPath, gson.toJson(message)).subscribe();
 		}
 	}
@@ -161,6 +195,15 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		messageListAdapter.notifyDataSetChanged();
 	}
 
+	private void onReceivedMessages(Message[] response) {
+		messages.clear();
+		Collections.addAll(messages, response);
+
+		if (null != messageListAdapter) {
+			messageListAdapter.notifyDataSetChanged();
+		}
+	}
+
 	@Override
 	public void onHeadersResponse(Map<String, String> headers) {
 	}
@@ -172,12 +215,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	}
 
 	@Override
-	public void onResponse(Message[] response) {
-		messages.clear();
-		Collections.addAll(messages, response);
-
-		if (null != messageListAdapter) {
-			messageListAdapter.notifyDataSetChanged();
-		}
+	public void onResponse(MemberMessage[] response) {
+		onReceivedMessages(response);
 	}
 }

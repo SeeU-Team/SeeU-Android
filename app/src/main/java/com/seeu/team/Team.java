@@ -24,8 +24,6 @@ public class Team extends Entity {
 	 */
 	public static final String STORAGE_KEY = "team";
 
-	private String pictureUrl;
-	private String name;
 	private String place;
 	private ArrayList<String> tags;
 	private String description;
@@ -91,7 +89,7 @@ public class Team extends Entity {
 
 		Team team = new Team();
 		team.setId((long) index);
-		team.setPictureUrl(Team.DEBUG_PICTURE_URL);
+		team.setProfilePhotoUrl(Team.DEBUG_PICTURE_URL);
 		team.setName("Team " + index);
 		team.setPlace("A LA MAISON");
 		team.setTags(tags);

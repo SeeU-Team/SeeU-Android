@@ -48,7 +48,7 @@ public class TeamRecyclerAdapter extends Adapter<TeamViewHolder> implements Cust
 		this.lastTeamUp = null;
 		this.itemClickListener = itemClickListener;
 
-		this.memberHasTeam = SharedPreferencesManager.getEntity(context, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+		this.memberHasTeam = SharedPreferencesManager.getObject(context, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 	}
 
 	@Override

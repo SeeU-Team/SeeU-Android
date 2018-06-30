@@ -162,14 +162,14 @@ public class NightCenterFragment extends Fragment {
 				&& null != myTeamCardView
 				&& null != memberHasTeam) {
 			myTeamPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(myTeamCardView, 150, 150, 150).execute(memberHasTeam.getTeam().getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(myTeamCardView, 150, 150, 150).execute(memberHasTeam.getTeam().getProfilePhotoUrl());
 		}
 
 		if (!mergedTeamPictureSet
 				&& null != mergedTeamCardView
 				&& null != mergedTeam) {
 			mergedTeamPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(mergedTeamCardView, 150, 150, 150).execute(mergedTeam.getPictureUrl());
+			new DownloadImageAndSetBackgroundTask(mergedTeamCardView, 150, 150, 150).execute(mergedTeam.getProfilePhotoUrl());
 		}
 	}
 }

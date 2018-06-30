@@ -66,7 +66,7 @@ class TeamViewHolder extends ViewHolder implements OnClickListener {
 	 * @param team the team to display
 	 */
 	public void setData(Team team) {
-		setPicture(team.getPictureUrl());
+		setPicture(team.getProfilePhotoUrl());
 		setName(team.getName());
 		setTags(team.getTagsAsString());
 	}

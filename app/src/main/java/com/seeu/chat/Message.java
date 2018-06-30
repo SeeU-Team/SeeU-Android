@@ -2,9 +2,12 @@ package com.seeu.chat;
 
 import android.content.Context;
 
+import com.seeu.common.Entity;
 import com.seeu.member.Member;
 import com.seeu.utils.SharedPreferencesManager;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,16 +16,14 @@ import lombok.Setter;
  *
  * Class that represents a message send between 2 entities (Team or Member).
  */
+@AllArgsConstructor
 @Getter
 @Setter
-public class Message {
+public abstract class Message<T extends Entity> {
 
-	private long id;
-	private Member owner;
-	private String content;
-
-	public Message() {
-	}
+	protected long id;
+	protected T owner;
+	protected String content;
 
 	/**
 	 * Check of this message belongs to the current user.
@@ -30,18 +31,5 @@ public class Message {
 	 * @param context the context to get the shared preferences from
 	 * @return true if this message has been sent by the current user
 	 */
-	public boolean belongsToCurrentUser(Context context) {
-		final Member currentUser = SharedPreferencesManager.getEntity(context, Member.STORAGE_KEY, Member.class);
-		return currentUser.getId() == owner.getId();
-	}
-
-	public static Message getDebugMessage(int index) {
-		Member owner = Member.getDebugMember(index);
-		Message message = new Message();
-		message.setId(index);
-		message.setContent("Ceci est du texte long " + index);
-		message.setOwner(owner);
-
-		return message;
-	}
+	public abstract boolean belongsToCurrentUser(Context context);
 }

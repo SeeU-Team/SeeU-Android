@@ -152,7 +152,7 @@ public class TeamCardFragment extends Fragment implements OnClickListener {
 
 		updateEditBtn(memberHasTeam.getStatus());
 
-		setPicture(team.getPictureUrl());
+		setPicture(team.getProfilePhotoUrl());
 		setName(team.getName());
 		setMark(team.getMark());
 
