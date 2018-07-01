@@ -2,10 +2,14 @@ package com.seeu.chat;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -15,7 +19,12 @@ import com.seeu.common.Constants;
 import com.seeu.common.Entity;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
+import com.seeu.member.profile.MemberProfileActivity;
 import com.seeu.team.Team;
+import com.seeu.team.like.LikeService;
+import com.seeu.team.like.Merge;
+import com.seeu.team.profile.TeamProfileActivity;
+import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -33,7 +42,7 @@ import ua.naiksoftware.stomp.client.StompClient;
  * Activity that manages the chat.
  * Use web socket for real time message exchanges.
  */
-public class ChatActivity extends ListActivity implements CustomResponseListener<MemberMessage[]> {
+public class ChatActivity extends ListActivity implements CustomResponseListener<MemberMessage[]>, ViewTreeObserver.OnPreDrawListener {
 
 	public static final String INTENT_IS_BEFORE_CONV = "beforeConversation";
 
@@ -43,6 +52,9 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	private boolean isBeforeConv;
 
 	private EditText newMessage;
+	private ImageButton profilePicture;
+	private boolean isProfilePictureLayoutDrawn;
+	private Button mergeBtn;
 
 	private MessageListAdapter messageListAdapter;
 	private List<Message> messages;
@@ -51,6 +63,11 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	private StompClient stompClient;
 	private Gson gson = new Gson();
 	private String sendingPath;
+
+	public ChatActivity() {
+		super();
+		isProfilePictureLayoutDrawn = false;
+	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +79,9 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		this.memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 
 		newMessage = findViewById(R.id.newMessage);
+		profilePicture = findViewById(R.id.profilePicture);
+		profilePicture.getViewTreeObserver().addOnPreDrawListener(this);
+		mergeBtn = findViewById(R.id.mergeBtn);
 		// NOTE: the class ListActivity find itself the listView if its id is 'list'
 
 		messages = new ArrayList<>();
@@ -69,6 +89,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		setListAdapter(messageListAdapter);
 
 		getInfoFromCaller();
+		updateUI();
 		loadMessages();
 		startWebSocketConfig();
 	}
@@ -96,6 +117,18 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 		if (null == receiver) {
 			throw new IllegalStateException("No team nor member provided to chat activity");
+		}
+	}
+
+	private void updateUI() {
+		mergeBtn.setVisibility(isBeforeConv ? View.VISIBLE : View.GONE);
+		setProfilePicture();
+	}
+
+	private void setProfilePicture() {
+		if (isProfilePictureLayoutDrawn
+				&& null != receiver) {
+			new DownloadImageAndSetBackgroundTask(profilePicture, 40).execute(receiver.getProfilePhotoUrl());
 		}
 	}
 
@@ -217,5 +250,51 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	@Override
 	public void onResponse(MemberMessage[] response) {
 		onReceivedMessages(response);
+	}
+
+	public void onProfileClick(View v) {
+		Intent intent;
+		if (receiver instanceof Member) {
+			intent = new Intent(this, MemberProfileActivity.class);
+			intent.putExtra(Member.STORAGE_KEY, receiver);
+		} else {
+			intent = new Intent(this, TeamProfileActivity.class);
+			intent.putExtra(Team.STORAGE_KEY, receiver);
+		}
+
+		startActivity(intent);
+	}
+
+	public void onMergeClick(View v) {
+		LikeService likeService = new LikeService(this);
+		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+
+		likeService.mergeTeam(memberHasTeam.getTeam(), (Team) receiver, new CustomResponseListener<Merge>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Toast.makeText(ChatActivity.this, "An error occurred during the merge", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onResponse(Merge response) {
+				mergeBtn.setVisibility(View.GONE);
+			}
+		});
+	}
+
+	@Override
+	public boolean onPreDraw() {
+		if (!isProfilePictureLayoutDrawn) {
+			isProfilePictureLayoutDrawn = true;
+			profilePicture.getViewTreeObserver().removeOnPreDrawListener(this);
+
+			setProfilePicture();
+		}
+
+		return true;
 	}
 }

@@ -1,6 +1,7 @@
 package com.seeu.team;
 
 import com.seeu.common.Entity;
+import com.seeu.member.Gender;
 import com.seeu.member.Member;
 
 import java.io.Serializable;
@@ -24,10 +25,10 @@ public class Team extends Entity {
 	 */
 	public static final String STORAGE_KEY = "team";
 
-	private String place;
-	private ArrayList<String> tags;
 	private String description;
+	private String place;
 	private int mark;
+	private ArrayList<String> tags;
 	private ArrayList<Member> members; // Use ArrayList because it is Serializable (List interface is not)
 	private ArrayList<TeamDescription> descriptions; // Use ArrayList because it is Serializable (List interface is not)
 
@@ -56,6 +57,18 @@ public class Team extends Entity {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public float getMaleProportion() {
+		float maleProportion = 0;
+
+		for (Member member : members) {
+			if (Gender.MALE.equals(member.getGender())) {
+				maleProportion++;
+			}
+		}
+
+		return maleProportion / members.size();
 	}
 
 	// TODO: Remove debug elements

@@ -136,12 +136,10 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	private void updateUI() {
 		setPicture();
 
-		float maleProportion = (team.getId() % 10) / (float) 10.0;
-
 		place.setText(team.getPlace());
 		name.setText(team.getName());
 		tags.setText(team.getTagsAsString());
-		genderIndex.setMaleProportion(maleProportion);
+		genderIndex.setMaleProportion(team.getMaleProportion());
 		textDescription.setText(team.getDescription());
 		mark.setMark(team.getMark());
 

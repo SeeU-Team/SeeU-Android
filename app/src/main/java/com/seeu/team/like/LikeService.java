@@ -79,7 +79,7 @@ public class LikeService extends AbstractService {
 		params.put("like", gson.toJson(like));
 
 		GsonRequest<Like> request = new GsonRequest<>(
-				BASE_URL,
+				BASE_URL + "/like",
 				Request.Method.POST,
 				Like.class,
 				getToken(),
@@ -94,14 +94,20 @@ public class LikeService extends AbstractService {
 	 * @param teamToMerge the team the leader wants to merge with
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void mergeTeam(Team teamToMerge, CustomResponseListener<Void> listener) {
-		Map<String, String> params = new HashMap<>(1);
-		params.put("teamToMergeId", String.valueOf(teamToMerge.getId()));
+	public void mergeTeam(Team myTeam, Team teamToMerge, CustomResponseListener<Merge> listener) {
+		Gson gson = new Gson();
+		Merge merge = Merge.builder()
+				.idFirst(myTeam.getId())
+				.idSecond(teamToMerge.getId())
+				.build();
 
-		GsonRequest<Void> request = new GsonRequest<>(
-				BASE_URL,
+		Map<String, String> params = new HashMap<>(1);
+		params.put("merge", gson.toJson(merge));
+
+		GsonRequest<Merge> request = new GsonRequest<>(
+				BASE_URL + "/merge",
 				Request.Method.POST,
-				Void.class,
+				Merge.class,
 				getToken(),
 				params,
 				listener);

@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@id/teamTags"
         app:cardUseCompatPadding="true"
         app:cardElevation="4dp"
-        app:cardCornerRadius="6dp" >
+        app:cardCornerRadius="10dp" >
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/teamPicture"

@@ -180,8 +180,8 @@ public class MessagesFragment extends Fragment {
 				setupTeamCard();
 
 				if (MemberStatus.LEADER.equals(memberHasTeam.getStatus())) {
-					loadTeams();
 					setupTeamsParts(getView());
+					loadTeams();
 				}
 			}
 		});

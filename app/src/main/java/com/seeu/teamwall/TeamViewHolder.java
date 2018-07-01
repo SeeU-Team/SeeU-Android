@@ -124,13 +124,11 @@ public class TeamViewHolder extends ViewHolder {
 			memberPictures.add(member.getProfilePhotoUrl());
 		}
 
-		float maleProportion = (team.getId() % 10) / (float) 10.0;
-
 		setName(team.getName());
 		setTags(team.getTagsAsString());
 		setPicture(team.getProfilePhotoUrl());
 		setMemberPictures(memberPictures);
-		setGenderIndex(maleProportion);
+		setGenderIndex(team.getMaleProportion());
 		setTeamDescriptions(team.getDescriptions());
 	}
 

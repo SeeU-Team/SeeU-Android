@@ -9,6 +9,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.seeu.R;
@@ -65,7 +66,6 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 			}
 		} catch (Exception e) {
 			Log.e(this.getClass().getName() + " : Error : ", "message : " + e.getMessage());
-			Log.i(this.getClass().getName(), "Use default image");
 			bitmap = BitmapFactory.decodeResource(viewWeakReference.get().getResources(), R.drawable.ic_broken_image_black);
 		} finally {
 			// BitmapDrawable drawable = new BitmapDrawable(Resources.getSystem(), result);

@@ -24,6 +24,7 @@ public class Member extends Entity {
 	public static final String STORAGE_KEY = "member";
 
 	private Long facebookId;
+	private Gender gender;
 	private String catchPhrase;
 	private String description;
 	private String pictureDescriptionUrl;
