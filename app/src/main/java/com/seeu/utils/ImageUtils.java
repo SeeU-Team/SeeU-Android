@@ -58,11 +58,10 @@ public class ImageUtils {
 	 */
 	public static String getStringImage(Bitmap bmp) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+		bmp.compress(Bitmap.CompressFormat.PNG, 75, baos);
 
 		byte[] imageBytes = baos.toByteArray();
 		return Base64.encodeToString(imageBytes, Base64.NO_WRAP | Base64.URL_SAFE);
-
 	}
 
 	public static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {

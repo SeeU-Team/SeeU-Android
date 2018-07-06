@@ -35,7 +35,7 @@ public class MemberService extends AbstractService {
 		params.put("member", gson.toJson(member));
 
 		if (null != imageBase64) {
-			params.put("profilePicture", imageBase64);
+			params.put("profilePicture", "\"" + imageBase64 + "\"");
 		}
 
 		GsonRequest<Member> request = new GsonRequest<>(
