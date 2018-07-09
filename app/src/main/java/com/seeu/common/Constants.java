@@ -10,6 +10,9 @@ public class Constants {
 	 */
 	private static final String SEEU_DOMAIN_URL = "192.168.2.200:8001";
 
+	// PROD
+//	private static final String SEEU_DOMAIN_URL = "ec2-18-188-18-232.us-east-2.compute.amazonaws.com:8001";
+
 	/**
 	 * The URL of the SEEU API.
 	 */

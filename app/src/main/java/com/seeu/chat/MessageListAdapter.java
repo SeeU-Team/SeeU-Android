@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 
 import com.seeu.R;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -18,12 +19,12 @@ import java.util.List;
  */
 public class MessageListAdapter extends BaseAdapter {
 
-	private Context context;
+	private WeakReference<Context> weakRefContext;
 	private LayoutInflater inflater;
 	private List<Message> messages;
 
 	public MessageListAdapter(Context context, @NonNull  List<Message> messages) {
-		this.context = context;
+		this.weakRefContext = new WeakReference<>(context);
 		this.inflater = LayoutInflater.from(context);
 		this.messages = messages;
 	}
@@ -51,8 +52,9 @@ public class MessageListAdapter extends BaseAdapter {
 	@Override
 	public int getItemViewType(int position) {
 		Message message = (Message) getItem(position);
+		Context context = weakRefContext.get();
 
-		return message.belongsToCurrentUser(context) ? MessageViewType.MY_MESSAGE.getValue() : MessageViewType.OTHERS_MESSAGE.getValue();
+		return null != context && message.belongsToCurrentUser(context) ? MessageViewType.MY_MESSAGE.getValue() : MessageViewType.OTHERS_MESSAGE.getValue();
 	}
 
 	@Override

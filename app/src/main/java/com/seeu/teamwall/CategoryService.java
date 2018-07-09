@@ -24,13 +24,11 @@ public class CategoryService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void getAllCategories(CustomResponseListener<Category[]> listener) {
-		String token = SharedPreferencesManager.getToken(context);
-
 		GsonRequest<Category[]> request = new GsonRequest<>(
 				BASE_URL,
 				Request.Method.GET,
 				Category[].class,
-				token,
+				getToken(),
 				null,
 				listener);
 

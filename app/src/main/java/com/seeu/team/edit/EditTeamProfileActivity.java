@@ -2,6 +2,7 @@ package com.seeu.team.edit;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +24,9 @@ import com.seeu.member.Member;
 import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
 import com.seeu.team.TeamService;
+import com.seeu.teamwall.Category;
+import com.seeu.teamwall.CategoryRecyclerAdapter;
+import com.seeu.teamwall.CategoryService;
 import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
@@ -29,6 +34,9 @@ import com.seeu.utils.network.CustomResponseListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +51,10 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	private PictureChooser pictureChooser;
 	private MemberRecyclerAdapter memberRecyclerAdapter;
 
+	private CategoryRecyclerAdapter categoryRecyclerAdapter;
+	private List<Category> categories;
+	private CategoryService categoryService;
+
 	private EditText name;
 	private EditText place;
 	private EditText tags;
@@ -52,6 +64,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 	public EditTeamProfileActivity() {
 		super();
+		categories = new ArrayList<>();
 	}
 
 	@Override
@@ -59,7 +72,8 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_teamprofile_activity);
 
-		this.teamService = new TeamService(this);
+		teamService = new TeamService(this);
+		categoryService = new CategoryService(this);
 
 		pictureChooser = new PictureChooser();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -72,6 +86,9 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		textDescription	= findViewById(R.id.teamTextDescription);
 
 		setupMemberRecycler();
+		setupCategoryRecycler();
+
+		loadCategories();
 		updateUI();
 	}
 
@@ -91,19 +108,62 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	 */
 	private void setupMemberRecycler() {
 		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
-		LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
 		// Keep reference of the dataset (arraylist here) in the adapter
 		memberRecyclerAdapter = new MemberRecyclerAdapter(this, entity.getMembers());
 		memberRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onItemRangeInserted(int positionStart, int itemCount) {
-				layoutManager.smoothScrollToPosition(memberRecycler, null, memberRecyclerAdapter.getItemCount());
+				memberRecycler.getLayoutManager().smoothScrollToPosition(memberRecycler, null, memberRecyclerAdapter.getItemCount());
 			}
 		});
 
-		memberRecycler.setLayoutManager(layoutManager);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
+	}
+
+	/**
+	 * Method that set up the recycler view for the team categories.
+	 */
+	private void setupCategoryRecycler() {
+		// Keep reference of the dataset (arraylist here) in the adapter
+		categoryRecyclerAdapter = new CategoryRecyclerAdapter(this, categories, this::onCategoryClick);
+
+		// set up the RecyclerView for the categories of team
+		RecyclerView categoryRecycler = findViewById(R.id.categoryRecycler);
+		categoryRecycler.setAdapter(categoryRecyclerAdapter);
+	}
+
+	/**
+	 * Load all the categories of teams. Refresh teams when received.
+	 */
+	private void loadCategories() {
+		categoryService.getAllCategories(new CustomResponseListener<Category[]>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.e("TeamWallFragment", "Error while loading categories", error);
+				Toast.makeText(EditTeamProfileActivity.this, "Error while loading categories " + error.getMessage(), Toast.LENGTH_LONG).show();
+			}
+
+			@Override
+			public void onResponse(Category[] response) {
+				Collections.addAll(categories, response);
+
+				if (null != categoryRecyclerAdapter) {
+					categoryRecyclerAdapter.setSelected(0);
+					categoryRecyclerAdapter.notifyDataSetChanged();
+				}
+
+				updateSelectedCategory();
+			}
+		});
+	}
+
+	public void onCategoryClick(View view, int position) {
+		categoryRecyclerAdapter.setSelected(position);
 	}
 
 	/**
@@ -124,15 +184,30 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 	@Override
 	protected void updateUI() {
-//		if (null == team.getMembers()) {
-//			team.setMembers(new ArrayList<>());
-//		}
 		pictureChooser.setCurrentPictureUrl(entity.getProfilePhotoUrl());
 
 		name.setText(entity.getName());
 		place.setText(entity.getPlace());
 		tags.setText(entity.getTagsAsString());
 		textDescription.setText(entity.getDescription());
+
+		updateSelectedCategory();
+	}
+
+	private void updateSelectedCategory() {
+		if (null == categoryRecyclerAdapter) {
+			return;
+		}
+
+		for (Category actualCategory : entity.getCategories()) {
+			for (int i = 0; i < categories.size(); i++) {
+				if (actualCategory.equals(categories.get(i))) {
+					// For now, we can select only one category
+					categoryRecyclerAdapter.setSelected(i);
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -160,6 +235,9 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		// Add the current user first in the list of members to make him LEADER
 		Member currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
 		entity.getMembers().add(0, currentUser);
+
+		entity.getCategories().clear();
+		entity.getCategories().add(categoryRecyclerAdapter.getSelectedItem());
 	}
 
 	@Override
@@ -203,7 +281,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	@Override
 	public void onResponse(Team response) {
 		// TODO: if update, no team is returned
-		SharedPreferencesManager.putEntity(this, Team.STORAGE_KEY, response);
+		// SharedPreferencesManager.putEntity(this, Team.STORAGE_KEY, response);
 		// End this activity when successfully save the team
 
 		Intent returnIntent = new Intent();

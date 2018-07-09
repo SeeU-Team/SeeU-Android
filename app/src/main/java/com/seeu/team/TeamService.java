@@ -106,6 +106,8 @@ public class TeamService extends AbstractService {
 
 		if (null != imageBase64) {
 			params.put("profilePicture", "\"" + imageBase64 + "\"");
+		} else {
+			params.put("profilePicture", null);
 		}
 
 		GsonRequest<Team> request = new GsonRequest<>(

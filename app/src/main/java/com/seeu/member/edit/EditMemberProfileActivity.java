@@ -15,7 +15,6 @@ import com.seeu.common.AbstractEditEntityActivity;
 import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
 import com.seeu.member.MemberService;
-import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -27,7 +26,7 @@ import java.util.Map;
  *
  * Activity that display the edition of member's profile.
  */
-public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member> implements CustomResponseListener<Member> {
+public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member> implements CustomResponseListener<Void> {
 
 	private PictureChooser pictureChooser;
 	private EditText catchPhrase;
@@ -89,17 +88,15 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 	@Override
 	protected void saveEntity() {
 		Uri chosenPictureUri = pictureChooser.getChosenPictureUri();
-		String imageBase64 = null;
+		Bitmap bitmap = null;
 
 		if (null != chosenPictureUri) {
 			try {
 				// Get data of picture
-				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), chosenPictureUri);
-				//encoding image to string
-				imageBase64 = ImageUtils.getStringImage(bitmap);
+				bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), chosenPictureUri);
 			} catch (IOException e) {
 				e.printStackTrace();
-				imageBase64 = null;
+				bitmap = null;
 			}
 		}
 
@@ -108,7 +105,7 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 			throw new IllegalStateException("We cannot create a member in the application...");
 		} else {
 			// Save the updated member with its new picture or not
-			memberService.updateMember(entity, imageBase64, this);
+			memberService.updateMember(entity, bitmap, this);
 		}
 	}
 
@@ -125,9 +122,7 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 	}
 
 	@Override
-	public void onResponse(Member response) {
-		// Save the updated member in the shared preferences
-		SharedPreferencesManager.putEntity(this, Member.STORAGE_KEY, response);
+	public void onResponse(Void response) {
 		// End this activity when successfully save the member
 		finish();
 	}

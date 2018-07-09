@@ -1,5 +1,8 @@
 package com.seeu.teamwall;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +20,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class Category implements Serializable {
 
 	private Long id;
 	private String name;
@@ -25,5 +28,18 @@ public class Category {
 	@Override
 	public String toString() {
 		return "Category " + name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Category category = (Category) o;
+		return Objects.equals(id, category.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

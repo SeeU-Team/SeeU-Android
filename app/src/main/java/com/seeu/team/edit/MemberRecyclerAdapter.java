@@ -11,7 +11,9 @@ import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 import com.seeu.member.profile.MemberProfileActivity;
+import com.seeu.utils.SharedPreferencesManager;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -23,10 +25,12 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 
 	private LayoutInflater inflater;
 	private List<Member> members;
+	private Member currentUser;
 
 	public MemberRecyclerAdapter(Context context, List<Member> members) {
 		inflater = LayoutInflater.from(context);
 		this.members = members;
+		this.currentUser = SharedPreferencesManager.getEntity(context, Member.STORAGE_KEY, Member.class);
 	}
 
 	private Member getItem(int position) {
@@ -42,8 +46,9 @@ class MemberRecyclerAdapter extends Adapter<MemberViewHolder> implements ItemCli
 	@Override
 	public void onBindViewHolder(MemberViewHolder holder, int position) {
 		Member member = getItem(position);
+		boolean isCurrentUser = currentUser.equals(member);
 
-		holder.setPicture(member.getProfilePhotoUrl());
+		holder.setData(member, isCurrentUser);
 	}
 
 	@Override

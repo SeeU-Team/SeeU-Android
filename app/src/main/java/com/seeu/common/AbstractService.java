@@ -2,12 +2,11 @@ package com.seeu.common;
 
 import android.content.Context;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.seeu.utils.SharedPreferencesManager;
 
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -18,18 +17,21 @@ import java.util.Map;
  */
 public abstract class AbstractService {
 
-	protected Context context;
+	protected WeakReference<Context> weakRefContext;
 	protected RequestQueue queue;
 	protected final String BASE_URL;
 
-	protected AbstractService(Context context, String rootEndPointUrl) {
-		this.context = context;
-		this.queue = Volley.newRequestQueue(context);
+	protected AbstractService(Context weakRefContext, String rootEndPointUrl) {
+		this.weakRefContext = new WeakReference<>(weakRefContext);
+		this.queue = Volley.newRequestQueue(weakRefContext);
 		this.BASE_URL = Constants.SEEU_API_URL + rootEndPointUrl;
 	}
 
 	protected String getToken() {
-		return SharedPreferencesManager.getToken(context);
+		Context context = weakRefContext.get();
+		return null != context
+				? SharedPreferencesManager.getToken(context)
+				: null;
 	}
 
 	/**

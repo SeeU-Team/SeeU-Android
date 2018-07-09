@@ -80,10 +80,6 @@ public class TeamMemberPicturesFragment extends Fragment {
 			memberPictures[i].setVisibility(View.VISIBLE);
 
 			String url = team.getMembers().get(i).getProfilePhotoUrl();
-			if (null == url) {
-				// TODO: remove debug picture
-				url = Member.DEBUG_PICTURE_URL;
-			}
 			new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(url);
 		}
 

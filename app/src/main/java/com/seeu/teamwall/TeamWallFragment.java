@@ -75,7 +75,7 @@ public class TeamWallFragment extends Fragment {
 		View view = inflater.inflate(R.layout.teamwall_fragment, container, false);
 
 		// TODO: get saved state from last instance of fragment
-		setupTeamTypeRecycler(view);
+		setupCategoryRecycler(view);
 		setupTeamRecycler(view);
 
 		return view;
@@ -113,13 +113,13 @@ public class TeamWallFragment extends Fragment {
 	 * Method that set up the recycler view for the team categories.
 	 * @param view the view that the recycler view belongs to
 	 */
-	private void setupTeamTypeRecycler(View view) {
+	private void setupCategoryRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
 		categoryRecyclerAdapter = new CategoryRecyclerAdapter(getActivity(), categories, this::onCategoryClick);
 
 		// set up the RecyclerView for the categories of team
-		RecyclerView teamTypeRecycler = view.findViewById(R.id.categoryRecycler);
-		teamTypeRecycler.setAdapter(categoryRecyclerAdapter);
+		RecyclerView categoryRecycler = view.findViewById(R.id.categoryRecycler);
+		categoryRecycler.setAdapter(categoryRecyclerAdapter);
 	}
 
 	/**

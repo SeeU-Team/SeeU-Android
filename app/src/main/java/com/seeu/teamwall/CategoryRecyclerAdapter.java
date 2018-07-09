@@ -57,6 +57,10 @@ public class CategoryRecyclerAdapter extends Adapter<CategoryViewHolder> {
 		return categories.get(position);
 	}
 
+	public Category getSelectedItem() {
+		return getItem(selected);
+	}
+
 	/**
 	 * Set the selected category item of the list.
 	 * The selected item is highlighted.

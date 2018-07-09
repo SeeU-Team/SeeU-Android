@@ -27,14 +27,4 @@ public class MemberMessage extends Message<Member> {
 		final Member currentUser = SharedPreferencesManager.getEntity(context, Member.STORAGE_KEY, Member.class);
 		return currentUser.getId().equals(owner.getId());
 	}
-
-	public static Message getDebugMessage(int index) {
-		Member owner = Member.getDebugMember(index);
-
-		return MemberMessage.builder()
-				.id(index)
-				.content("Ceci est du texte long " + index)
-				.owner(owner)
-				.build();
-	}
 }

@@ -1,5 +1,7 @@
 package com.seeu.team.like;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +16,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class Merge {
+public class Merge implements Serializable {
 
 	private Long idMerge;
 	private Long idFirst;

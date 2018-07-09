@@ -31,7 +31,6 @@ public class MessageService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void getMessages(Member currentUser, Member otherUser, CustomResponseListener<MemberMessage[]> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(2);
 		params.put("firstUserId", String.valueOf(currentUser.getId()));
 		params.put("secondUserId", String.valueOf(otherUser.getId()));
@@ -40,7 +39,7 @@ public class MessageService extends AbstractService {
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				MemberMessage[].class,
-				token,
+				getToken(),
 				null,
 				listener);
 
@@ -54,7 +53,6 @@ public class MessageService extends AbstractService {
 	 * @param listener callback listener called when the response is available from the server
 	 */
 	public void getMessages(Team team, CustomResponseListener<MemberMessage[]> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
@@ -62,7 +60,7 @@ public class MessageService extends AbstractService {
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				MemberMessage[].class,
-				token,
+				getToken(),
 				null,
 				listener);
 
@@ -71,7 +69,6 @@ public class MessageService extends AbstractService {
 	}
 
 	public void getMessages(Team myTeam, Team likedTeam, CustomResponseListener<TeamMessage[]> listener) {
-		String token = SharedPreferencesManager.getToken(context);
 		Map<String, String> params = new HashMap<>(2);
 		params.put("firstTeamId", String.valueOf(myTeam.getId()));
 		params.put("secondTeamId", String.valueOf(likedTeam.getId()));
@@ -80,7 +77,7 @@ public class MessageService extends AbstractService {
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
 				TeamMessage[].class,
-				token,
+				getToken(),
 				null,
 				listener);
 

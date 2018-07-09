@@ -40,26 +40,4 @@ public class Member extends Entity {
 	public String toString() {
 		return "member " + id;
 	}
-
-	// TODO: Remove the debug url
-	public static final String DEBUG_PICTURE_URL = "https://scontent.xx.fbcdn.net/v/t1.0-1/p200x200/22365631_1924906760859051_4812781837110089872_n.jpg?oh=a27a7d0053306572e7e485b647db99d4&oe=5B3A50DA";
-
-	public static Member getDebugMember(int index) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, -index);
-
-		Member member = new Member();
-		member.setId((long) index);
-		member.setProfilePhotoUrl(Member.DEBUG_PICTURE_URL);
-		member.setName("Member " + index);
-		member.setCatchPhrase("Catch phrase " + index);
-		member.setPictureDescriptionUrl(Member.DEBUG_PICTURE_URL);
-		member.setPictureDescriptionLabel("Description label " + index);
-		member.setMark(index%6);
-		member.setDescription("Description " + index);
-		member.setConnected(index%2 == 0);
-		member.setLastConnection(calendar.getTime());
-
-		return member;
-	}
 }

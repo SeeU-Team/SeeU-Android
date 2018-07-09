@@ -1,6 +1,9 @@
 package com.seeu.member;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.util.Base64;
 
 import com.android.volley.Request;
 import com.facebook.AccessToken;
@@ -9,6 +12,7 @@ import com.seeu.common.AbstractService;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,25 +27,35 @@ public class MemberService extends AbstractService {
 		super(context, "/api/users");
 	}
 
+	public void updateMember(Member member, Bitmap bitmapImage, CustomResponseListener<Void> listener) {
+		if (null != bitmapImage) {
+			new UpdateMemberWithNewPictureAsyncTask(member, listener).execute(bitmapImage);
+		} else {
+			updateMember(member, (String) null, listener);
+		}
+	}
+
 	/**
 	 * Save the updated member passed in parameter in the Database.
 	 * @param member the member to save
 	 * @param imageBase64 the new profile picture encoded in Base64. May be null if not updated
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void updateMember(Member member, String imageBase64, CustomResponseListener<Member> listener) {
+	private void updateMember(Member member, String imageBase64, CustomResponseListener<Void> listener) {
 		Map<String, String> params = new HashMap<>(2);
 		Gson gson = new Gson();
 		params.put("member", gson.toJson(member));
 
 		if (null != imageBase64) {
 			params.put("profilePicture", "\"" + imageBase64 + "\"");
+		} else {
+			params.put("profilePicture", null);
 		}
 
-		GsonRequest<Member> request = new GsonRequest<>(
+		GsonRequest<Void> request = new GsonRequest<>(
 				BASE_URL,
 				Request.Method.PUT,
-				Member.class,
+				Void.class,
 				getToken(),
 				params,
 				listener);
@@ -90,5 +104,34 @@ public class MemberService extends AbstractService {
 				listener);
 
 		queue.add(request);
+	}
+
+	private class UpdateMemberWithNewPictureAsyncTask extends AsyncTask<Bitmap, Void, String> {
+
+		private Member member;
+		private CustomResponseListener<Void> listener;
+
+		public UpdateMemberWithNewPictureAsyncTask(Member member, CustomResponseListener<Void> listener) {
+			this.member = member;
+			this.listener = listener;
+		}
+
+		@Override
+		protected String doInBackground(Bitmap... bitmaps) {
+			Bitmap bitmap = bitmaps[0];
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.PNG, 75, baos);
+
+			byte[] imageBytes = baos.toByteArray();
+			return Base64.encodeToString(imageBytes, Base64.NO_WRAP | Base64.URL_SAFE);
+		}
+
+		@Override
+		protected void onPostExecute(String s) {
+			if (null != s) {
+				updateMember(member, s, listener);
+			}
+		}
 	}
 }
