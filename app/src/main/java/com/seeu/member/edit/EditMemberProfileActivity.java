@@ -15,7 +15,6 @@ import com.seeu.common.AbstractEditEntityActivity;
 import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
 import com.seeu.member.MemberService;
-import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
 import java.io.IOException;

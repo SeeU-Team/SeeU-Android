@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class ConnectionActivity extends Activity implements FacebookCallback<LoginResult>, CustomResponseListener<Member> {
 
 	private CallbackManager callbackManager;
+
 	private LoginButton loginButton;
 	private TextView errorView;
 
@@ -38,21 +40,22 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.connection_activity);
 
+		loginButton = findViewById(R.id.login_button);
+		errorView = findViewById(R.id.error_login);
+
 		this.authenticationService = new AuthenticationService(this);
 
 		final AccessToken accessToken = AccessToken.getCurrentAccessToken();
 		if (null != accessToken) {
 			Log.d("Facebook", "already logged in");
+
 			loadMemberInfo(accessToken);
+		} else {
+			callbackManager = CallbackManager.Factory.create();
+			loginButton.setReadPermissions("public_profile", "user_photos", "user_friends");
+			// Callback registration
+			loginButton.registerCallback(callbackManager, this);
 		}
-
-		callbackManager = CallbackManager.Factory.create();
-		loginButton = findViewById(R.id.login_button);
-		loginButton.setReadPermissions("public_profile", "user_photos", "user_friends");
-		// Callback registration
-		loginButton.registerCallback(callbackManager, this);
-
-		errorView = findViewById(R.id.error_login);
 	}
 
 	@Override
@@ -62,52 +65,28 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	}
 
 	@Override
-	public void onSuccess(LoginResult loginResult) {
-		Log.d("Facebook", "Login success");
-		loadMemberInfo(loginResult.getAccessToken());
-	}
-
-	@Override
 	public void onCancel() {
 		System.out.println("Facebook login canceled");
 	}
 
 	@Override
 	public void onError(FacebookException exception) {
-		System.out.println("Facebook login error");
+		Log.e("Facebook", "login error");
 		exception.printStackTrace();
 		errorView.setText(exception.toString());
 	}
 
-	/**
-	 * Load information about the connected user with the access token provided by Facebook.
-	 * Start the main activity when the request is done.
-	 * @param accessToken the access token provided by Facebook
-	 */
-	private void loadMemberInfo(final AccessToken accessToken) {
+	@Override
+	public void onSuccess(LoginResult loginResult) {
+		Log.d("Facebook", "Login success");
 
-//		GraphRequest request = GraphRequest.newMeRequest(
-//				accessToken,
-//				(object, response) -> {
-//					Log.d("Facebook Graph", object.toString());
-//				});
-//
-//		Bundle parameters = new Bundle();
-//		parameters.putString("fields", "id,name,link,picture.type(large),cover,friends");
-//		request.setParameters(parameters);
-//		request.executeAsync();
-
-		SharedPreferencesManager.putFacebookToken(this, accessToken.getToken());
-		authenticationService.getMember(accessToken, this);
+		loadMemberInfo(loginResult.getAccessToken());
 	}
 
-	@Override
-	public void onResponse(Member response) {
-		SharedPreferencesManager.putEntity(this, Member.STORAGE_KEY, response);
-
-		Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
-		startActivity(intent);
-		finish();
+	private void loadMemberInfo(AccessToken accessToken) {
+		loginButton.setVisibility(View.GONE);
+		errorView.setText("Lancement de l'application");
+		authenticationService.getMember(accessToken, this);
 	}
 
 	@Override
@@ -123,5 +102,14 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 	public void onErrorResponse(VolleyError error) {
 		error.printStackTrace();
 		errorView.setText(error.getLocalizedMessage());
+	}
+
+	@Override
+	public void onResponse(Member response) {
+		SharedPreferencesManager.putEntity(this, Member.STORAGE_KEY, response);
+
+		Intent intent = new Intent(ConnectionActivity.this, TabbedActivity.class);
+		startActivity(intent);
+		finish();
 	}
 }

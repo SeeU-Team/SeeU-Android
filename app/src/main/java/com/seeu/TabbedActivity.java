@@ -15,16 +15,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
+import com.facebook.login.LoginManager;
+import com.seeu.common.subviews.Mark;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.member.MemberStatus;
 import com.seeu.member.edit.EditMemberProfileActivity;
+import com.seeu.member.profile.MemberProfileActivity;
 import com.seeu.messages.MessagesFragment;
 import com.seeu.nightcenter.NightCenterFragment;
 import com.seeu.team.TeamService;
 import com.seeu.teamwall.TeamWallFragment;
+import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -47,11 +54,19 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	private BottomNavigationView navigationView;
 	private MenuItem nightCenterMenuItem;
 
+	private ImageView memberProfilePicture;
+	private boolean hasPictureBeDrawn;
+
 	/**
 	 * Listener for the bottom navigation menu. Switch between the fragments on user clicks.
 	 */
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
 		Fragment selectedFragment = null;
+
+		// Show the night center menu
+		//navigationView.getMenu().add(nightCenterMenuItem.getGroupId(), nightCenterMenuItem.getItemId(), nightCenterMenuItem.getOrder(), nightCenterMenuItem.getTitle())
+		//		.setIcon(nightCenterMenuItem.getIcon());
+		// TODO: get status of the team (merged or not), and decide if we must show the night center or not
 
 		switch (item.getItemId()) {
 			case R.id.navigation_teamwall:
@@ -84,29 +99,29 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	 * Listener for the left navigation menu that appears on click on the hamburger menu.
 	 */
 	private NavigationView.OnNavigationItemSelectedListener onLeftMenuNavigationItemSelectedListener = (item) -> {
+		Intent intent;
 		// Handle navigation view item clicks here.
 		switch (item.getItemId()) {
-			case R.id.nav_camera:
-				// Handle the camera action
-				Intent intent = new Intent(this, EditMemberProfileActivity.class);
+			case R.id.nav_member_profile:
+				intent = new Intent(this, MemberProfileActivity.class);
 				intent.putExtra(Member.STORAGE_KEY, currentUser);
 
 				startActivity(intent);
 				break;
 
-			case R.id.nav_gallery:
+			case R.id.nav_edit_member_profile:
+				intent = new Intent(this, EditMemberProfileActivity.class);
+				intent.putExtra(Member.STORAGE_KEY, currentUser);
+
+				startActivity(intent);
 				break;
 
-			case R.id.nav_slideshow:
+			case R.id.nav_team_profile:
 				break;
 
-			case R.id.nav_manage:
-				break;
-
-			case R.id.nav_share:
-				break;
-
-			case R.id.nav_send:
+			case R.id.nav_disconnection:
+				LoginManager.getInstance().logOut();
+				finishAndRemoveTask();
 				break;
 		}
 
@@ -137,10 +152,12 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		NavigationView navigationView = findViewById(R.id.nav_view);
 		navigationView.setNavigationItemSelectedListener(onLeftMenuNavigationItemSelectedListener);
+		View navHeader = navigationView.getHeaderView(0);
 
 		teamService = new TeamService(this);
 		currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
 		loadMemberTeam();
+		loadLeftNavViewHeader(navHeader);
 	}
 
 	@Override
@@ -173,16 +190,39 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here.
-		// The action bar will automatically handle clicks on the Home/Up button,
-		// so long as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
+		// The action bar will automatically handle clicks on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
+		switch (item.getItemId()) {
+			case R.id.action_settings:
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void loadLeftNavViewHeader(View view) {
+		memberProfilePicture = view.findViewById(R.id.memberPicture);
+		TextView memberMarkView = view.findViewById(R.id.memberMark);
+		TextView memberName = view.findViewById(R.id.memberName);
+		TextView memberCatchPhrase = view.findViewById(R.id.memberCatchPhrase);
+		Mark mark = new Mark(memberMarkView);
+
+		hasPictureBeDrawn = false;
+		memberProfilePicture.getViewTreeObserver().addOnPreDrawListener(this::onMemberPicturePreDraw);
+
+		mark.setMark(currentUser.getMark());
+		memberName.setText(currentUser.getName());
+		memberCatchPhrase.setText(currentUser.getCatchPhrase());
+	}
+
+	public boolean onMemberPicturePreDraw() {
+		if (!hasPictureBeDrawn) {
+			hasPictureBeDrawn = true;
+
+			memberProfilePicture.getViewTreeObserver().removeOnPreDrawListener(this::onMemberPicturePreDraw);
+			new DownloadImageAndSetBackgroundTask(memberProfilePicture,100).execute(currentUser.getProfilePhotoUrl());
+		}
+
+		return true;
 	}
 
 	private void loadMemberTeam() {
@@ -212,11 +252,6 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	@Override
 	public void onResponse(MemberHasTeam response) {
 		SharedPreferencesManager.putObject(this, MemberHasTeam.STORAGE_KEY, response);
-
-		// Show the night center menu
-		//navigationView.getMenu().add(nightCenterMenuItem.getGroupId(), nightCenterMenuItem.getItemId(), nightCenterMenuItem.getOrder(), nightCenterMenuItem.getTitle())
-		//		.setIcon(nightCenterMenuItem.getIcon());
-		// TODO: get status of the team (merged or not), and decide if we must show the night center or not
 
 		//Manually displaying the TeamWall fragment - one time only
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();

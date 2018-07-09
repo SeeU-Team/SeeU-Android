@@ -75,8 +75,7 @@ public class MemberSearchableActivity extends Activity implements ItemClickListe
 	}
 
 	private void getFacebookFriends() {
-		String accessToken = SharedPreferencesManager.getFacebookToken(this);
-		memberService.getFacebookFriends(accessToken, this);
+		memberService.getFacebookFriends(this);
 	}
 
 	/**

@@ -54,24 +54,6 @@ public class SharedPreferencesManager {
 	}
 
 	/**
-	 * Put the Facebook access token in the shared preferences.
-	 * @param context the context needed to get the shared preferences
-	 * @param token the Facebook access token to store
-	 */
-	public static void putFacebookToken(Context context, String token) {
-		putString(context, FACEBOOK_ACCESS_TOKEN_KEY, token);
-	}
-
-	/**
-	 * Get the Facebook access token from the shared preferences.
-	 * @param context the context needed to get the shared preferences
-	 * @return the Facebook access token
-	 */
-	public static String getFacebookToken(Context context) {
-		return getString(context, FACEBOOK_ACCESS_TOKEN_KEY, null);
-	}
-
-	/**
 	 * Put an {@link Entity} in the shared preferences.
 	 * @param context the context needed to get the shared preferences
 	 * @param key the key assigned to the value

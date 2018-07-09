@@ -90,9 +90,9 @@ public class MemberService extends AbstractService {
 	 * @param accessToken the facebook user's we want his Facebook friends
 	 * @param listener listener that will retrieve the data after the request completes
 	 */
-	public void getFacebookFriends(String accessToken, CustomResponseListener<Member[]> listener) {
+	public void getFacebookFriends(CustomResponseListener<Member[]> listener) {
 		Map<String, String> params = new HashMap<>(1);
-		params.put("access_token", accessToken);
+		params.put("access_token", AccessToken.getCurrentAccessToken().getToken());
 
 		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<Member[]> request = new GsonRequest<>(

@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
-
-    <item android:title="Communicate">
+    <item android:title="Mon profil">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_member_profile"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Voir" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_edit_member_profile"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Editer" />
         </menu>
     </item>
+
+    <group>
+        <item
+            android:id="@+id/nav_team_profile"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Voir le profil de ma team"
+            android:enabled="false" />
+        <item
+            android:id="@+id/nav_disconnection"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Déconnexion" />
+    </group>
 
 </menu>
