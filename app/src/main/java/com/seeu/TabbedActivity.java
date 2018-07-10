@@ -57,24 +57,22 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	private ImageView memberProfilePicture;
 	private boolean hasPictureBeDrawn;
 
+	private boolean loadFirstFragment;
+	private boolean isAlreadyLoadingMemberTeam;
+
 	/**
 	 * Listener for the bottom navigation menu. Switch between the fragments on user clicks.
 	 */
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
 		Fragment selectedFragment = null;
 
-		// Show the night center menu
-		//navigationView.getMenu().add(nightCenterMenuItem.getGroupId(), nightCenterMenuItem.getItemId(), nightCenterMenuItem.getOrder(), nightCenterMenuItem.getTitle())
-		//		.setIcon(nightCenterMenuItem.getIcon());
-		// TODO: get status of the team (merged or not), and decide if we must show the night center or not
+		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+		if (null == memberHasTeam) {
+			return false;
+		}
 
 		switch (item.getItemId()) {
 			case R.id.navigation_teamwall:
-				MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
-				if (null == memberHasTeam) {
-					return false;
-				}
-
 				selectedFragment = MemberStatus.ALONE.equals(memberHasTeam.getStatus())
 						? new NoTeamFragment()
 						: new TeamWallFragment();
@@ -156,8 +154,18 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		teamService = new TeamService(this);
 		currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
-		loadMemberTeam();
+		loadMemberTeam(true);
 		loadLeftNavViewHeader(navHeader);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// Refresh member's team when user navigates through menu items
+		if (!isAlreadyLoadingMemberTeam) {
+			loadMemberTeam(false);
+		}
 	}
 
 	@Override
@@ -166,7 +174,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		// When got result from NoTeamFragment, reload the team of the user
 		if (NoTeamFragment.TEAM_CREATION_REQUEST_CODE == requestCode && Activity.RESULT_OK == resultCode) {
-			loadMemberTeam();
+			loadMemberTeam(true);
 		}
 	}
 
@@ -225,37 +233,69 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 		return true;
 	}
 
-	private void loadMemberTeam() {
+	private void updateNightCenterMenuVisibility() {
+		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+
+		if (!MemberStatus.ALONE.equals(memberHasTeam.getStatus())
+				&& memberHasTeam.getTeam().isMerged()) {
+
+			// Add the night center menu if it has not be added yet
+			MenuItem navMenuItem = navigationView.getMenu().findItem(nightCenterMenuItem.getItemId());
+			if (null == navMenuItem) {
+				navigationView.getMenu()
+						.add(nightCenterMenuItem.getGroupId(),
+								nightCenterMenuItem.getItemId(),
+								nightCenterMenuItem.getOrder(),
+								nightCenterMenuItem.getTitle())
+						.setIcon(nightCenterMenuItem.getIcon());
+			}
+		} else {
+			navigationView.getMenu()
+					.removeItem(nightCenterMenuItem.getItemId());
+		}
+	}
+
+	private void loadMemberTeam(boolean loadFirstFragment) {
+		this.loadFirstFragment = loadFirstFragment;
 		teamService.getTeam(currentUser, this);
+		isAlreadyLoadingMemberTeam = true;
 	}
 
 	@Override
 	public void onHeadersResponse(Map<String, String> headers) {
+		isAlreadyLoadingMemberTeam = false;
 	}
 
 	@Override
 	public void onErrorResponse(VolleyError error) {
-		if (HttpURLConnection.HTTP_NOT_FOUND == error.networkResponse.statusCode) {
+		if (null != error.networkResponse
+				&& HttpURLConnection.HTTP_NOT_FOUND == error.networkResponse.statusCode) {
 			MemberHasTeam memberHasTeam = new MemberHasTeam();
 			memberHasTeam.setMemberId(currentUser.getId());
 			memberHasTeam.setStatus(MemberStatus.ALONE);
 
 			SharedPreferencesManager.putObject(this, MemberHasTeam.STORAGE_KEY, memberHasTeam);
+			updateNightCenterMenuVisibility();
 
-			//Manually displaying the NoTeam fragment - one time only
-			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.frame_layout, new NoTeamFragment());
-			transaction.commit();
+			// Manually displaying the NoTeam fragment - one time only
+			if (loadFirstFragment) {
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.frame_layout, new NoTeamFragment());
+				transaction.commit();
+			}
 		}
 	}
 
 	@Override
 	public void onResponse(MemberHasTeam response) {
 		SharedPreferencesManager.putObject(this, MemberHasTeam.STORAGE_KEY, response);
+		updateNightCenterMenuVisibility();
 
 		//Manually displaying the TeamWall fragment - one time only
-		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		transaction.replace(R.id.frame_layout, new TeamWallFragment());
-		transaction.commit();
+		if (loadFirstFragment) {
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+			transaction.replace(R.id.frame_layout, new TeamWallFragment());
+			transaction.commit();
+		}
 	}
 }

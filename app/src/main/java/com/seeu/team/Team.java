@@ -29,10 +29,14 @@ public class Team extends Entity {
 	private String description;
 	private String place;
 	private int mark;
+
+	// Use ArrayList because it is Serializable (List interface is not)
 	private ArrayList<Category> categories;
 	private ArrayList<String> tags;
-	private ArrayList<Member> members; // Use ArrayList because it is Serializable (List interface is not)
-	private ArrayList<TeamDescription> descriptions; // Use ArrayList because it is Serializable (List interface is not)
+	private ArrayList<Member> members;
+	private ArrayList<TeamDescription> descriptions;
+
+	private boolean merged;
 
 	public Team() {
 		categories = new ArrayList<>();

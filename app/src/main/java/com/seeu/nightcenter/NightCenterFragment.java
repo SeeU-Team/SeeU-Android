@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
@@ -33,17 +34,17 @@ import java.util.Map;
  */
 public class NightCenterFragment extends Fragment {
 
-	private Member currentUser;
 	private MemberHasTeam memberHasTeam;
 
 	private CardView myTeamCardView;
+	private TextView myTeamName;
 	private boolean myTeamPictureSet;
 
 	private CardView mergedTeamCardView;
+	private TextView mergedTeamName;
 	private Team mergedTeam;
 	private boolean mergedTeamPictureSet;
 
-	private TeamService teamService;
 	private LikeService likeService;
 
 	private MemberRecyclerAdapter memberRecyclerAdapter;
@@ -63,11 +64,15 @@ public class NightCenterFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.teamService = new TeamService(getActivity());
 		this.likeService = new LikeService(getActivity());
-		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
+		this.memberHasTeam = SharedPreferencesManager.getObject(getActivity(), MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 
-		loadMyTeam();
+		loadMergedTeam();
+
+		members.addAll(memberHasTeam.getTeam().getMembers());
+		if (null != memberRecyclerAdapter) {
+			memberRecyclerAdapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
@@ -75,14 +80,17 @@ public class NightCenterFragment extends Fragment {
 		View view = inflater.inflate(R.layout.nightcenter_fragment, container, false);
 
 		myTeamCardView = view.findViewById(R.id.firstTeamCardView);
+		myTeamName = view.findViewById(R.id.firstTeamName);
 		mergedTeamCardView = view.findViewById(R.id.secondTeamCardView);
+		mergedTeamName = view.findViewById(R.id.secondTeamName);
+
+		myTeamName.setText(memberHasTeam.getTeam().getName());
 
 		setupMemberRecycler(view);
 		applyPicture();
 
 		return view;
 	}
-
 
 	/**
 	 * Setup the recycler view to display the member list.
@@ -95,36 +103,6 @@ public class NightCenterFragment extends Fragment {
 
 		RecyclerView memberRecycler = view.findViewById(R.id.memberRecycler);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
-	}
-
-	/**
-	 * Load teams info from the database.
-	 */
-	private void loadMyTeam() {
-		teamService.getTeam(currentUser, new CustomResponseListener<MemberHasTeam>() {
-			@Override
-			public void onHeadersResponse(Map<String, String> headers) {
-			}
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				error.printStackTrace();
-				Toast.makeText(getActivity(), "An error occurred while trying to retrieve my team", Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			public void onResponse(MemberHasTeam response) {
-				memberHasTeam = response;
-				applyPicture();
-
-				loadMergedTeam();
-
-				members.addAll(memberHasTeam.getTeam().getMembers());
-				if (null != memberRecyclerAdapter) {
-					memberRecyclerAdapter.notifyDataSetChanged();
-				}
-			}
-		});
 	}
 
 	private void loadMergedTeam() {
@@ -142,6 +120,8 @@ public class NightCenterFragment extends Fragment {
 			@Override
 			public void onResponse(Team response) {
 				mergedTeam = response;
+
+				mergedTeamName.setText(response.getName());
 				applyPicture();
 
 				members.addAll(mergedTeam.getMembers());
