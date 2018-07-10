@@ -61,12 +61,13 @@ public class MessagesFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.teamService = new TeamService(getActivity());
-		this.memberService = new MemberService(getActivity());
-		this.likeService = new LikeService(getActivity());
-		this.currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
+		teamService = new TeamService(getActivity());
+		memberService = new MemberService(getActivity());
+		likeService = new LikeService(getActivity());
+		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
+		memberHasTeam = SharedPreferencesManager.getObject(getActivity(), MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 
-		loadTeam();
+//		loadTeam();
 		loadMembers();
 	}
 
@@ -128,6 +129,8 @@ public class MessagesFragment extends Fragment {
 		teamsTitle.setVisibility(View.VISIBLE);
 
 		setupTeamRecycler(view);
+
+		loadTeams();
 	}
 
 	/**

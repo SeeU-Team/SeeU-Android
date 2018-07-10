@@ -50,6 +50,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	private MemberHasTeam memberHasTeam;
 	private Entity receiver;
 	private boolean isBeforeConv;
+	private LikeService likeService;
 
 	private EditText newMessage;
 	private ImageButton profilePicture;
@@ -74,9 +75,10 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.chat_activity);
 
-		this.messageService = new MessageService(this);
-		this.currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
-		this.memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
+		messageService = new MessageService(this);
+		likeService = new LikeService(this);
+		currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
+		memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 
 		newMessage = findViewById(R.id.newMessage);
 		profilePicture = findViewById(R.id.profilePicture);
@@ -121,8 +123,37 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	}
 
 	private void updateUI() {
-		mergeBtn.setVisibility(isBeforeConv ? View.VISIBLE : View.GONE);
+		if (isBeforeConv
+				&& !memberHasTeam.getTeam().isMerged()) {
+
+			updateMergeBtnVisibility();
+		}
+
 		setProfilePicture();
+	}
+
+	private void updateMergeBtnVisibility() {
+		likeService.getAllTeamsAlreadyMergedByTeam(memberHasTeam.getTeam(), new CustomResponseListener<Merge[]>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				error.printStackTrace();
+				Toast.makeText(ChatActivity.this, "An error occurred while trying to retrieve all teams already merged by your team", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onResponse(Merge[] response) {
+				for (Merge merge : response) {
+					if (receiver.getId().equals(merge.getIdSecond())) {
+						return;
+					}
+				}
+				mergeBtn.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 
 	private void setProfilePicture() {
@@ -266,9 +297,6 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	}
 
 	public void onMergeClick(View v) {
-		LikeService likeService = new LikeService(this);
-		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
-
 		likeService.mergeTeam(memberHasTeam.getTeam(), (Team) receiver, new CustomResponseListener<Merge>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {

@@ -50,11 +50,25 @@ public class LikeService extends AbstractService {
 		Map<String, String> params = new HashMap<>(1);
 		params.put("teamId", String.valueOf(team.getId()));
 
-		// TODO: get full url with params
 		GsonRequest<Team> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL + "/merged", params),
 				Request.Method.GET,
 				Team.class,
+				getToken(),
+				null,
+				listener);
+
+		queue.add(request);
+	}
+
+	public void getAllTeamsAlreadyMergedByTeam(Team team, CustomResponseListener<Merge[]> listener) {
+		Map<String, String> params = new HashMap<>(1);
+		params.put("teamId", String.valueOf(team.getId()));
+
+		GsonRequest<Merge[]> request = new GsonRequest<>(
+				getFullGETUrl(BASE_URL + "/allMerged", params),
+				Request.Method.GET,
+				Merge[].class,
 				getToken(),
 				null,
 				listener);

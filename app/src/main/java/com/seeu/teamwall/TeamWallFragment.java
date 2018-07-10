@@ -49,12 +49,15 @@ public class TeamWallFragment extends Fragment {
 	private List<Team> teams;
 	private TeamService teamService;
 
+	private boolean alreadyRefreshingTeams;
+
 	/**
 	 * Constructor
 	 */
 	public TeamWallFragment() {
 		categories = new ArrayList<>();
 		teams = new ArrayList<>();
+		alreadyRefreshingTeams = false;
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class TeamWallFragment extends Fragment {
 		this.categoryService = new CategoryService(this.getActivity());
 
 		currentUser = SharedPreferencesManager.getEntity(getActivity(), Member.STORAGE_KEY, Member.class);
-		memberHasTeam = SharedPreferencesManager.getObject(getActivity(), Member.STORAGE_KEY, MemberHasTeam.class);
+		memberHasTeam = SharedPreferencesManager.getObject(getActivity(), MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 
 		loadCategories();
 	}
@@ -105,6 +108,7 @@ public class TeamWallFragment extends Fragment {
 		Team team = teams.get(position);
 		Intent intent = new Intent(getActivity(), TeamProfileActivity.class);
 		intent.putExtra(Team.STORAGE_KEY, team);
+		intent.putExtra(TeamProfileActivity.TEAM_UP_DISPLAY_BTN_NAME, true);
 
 		startActivityForResult(intent, INTENT_TEAM_PROFILE);
 	}
@@ -137,7 +141,6 @@ public class TeamWallFragment extends Fragment {
 	 * Load all the categories of teams. Refresh teams when received.
 	 */
 	private void loadCategories() {
-		final Context context = this.getActivity();
 		categories.clear();
 
 		categoryService.getAllCategories(new CustomResponseListener<Category[]>() {
@@ -148,7 +151,7 @@ public class TeamWallFragment extends Fragment {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				Log.e("TeamWallFragment", "Error while loading categories", error);
-				Toast.makeText(context, "Error while loading categories " + error.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(TeamWallFragment.this.getActivity(), "Error while loading categories " + error.getMessage(), Toast.LENGTH_LONG).show();
 			}
 
 			@Override
@@ -172,22 +175,29 @@ public class TeamWallFragment extends Fragment {
 	 * @param selectedType the category of teams
 	 */
 	private void refreshTeams(Category selectedType) {
-		final Context context = this.getActivity();
-		teams.clear();
+		if (alreadyRefreshingTeams) {
+			return;
+		}
 
-		teamService.getTeams(selectedType, new CustomResponseListener<Team[]>() {
+		alreadyRefreshingTeams = true;
+
+		teamService.getTeams(selectedType, memberHasTeam.getTeam(), new CustomResponseListener<Team[]>() {
 			@Override
 			public void onHeadersResponse(Map<String, String> headers) {
 			}
 
 			@Override
 			public void onErrorResponse(VolleyError error) {
+				teams.clear();
+				alreadyRefreshingTeams = false;
 				Log.e("TeamWallFragment", "Error while loading Teams", error);
-				Toast.makeText(context, "Error while loading Teams " + error.getMessage(), Toast.LENGTH_LONG).show();
+				Toast.makeText(TeamWallFragment.this.getActivity(), "Error while loading Teams " + error.getMessage(), Toast.LENGTH_LONG).show();
 			}
 
 			@Override
 			public void onResponse(Team[] response) {
+				teams.clear();
+				alreadyRefreshingTeams = false;
 				Collections.addAll(teams, response);
 
 				if (null != teamRecyclerAdapter) {

@@ -28,11 +28,13 @@ public class TeamService extends AbstractService {
 	/**
 	 * Get all the teams of the category passed in parameter.
 	 * @param category the category of the teams to load
+	 * @param team the team of the current user
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void getTeams(Category category, CustomResponseListener<Team[]> listener) {
-		Map<String, String> params = new HashMap<>(1);
+	public void getTeams(Category category, Team team, CustomResponseListener<Team[]> listener) {
+		Map<String, String> params = new HashMap<>(2);
 		params.put("categoryId", String.valueOf(category.getId()));
+		params.put("teamId", String.valueOf(team.getId()));
 
 		GsonRequest<Team[]> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL, params),

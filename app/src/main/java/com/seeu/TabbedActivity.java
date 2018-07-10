@@ -263,7 +263,6 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 	@Override
 	public void onHeadersResponse(Map<String, String> headers) {
-		isAlreadyLoadingMemberTeam = false;
 	}
 
 	@Override
@@ -284,6 +283,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 				transaction.commit();
 			}
 		}
+		isAlreadyLoadingMemberTeam = false;
 	}
 
 	@Override
@@ -297,5 +297,6 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 			transaction.replace(R.id.frame_layout, new TeamWallFragment());
 			transaction.commit();
 		}
+		isAlreadyLoadingMemberTeam = false;
 	}
 }

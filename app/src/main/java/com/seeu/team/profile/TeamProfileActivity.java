@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver.OnPreDrawListener;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import java.util.Map;
  */
 public class TeamProfileActivity extends Activity implements OnPreDrawListener, CustomResponseListener<Like> {
 
+	public static final String TEAM_UP_DISPLAY_BTN_NAME = "displayTeamUpBtn";
 	public static final String TEAM_UP_RESULT_NAME = "result";
 
 	private ConstraintLayout picture;
@@ -62,7 +64,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.teamprofile_activity);
 
-		this.likeService = new LikeService(this);
+		likeService = new LikeService(this);
 
 		picture = findViewById(R.id.teamPicture);
 		place = findViewById(R.id.teamPlace);
@@ -78,34 +80,18 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 
 		picture.getViewTreeObserver().addOnPreDrawListener(this);
 
+		Button teamUpBtn = findViewById(R.id.teamUpBtn);
+		boolean teamUpBtnMustBeDisplayed = getIntent().getBooleanExtra(TEAM_UP_DISPLAY_BTN_NAME, false);
+		if (!teamUpBtnMustBeDisplayed) {
+			teamUpBtn.setVisibility(View.GONE);
+		}
+
 		setTeamFromCaller();
 
 		setupMemberRecycler();
 		setupTeamDescriptionReycler();
 
 		updateUI();
-	}
-
-	/**
-	 * Method that set up the recycler view for the members.
-	 */
-	private void setupMemberRecycler() {
-		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
-
-		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
-		memberRecycler.setAdapter(memberRecyclerAdapter);
-	}
-
-	/**
-	 * Method that set up the recycler view for the team descriptions.
-	 */
-	private void setupTeamDescriptionReycler() {
-		// Keep reference of the dataset (arraylist here) in the adapter
-		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, team.getDescriptions());
-
-		RecyclerView teamDescriptionRecycler = findViewById(R.id.teamDescriptionRecycler);
-		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
 	}
 
 	/**
@@ -128,6 +114,28 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		if (null == team.getDescriptions()) {
 			team.setDescriptions(new ArrayList<>());
 		}
+	}
+
+	/**
+	 * Method that set up the recycler view for the members.
+	 */
+	private void setupMemberRecycler() {
+		// Keep reference of the dataset (arraylist here) in the adapter
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
+
+		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
+		memberRecycler.setAdapter(memberRecyclerAdapter);
+	}
+
+	/**
+	 * Method that set up the recycler view for the team descriptions.
+	 */
+	private void setupTeamDescriptionReycler() {
+		// Keep reference of the dataset (arraylist here) in the adapter
+		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, team.getDescriptions());
+
+		RecyclerView teamDescriptionRecycler = findViewById(R.id.teamDescriptionRecycler);
+		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
 	}
 
 	/**
