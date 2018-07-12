@@ -17,12 +17,16 @@ class MemberViewHolder extends BaseMemberViewHolder {
 
 	private ItemClickListener messageActionListener;
 
-	public MemberViewHolder(View itemView, ItemClickListener itemClickListener, ItemClickListener messageActionListener) {
+	public MemberViewHolder(View itemView, ItemClickListener itemClickListener, ItemClickListener messageActionListener, boolean startedFromTeamwall) {
 		super(itemView, itemClickListener);
 		this.messageActionListener = messageActionListener;
 
 		AppCompatImageButton messageAction = itemView.findViewById(R.id.messageAction);
-		messageAction.setOnClickListener(this::onMessageBtnClick);
+		if (startedFromTeamwall) {
+			messageAction.setVisibility(View.GONE);
+		} else {
+			messageAction.setOnClickListener(this::onMessageBtnClick);
+		}
 	}
 
 	@Override

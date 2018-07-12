@@ -30,6 +30,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static com.seeu.teamwall.TeamWallFragment.TEAMWALL_STARTED_NAME;
+
 /**
  * Created by thomasfouan on 07/05/2018.
  *
@@ -37,8 +39,9 @@ import java.util.Map;
  */
 public class TeamProfileActivity extends Activity implements OnPreDrawListener, CustomResponseListener<Like> {
 
-	public static final String TEAM_UP_DISPLAY_BTN_NAME = "displayTeamUpBtn";
 	public static final String TEAM_UP_RESULT_NAME = "result";
+
+	private boolean startedFromTeamwall;
 
 	private ConstraintLayout picture;
 	private TextView place;
@@ -81,8 +84,8 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		picture.getViewTreeObserver().addOnPreDrawListener(this);
 
 		Button teamUpBtn = findViewById(R.id.teamUpBtn);
-		boolean teamUpBtnMustBeDisplayed = getIntent().getBooleanExtra(TEAM_UP_DISPLAY_BTN_NAME, false);
-		if (!teamUpBtnMustBeDisplayed) {
+		startedFromTeamwall = getIntent().getBooleanExtra(TEAMWALL_STARTED_NAME, false);
+		if (!startedFromTeamwall) {
 			teamUpBtn.setVisibility(View.GONE);
 		}
 
@@ -121,7 +124,7 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	 */
 	private void setupMemberRecycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers());
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers(), startedFromTeamwall);
 
 		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
 		memberRecycler.setAdapter(memberRecyclerAdapter);

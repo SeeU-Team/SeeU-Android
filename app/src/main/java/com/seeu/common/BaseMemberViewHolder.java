@@ -21,6 +21,7 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 
 	private Member member;
 	private boolean isPictureLayoutDrawn;
+	private boolean isPictureSet;
 
 	private ImageView picture;
 	private TextView name;
@@ -32,6 +33,7 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 		super(itemView);
 		member = null;
 		isPictureLayoutDrawn = false;
+		isPictureSet = false;
 		this.listener = listener;
 
 		picture	= itemView.findViewById(R.id.memberPicture);
@@ -50,7 +52,9 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 	 * @param pictureUrl the url of the member's picture
 	 */
 	private void setPicture(String pictureUrl) {
-		if (isPictureLayoutDrawn) {
+		if (isPictureLayoutDrawn
+				&& !isPictureSet) {
+			isPictureSet = true;
 			new DownloadImageAndSetBackgroundTask(picture, 200).execute(pictureUrl);
 		}
 	}
@@ -92,8 +96,9 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 	public boolean onPreDraw() {
 		isPictureLayoutDrawn = true;
 		picture.getViewTreeObserver().removeOnPreDrawListener(this);
-
-		if (null != member) {
+		if (null != member
+				&& !isPictureSet) {
+			isPictureSet = true;
 			new DownloadImageAndSetBackgroundTask(picture, 200).execute(member.getProfilePhotoUrl());
 		}
 

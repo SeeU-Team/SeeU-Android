@@ -11,6 +11,7 @@ import com.seeu.common.BaseMemberRecyclerAdapter;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 import com.seeu.member.profile.MemberProfileActivity;
+import com.seeu.teamwall.TeamWallFragment;
 
 import java.util.List;
 
@@ -21,14 +22,17 @@ import java.util.List;
  */
 public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements ItemClickListener {
 
-	public MemberRecyclerAdapter(Context context, List<Member> members) {
+	private boolean startedFromTeamwall;
+
+	public MemberRecyclerAdapter(Context context, List<Member> members, boolean startedFromTeamwall) {
 		super(context, members);
+		this.startedFromTeamwall = startedFromTeamwall;
 	}
 
 	@Override
 	public MemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = inflater.inflate(R.layout.nightcenter_layout_member_item, parent, false);
-		return new MemberViewHolder(view, this, this::startMessageActivity);
+		return new MemberViewHolder(view, this, this::startMessageActivity, startedFromTeamwall);
 	}
 
 	@Override
@@ -37,6 +41,7 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 		Context context = view.getContext();
 		Intent intent = new Intent(context, MemberProfileActivity.class);
 		intent.putExtra(Member.STORAGE_KEY, member);
+		intent.putExtra(TeamWallFragment.TEAMWALL_STARTED_NAME, startedFromTeamwall);
 
 		context.startActivity(intent);
 	}

@@ -36,6 +36,7 @@ import static android.app.Activity.RESULT_OK;
  */
 public class TeamWallFragment extends Fragment {
 
+	public static final String TEAMWALL_STARTED_NAME = "teamWallStarted";
 	public static final int INTENT_TEAM_PROFILE = 4;
 
 	private Member currentUser;
@@ -108,7 +109,7 @@ public class TeamWallFragment extends Fragment {
 		Team team = teams.get(position);
 		Intent intent = new Intent(getActivity(), TeamProfileActivity.class);
 		intent.putExtra(Team.STORAGE_KEY, team);
-		intent.putExtra(TeamProfileActivity.TEAM_UP_DISPLAY_BTN_NAME, true);
+		intent.putExtra(TEAMWALL_STARTED_NAME, true);
 
 		startActivityForResult(intent, INTENT_TEAM_PROFILE);
 	}

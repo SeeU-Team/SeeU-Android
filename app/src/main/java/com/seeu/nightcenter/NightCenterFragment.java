@@ -99,7 +99,7 @@ public class NightCenterFragment extends Fragment {
 	 */
 	private void setupMemberRecycler(View view) {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members);
+		memberRecyclerAdapter = new MemberRecyclerAdapter(getActivity(), members, false);
 
 		RecyclerView memberRecycler = view.findViewById(R.id.memberRecycler);
 		memberRecycler.setAdapter(memberRecyclerAdapter);

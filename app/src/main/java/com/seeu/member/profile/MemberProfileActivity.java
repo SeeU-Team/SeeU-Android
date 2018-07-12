@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -16,9 +17,12 @@ import com.seeu.R;
 import com.seeu.chat.ChatActivity;
 import com.seeu.common.subviews.Mark;
 import com.seeu.member.Member;
+import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 
 import java.io.Serializable;
+
+import static android.view.View.GONE;
 
 /**
  * Created by thomasfouan on 26/03/2018.
@@ -64,6 +68,12 @@ public class MemberProfileActivity extends Activity {
 		textDescription			= findViewById(R.id.memberTextDescription);
 
 		mark = new Mark(markView);
+
+		FloatingActionButton messageBtn = findViewById(R.id.messageAction);
+		boolean startedFromTeamwall = getIntent().getBooleanExtra(TeamWallFragment.TEAMWALL_STARTED_NAME, false);
+		if (startedFromTeamwall) {
+			messageBtn.setVisibility(GONE);
+		}
 
 		pictureBlurred.getViewTreeObserver().addOnPreDrawListener(this::onPreDrawPictureBlurred);
 		picture.getViewTreeObserver().addOnPreDrawListener(this::onPreDrawPicture);
