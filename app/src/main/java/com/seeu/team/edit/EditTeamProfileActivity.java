@@ -233,8 +233,10 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		entity.setDescription(textDescription.getText().toString());
 
 		// Add the current user first in the list of members to make him LEADER
-		Member currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
-		entity.getMembers().add(0, currentUser);
+		if (isNewEntity) {
+			Member currentUser = SharedPreferencesManager.getEntity(this, Member.STORAGE_KEY, Member.class);
+			entity.getMembers().add(0, currentUser);
+		}
 
 		entity.getCategories().clear();
 		entity.getCategories().add(categoryRecyclerAdapter.getSelectedItem());
