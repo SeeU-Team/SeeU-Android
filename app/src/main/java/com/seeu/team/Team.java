@@ -32,7 +32,7 @@ public class Team extends Entity {
 
 	// Use ArrayList because it is Serializable (List interface is not)
 	private ArrayList<Category> categories;
-	private ArrayList<String> tags;
+	private ArrayList<Tag> tags;
 	private ArrayList<Member> members;
 	private ArrayList<TeamDescription> descriptions;
 
@@ -51,16 +51,20 @@ public class Team extends Entity {
 
 		for (String s : tagsArray) {
 			if (!s.trim().isEmpty()) {
-				this.tags.add(s);
+				Tag tag = Tag.builder()
+						.name(s)
+						.build();
+
+				this.tags.add(tag);
 			}
 		}
 	}
 
 	public String getTagsAsString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		for (String s : tags) {
+		for (Tag tag : tags) {
 			stringBuilder.append("#");
-			stringBuilder.append(s);
+			stringBuilder.append(tag.getName());
 		}
 
 		return stringBuilder.toString();
