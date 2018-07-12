@@ -1,10 +1,13 @@
 package com.seeu.chat;
 
+import android.app.Service;
 import android.content.Context;
 
 import com.seeu.common.Entity;
 import com.seeu.member.Member;
 import com.seeu.utils.SharedPreferencesManager;
+
+import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +22,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public abstract class Message<T extends Entity> {
+public abstract class Message<T extends Entity> implements Serializable {
+
+	public static final String STORAGE_KEY = "message";
 
 	protected long id;
 	protected T owner;

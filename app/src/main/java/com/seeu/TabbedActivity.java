@@ -48,6 +48,8 @@ import java.util.Map;
  */
 public class TabbedActivity extends AppCompatActivity implements CustomResponseListener<MemberHasTeam> {
 
+	public static boolean isAppRunning;
+
 	private Member currentUser;
 	private TeamService teamService;
 
@@ -133,6 +135,8 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabbed_activity);
 
+		isAppRunning = true;
+
 		navigationView = findViewById(R.id.navigation);
 		navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		nightCenterMenuItem = navigationView.getMenu().findItem(R.id.navigation_nightcenter);
@@ -166,6 +170,12 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 		if (!isAlreadyLoadingMemberTeam) {
 			loadMemberTeam(false);
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		isAppRunning = false;
 	}
 
 	@Override

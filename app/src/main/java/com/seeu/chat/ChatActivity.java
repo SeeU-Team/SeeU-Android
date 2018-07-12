@@ -1,6 +1,7 @@
 package com.seeu.chat;
 
 import android.app.ListActivity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.seeu.common.Entity;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.member.profile.MemberProfileActivity;
+import com.seeu.notification.NotificationSenderService;
 import com.seeu.team.Team;
 import com.seeu.team.like.LikeService;
 import com.seeu.team.like.Merge;
@@ -45,6 +47,7 @@ import ua.naiksoftware.stomp.client.StompClient;
 public class ChatActivity extends ListActivity implements CustomResponseListener<MemberMessage[]>, ViewTreeObserver.OnPreDrawListener {
 
 	public static final String INTENT_IS_BEFORE_CONV = "beforeConversation";
+	public static boolean isActive = false;
 
 	private Member currentUser;
 	private MemberHasTeam memberHasTeam;
@@ -65,14 +68,19 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	private Gson gson = new Gson();
 	private String sendingPath;
 
+	private NotificationSenderService notificationSenderService;
+
 	public ChatActivity() {
 		super();
 		isProfilePictureLayoutDrawn = false;
+		notificationSenderService = new NotificationSenderService();
 	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		isActive = true;
+
 		setContentView(R.layout.chat_activity);
 
 		messageService = new MessageService(this);
@@ -97,8 +105,28 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	}
 
 	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		// When received new intent from notification service, check if the message belongs to this conversation.
+		// If yes, add it. Otherwise, send a notification
+		Message message = (Message) intent.getSerializableExtra(Message.STORAGE_KEY);
+
+		// Display only messages sent by me or the receiver of this conversation, or my team
+		if (receiver instanceof Team
+				|| receiver.equals(message.getOwner())
+				|| currentUser.equals(message.getOwner())) {
+
+			runOnUiThread(() -> addMessage(message));
+		} else {
+			// Send a notification
+			notificationSenderService.sendNewMessageNotificationWithStack(this, message, intent);
+		}
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		isActive = false;
 
 		if (null != stompClient) {
 			stompClient.disconnect();
@@ -112,6 +140,8 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	private void getInfoFromCaller() {
 		isBeforeConv = getIntent().getBooleanExtra(INTENT_IS_BEFORE_CONV, false);
 		receiver = (Entity) getIntent().getSerializableExtra(Member.STORAGE_KEY);
+
+		// TODO: pass conversation type to this Activity
 
 		if (null == receiver) {
 			receiver = (Entity) getIntent().getSerializableExtra(Team.STORAGE_KEY);

@@ -63,6 +63,21 @@ public class MemberService extends AbstractService {
 		queue.add(request);
 	}
 
+	public void updateAppInstanceId(Member member, String appInstanceId, CustomResponseListener<Void> listener) {
+		Map<String, String> params = new HashMap<>(1);
+		params.put("appInstanceId", appInstanceId);
+
+		GsonRequest<Void> request = new GsonRequest<>(
+				BASE_URL + "/" + member.getId() + "/appInstanceId",
+				Request.Method.PUT,
+				Void.class,
+				getToken(),
+				params,
+				listener);
+
+		queue.add(request);
+	}
+
 	/**
 	 * Get friends of a member.
 	 * A friend is a member that had a previous discussion with the current member.
@@ -87,7 +102,6 @@ public class MemberService extends AbstractService {
 	/**
 	 * Get Facebook friends of a member that uses the application.
 	 *
-	 * @param accessToken the facebook user's we want his Facebook friends
 	 * @param listener listener that will retrieve the data after the request completes
 	 */
 	public void getFacebookFriends(CustomResponseListener<Member[]> listener) {
