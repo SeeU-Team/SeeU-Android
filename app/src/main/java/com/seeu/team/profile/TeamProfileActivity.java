@@ -2,6 +2,7 @@ package com.seeu.team.profile;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -23,6 +24,7 @@ import com.seeu.team.like.Like;
 import com.seeu.team.like.LikeService;
 import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -37,13 +39,14 @@ import static com.seeu.teamwall.TeamWallFragment.TEAMWALL_STARTED_NAME;
  *
  * Activity that displays the team's profile.
  */
-public class TeamProfileActivity extends Activity implements OnPreDrawListener, CustomResponseListener<Like> {
+public class TeamProfileActivity extends Activity implements CustomResponseListener<Like> {
 
 	public static final String TEAM_UP_RESULT_NAME = "result";
 
 	private boolean startedFromTeamwall;
 
 	private ConstraintLayout picture;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private TextView place;
 	private TextView name;
 	private TextView tags;
@@ -55,11 +58,9 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 
 	private Team team;
 	private LikeService likeService;
-	private boolean isPictureLayoutDrawn;
 
 	public TeamProfileActivity() {
 		super();
-		isPictureLayoutDrawn = false;
 	}
 
 	@Override
@@ -81,8 +82,6 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		View genderIndexView = findViewById(R.id.genderIndex);
 		genderIndex = new GenderIndex(genderIndexView);
 
-		picture.getViewTreeObserver().addOnPreDrawListener(this);
-
 		Button teamUpBtn = findViewById(R.id.teamUpBtn);
 		startedFromTeamwall = getIntent().getBooleanExtra(TEAMWALL_STARTED_NAME, false);
 		if (!startedFromTeamwall) {
@@ -95,6 +94,15 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		setupTeamDescriptionReycler();
 
 		updateUI();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
 	}
 
 	/**
@@ -159,10 +167,10 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 	}
 
 	private void setPicture() {
-		if (isPictureLayoutDrawn
-				&& null != team) {
-			new DownloadImageAndSetBackgroundTask(picture, 0).execute(team.getProfilePhotoUrl());
-		}
+		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(picture, 0);
+			asyncTask.execute(team.getProfilePhotoUrl());
+		});
 	}
 
 	/**
@@ -174,18 +182,6 @@ public class TeamProfileActivity extends Activity implements OnPreDrawListener, 
 		// TODO: if the member is leader, like the team. Otherwise, send notification to the leader
 		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 		likeService.likeTeam(memberHasTeam.getTeam(), team, this);
-	}
-
-	@Override
-	public boolean onPreDraw() {
-		if (!isPictureLayoutDrawn) {
-			isPictureLayoutDrawn = true;
-			picture.getViewTreeObserver().removeOnPreDrawListener(this);
-
-			setPicture();
-		}
-
-		return true;
 	}
 
 	@Override

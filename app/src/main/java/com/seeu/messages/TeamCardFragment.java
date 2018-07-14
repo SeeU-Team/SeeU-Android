@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +25,7 @@ import com.seeu.member.MemberStatus;
 import com.seeu.team.Team;
 import com.seeu.team.edit.EditTeamProfileActivity;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 import java.io.Serializable;
 
@@ -38,6 +40,7 @@ public class TeamCardFragment extends Fragment implements OnClickListener {
 	private FloatingActionButton editTeamBtn;
 
 	private ImageView picture;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private TextView name;
 	private TextView nbNotReadMessages;
 
@@ -82,6 +85,15 @@ public class TeamCardFragment extends Fragment implements OnClickListener {
 		return view;
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+	}
+
 	private void setupTeamMemberPicturesFragment() {
 		Bundle bundle = new Bundle();
 		bundle.putSerializable(Team.STORAGE_KEY, memberHasTeam.getTeam());
@@ -109,9 +121,10 @@ public class TeamCardFragment extends Fragment implements OnClickListener {
 	 * @param url the picture url
 	 */
 	private void setPicture(String url) {
-		if (null != url) {
-			new DownloadImageAndSetBackgroundTask(picture, 6, 100, 80).execute(url);
-		}
+		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(picture, 6);
+			asyncTask.execute(url);
+		});
 	}
 
 	/**

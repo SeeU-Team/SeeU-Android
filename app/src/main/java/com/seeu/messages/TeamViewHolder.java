@@ -1,5 +1,6 @@
 package com.seeu.messages;
 
+import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
@@ -10,6 +11,7 @@ import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 import java.util.ArrayList;
 
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 class TeamViewHolder extends ViewHolder implements OnClickListener {
 
 	private ConstraintLayout layoutPicture;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private TextView name;
 	private TextView tags;
 
@@ -58,7 +61,10 @@ class TeamViewHolder extends ViewHolder implements OnClickListener {
 	 * @param pictureUrl the picture's url
 	 */
 	private void setPicture(String pictureUrl) {
-		new DownloadImageAndSetBackgroundTask(layoutPicture, 0, 250, 250).execute(pictureUrl);
+		ImageUtils.runJustBeforeBeingDrawn(layoutPicture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(layoutPicture, 0);
+			asyncTask.execute(pictureUrl);
+		});
 	}
 
 	/**
@@ -66,6 +72,10 @@ class TeamViewHolder extends ViewHolder implements OnClickListener {
 	 * @param team the team to display
 	 */
 	public void setData(Team team) {
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+
 		setPicture(team.getProfilePhotoUrl());
 		setName(team.getName());
 		setTags(team.getTagsAsString());

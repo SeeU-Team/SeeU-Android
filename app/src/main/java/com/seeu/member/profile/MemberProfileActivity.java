@@ -3,6 +3,7 @@ package com.seeu.member.profile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -19,8 +20,11 @@ import com.seeu.common.subviews.Mark;
 import com.seeu.member.Member;
 import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.view.View.GONE;
 
@@ -32,9 +36,7 @@ import static android.view.View.GONE;
 public class MemberProfileActivity extends Activity {
 
 	private Member member;
-	private boolean isPictureBlurredLayoutDrawn;
-	private boolean isPictureLayoutDrawn;
-	private boolean isPictureDescriptionLayoutDrawn;
+	private List<AsyncTask> asyncTasks;
 
 	private ConstraintLayout pictureBlurred;
 	private CardView picture;
@@ -49,13 +51,14 @@ public class MemberProfileActivity extends Activity {
 
 	private TextView textDescription;
 
+	public MemberProfileActivity() {
+		asyncTasks = new ArrayList<>(3);
+	}
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.memberprofile_activity);
-		isPictureBlurredLayoutDrawn = false;
-		isPictureLayoutDrawn = false;
-		isPictureDescriptionLayoutDrawn = false;
 
 		pictureBlurred			= findViewById(R.id.memberPictureBlurred);
 		picture					= findViewById(R.id.memberPicture);
@@ -74,10 +77,6 @@ public class MemberProfileActivity extends Activity {
 		if (startedFromTeamwall) {
 			messageBtn.setVisibility(GONE);
 		}
-
-		pictureBlurred.getViewTreeObserver().addOnPreDrawListener(this::onPreDrawPictureBlurred);
-		picture.getViewTreeObserver().addOnPreDrawListener(this::onPreDrawPicture);
-		pictureDescription.getViewTreeObserver().addOnPreDrawListener(this::onPreDrawPictureDescription);
 
 		setMember();
 		updateUI();
@@ -123,84 +122,30 @@ public class MemberProfileActivity extends Activity {
 	 * Update the blurred image view with the member's picture.
 	 */
 	private void setPictureBlurred() {
-		if (isPictureBlurredLayoutDrawn
-				&& null != member) {
-			new DownloadImageAndSetBackgroundTask(pictureBlurred, 0, true).execute(member.getProfilePhotoUrl());
-		}
+		ImageUtils.runJustBeforeBeingDrawn(pictureBlurred, () -> {
+			AsyncTask asyncTask = new DownloadImageAndSetBackgroundTask(pictureBlurred, 0, true).execute(member.getProfilePhotoUrl());
+			asyncTasks.add(asyncTask);
+		});
 	}
 
 	/**
 	 * Update the image view with member's picture.
 	 */
 	private void setPicture() {
-		if (isPictureLayoutDrawn
-				&& null != member) {
-			new DownloadImageAndSetBackgroundTask(picture, 140).execute(member.getProfilePhotoUrl());
-		}
+		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
+			AsyncTask asyncTask = new DownloadImageAndSetBackgroundTask(picture, 140).execute(member.getProfilePhotoUrl());
+			asyncTasks.add(asyncTask);
+		});
 	}
 
 	/**
 	 * Update the image view wit the member's description picture.
 	 */
 	private void setPictureDescription() {
-		if (isPictureDescriptionLayoutDrawn
-				&& null != member) {
-			new DownloadImageAndSetBackgroundTask(pictureDescription, 0).execute(member.getProfilePhotoUrl());
-		}
-	}
-
-	/**
-	 * Method called just before the system will draw the picture blurred layout.
-	 * This lets the activity know when the view is drawn and avoids manipulations before it has been drawn.
-	 *
-	 * @return true to proceed the drawing. False to cancel it
-	 *
-	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
-	 */
-	public boolean onPreDrawPictureBlurred() {
-		if (!isPictureBlurredLayoutDrawn) {
-			isPictureBlurredLayoutDrawn = true;
-			pictureBlurred.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureBlurred);
-
-			setPictureBlurred();
-		}
-		return true;
-	}
-
-	/**
-	 * Method called just before the system will draw the picture layout.
-	 * This lets the activity know when the view is drawn and avoids manipulations before it has been drawn.
-	 *
-	 * @return true to proceed the drawing. False to cancel it
-	 *
-	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
-	 */
-	public boolean onPreDrawPicture() {
-		if (!isPictureLayoutDrawn) {
-			isPictureLayoutDrawn = true;
-			picture.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPicture);
-
-			setPicture();
-		}
-		return true;
-	}
-
-	/**
-	 * Method called just before the system will draw the description picture blurred layout.
-	 * This lets the activity know when the view is drawn and avoids manipulations before it has been drawn.
-	 *
-	 * @return true to proceed the drawing. False to cancel it
-	 *
-	 * For more information, see {@link ViewTreeObserver.OnPreDrawListener#onPreDraw()}
-	 */
-	public boolean onPreDrawPictureDescription() {
-		if (!isPictureDescriptionLayoutDrawn) {
-			isPictureDescriptionLayoutDrawn = true;
-			pictureDescription.getViewTreeObserver().removeOnDrawListener(this::onPreDrawPictureDescription);
-
-			setPictureDescription();
-		}
-		return true;
+		ImageUtils.runJustBeforeBeingDrawn(pictureDescription, () -> {
+			AsyncTask asyncTask = new DownloadImageAndSetBackgroundTask(pictureDescription, 0).execute(member.getProfilePhotoUrl());
+			asyncTasks.add(asyncTask);
+		});
 	}
 
 	/**

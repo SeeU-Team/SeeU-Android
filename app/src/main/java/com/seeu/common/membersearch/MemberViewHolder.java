@@ -10,6 +10,7 @@ import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 /**
  * Created by thomasfouan on 10/05/2018.
@@ -20,6 +21,7 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 
 	private ImageView picture;
 	private TextView name;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 
 	private ItemClickListener listener;
 
@@ -38,7 +40,10 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 	 * @param url the url of the picture to show
 	 */
 	private void setPicture(String url) {
-		new DownloadImageAndSetBackgroundTask(picture, 20, 40, 40).execute(url);
+		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(picture, 20);
+			asyncTask.execute(url);
+		});
 	}
 
 	/**
@@ -54,6 +59,10 @@ class MemberViewHolder extends ViewHolder implements OnClickListener {
 	 * @param member the member entity
 	 */
 	public void setData(Member member) {
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+
 		setPicture(member.getProfilePhotoUrl());
 		setName(member.getName());
 	}

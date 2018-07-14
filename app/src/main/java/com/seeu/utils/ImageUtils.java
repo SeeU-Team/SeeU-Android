@@ -1,10 +1,13 @@
 package com.seeu.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Base64;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import java.io.ByteArrayOutputStream;
 
@@ -51,6 +54,28 @@ public class ImageUtils {
 		return background;
 	}
 
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) >= reqHeight
+					&& (halfWidth / inSampleSize) >= reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
 	/**
 	 * Get the image data from a Bitmap to a Base64-encoded String.
 	 * @param bmp the image
@@ -62,6 +87,18 @@ public class ImageUtils {
 
 		byte[] imageBytes = baos.toByteArray();
 		return Base64.encodeToString(imageBytes, Base64.NO_WRAP | Base64.URL_SAFE);
+	}
+
+	public static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
+		final ViewTreeObserver.OnPreDrawListener preDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+			@Override
+			public boolean onPreDraw() {
+				view.getViewTreeObserver().removeOnPreDrawListener(this);
+				runnable.run();
+				return true;
+			}
+		};
+		view.getViewTreeObserver().addOnPreDrawListener(preDrawListener);
 	}
 
 	public static Bitmap resize(Bitmap image, int maxWidth, int maxHeight) {

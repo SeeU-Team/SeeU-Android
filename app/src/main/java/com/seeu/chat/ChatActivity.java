@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.seeu.team.like.LikeService;
 import com.seeu.team.like.Merge;
 import com.seeu.team.profile.TeamProfileActivity;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -44,7 +46,7 @@ import ua.naiksoftware.stomp.client.StompClient;
  * Activity that manages the chat.
  * Use web socket for real time message exchanges.
  */
-public class ChatActivity extends ListActivity implements CustomResponseListener<MemberMessage[]>, ViewTreeObserver.OnPreDrawListener {
+public class ChatActivity extends ListActivity implements CustomResponseListener<MemberMessage[]> {
 
 	public static final String INTENT_IS_BEFORE_CONV = "beforeConversation";
 	public static boolean isActive = false;
@@ -57,7 +59,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 	private EditText newMessage;
 	private ImageButton profilePicture;
-	private boolean isProfilePictureLayoutDrawn;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private Button mergeBtn;
 
 	private MessageListAdapter messageListAdapter;
@@ -72,7 +74,6 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 	public ChatActivity() {
 		super();
-		isProfilePictureLayoutDrawn = false;
 		notificationSenderService = new NotificationSenderService();
 	}
 
@@ -90,7 +91,6 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 		newMessage = findViewById(R.id.newMessage);
 		profilePicture = findViewById(R.id.profilePicture);
-		profilePicture.getViewTreeObserver().addOnPreDrawListener(this);
 		mergeBtn = findViewById(R.id.mergeBtn);
 		// NOTE: the class ListActivity find itself the listView if its id is 'list'
 
@@ -112,9 +112,10 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 		Message message = (Message) intent.getSerializableExtra(Message.STORAGE_KEY);
 
 		// Display only messages sent by me or the receiver of this conversation, or my team
-		if (receiver instanceof Team
-				|| receiver.equals(message.getOwner())
-				|| currentUser.equals(message.getOwner())) {
+//		if (receiver instanceof Team
+//				|| receiver.equals(message.getOwner())
+//				|| currentUser.equals(message.getOwner())) {
+		if (message.getOwner().equals(receiver)) {
 
 			runOnUiThread(() -> addMessage(message));
 		} else {
@@ -130,6 +131,10 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 
 		if (null != stompClient) {
 			stompClient.disconnect();
+		}
+
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
 		}
 	}
 
@@ -187,10 +192,10 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 	}
 
 	private void setProfilePicture() {
-		if (isProfilePictureLayoutDrawn
-				&& null != receiver) {
-			new DownloadImageAndSetBackgroundTask(profilePicture, 40).execute(receiver.getProfilePhotoUrl());
-		}
+		ImageUtils.runJustBeforeBeingDrawn(profilePicture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(profilePicture, 40);
+			asyncTask.execute(receiver.getProfilePhotoUrl());
+		});
 	}
 
 	/**
@@ -342,17 +347,5 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 				mergeBtn.setVisibility(View.GONE);
 			}
 		});
-	}
-
-	@Override
-	public boolean onPreDraw() {
-		if (!isProfilePictureLayoutDrawn) {
-			isProfilePictureLayoutDrawn = true;
-			profilePicture.getViewTreeObserver().removeOnPreDrawListener(this);
-
-			setProfilePicture();
-		}
-
-		return true;
 	}
 }

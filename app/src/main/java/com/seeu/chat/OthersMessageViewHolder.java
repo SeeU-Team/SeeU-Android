@@ -1,11 +1,13 @@
 package com.seeu.chat;
 
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 /**
  * Created by thomasfouan on 06/05/2018.
@@ -16,6 +18,7 @@ public class OthersMessageViewHolder extends MessageViewHolder {
 
 	private ImageView memberPicture;
 	private TextView memberName;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 
 	public OthersMessageViewHolder(View itemView) {
 		super(itemView);
@@ -29,7 +32,10 @@ public class OthersMessageViewHolder extends MessageViewHolder {
 	 * @param url the url of the member's picture
 	 */
 	private void setMemberPicture(String url) {
-		new DownloadImageAndSetBackgroundTask(memberPicture, 32, 32, 32).execute(url);
+		ImageUtils.runJustBeforeBeingDrawn(memberPicture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(memberPicture, 32);
+			asyncTask.execute(url);
+		});
 	}
 
 	/**
@@ -41,6 +47,10 @@ public class OthersMessageViewHolder extends MessageViewHolder {
 	}
 
 	public void setData(Message message) {
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+
 		setMemberName(message.getOwner().getName());
 		setMemberPicture(message.getOwner().getProfilePhotoUrl());
 	}

@@ -1,6 +1,7 @@
 package com.seeu.messages;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -81,6 +82,26 @@ public class MessagesFragment extends Fragment {
 		setupTeamsParts(view);
 
 		return view;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+//		FragmentManager fragmentManager = getChildFragmentManager();
+//		List<Fragment> fragments = fragmentManager.getFragments();
+//		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//		for (Fragment fragment : fragments) {
+//			fragmentTransaction.remove(fragment);
+//		}
+//
+//		fragmentTransaction.commit();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
 	}
 
 	/**

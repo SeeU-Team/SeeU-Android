@@ -3,19 +3,19 @@ package com.seeu.teamwall;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
+import com.seeu.common.subviews.GenderIndex;
+import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.member.Member;
 import com.seeu.team.Team;
 import com.seeu.team.TeamDescription;
-import com.seeu.common.subviews.GenderIndex;
-import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,8 @@ public class TeamViewHolder extends ViewHolder {
 
 	private ItemClickListener itemClickListener;
 	private ItemClickListener teamUpBtnClickListener;
+
+	private DownloadImageAndSetBackgroundTask asyncTask;
 
 	public TeamViewHolder(View itemView, ItemClickListener itemClickListener, ItemClickListener teamUpBtnClickListener) {
 		super(itemView);
@@ -85,7 +87,10 @@ public class TeamViewHolder extends ViewHolder {
 	 * @param pictureUrl the team picture's url
 	 */
 	private void setPicture(String pictureUrl) {
-		new DownloadImageAndSetBackgroundTask(layoutPicture, 20, 250, 250).execute(pictureUrl);
+		ImageUtils.runJustBeforeBeingDrawn(layoutPicture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(layoutPicture, 20);
+			asyncTask.execute(pictureUrl);
+		});
 	}
 
 	/**
@@ -119,6 +124,10 @@ public class TeamViewHolder extends ViewHolder {
 	 * @param team the team to display
 	 */
 	public void setData(Team team) {
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+
 		List<String> memberPictures = new ArrayList<>();
 		for (Member member : team.getMembers()) {
 			memberPictures.add(member.getProfilePhotoUrl());

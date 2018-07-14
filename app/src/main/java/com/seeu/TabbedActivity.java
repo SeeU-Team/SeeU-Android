@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
@@ -32,6 +33,7 @@ import com.seeu.nightcenter.NightCenterFragment;
 import com.seeu.team.TeamService;
 import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -49,6 +51,7 @@ import java.util.Map;
 public class TabbedActivity extends AppCompatActivity implements CustomResponseListener<MemberHasTeam> {
 
 	public static boolean isAppRunning;
+	private Fragment selectedFragment;
 
 	private Member currentUser;
 	private TeamService teamService;
@@ -57,7 +60,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	private MenuItem nightCenterMenuItem;
 
 	private ImageView memberProfilePicture;
-	private boolean hasPictureBeDrawn;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 
 	private boolean loadFirstFragment;
 	private boolean isAlreadyLoadingMemberTeam;
@@ -66,7 +69,7 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	 * Listener for the bottom navigation menu. Switch between the fragments on user clicks.
 	 */
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = (item) -> {
-		Fragment selectedFragment = null;
+		Fragment newSelectedFragment = null;
 
 		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 		if (null == memberHasTeam) {
@@ -75,21 +78,26 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		switch (item.getItemId()) {
 			case R.id.navigation_teamwall:
-				selectedFragment = MemberStatus.ALONE.equals(memberHasTeam.getStatus())
+				newSelectedFragment = MemberStatus.ALONE.equals(memberHasTeam.getStatus())
 						? new NoTeamFragment()
 						: new TeamWallFragment();
 				break;
 
 			case R.id.navigation_messages:
-				selectedFragment = new MessagesFragment();
+				newSelectedFragment = new MessagesFragment();
 				break;
 
 			case R.id.navigation_nightcenter:
-				selectedFragment = new NightCenterFragment();
+				newSelectedFragment = new NightCenterFragment();
 		}
 
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		transaction.replace(R.id.frame_layout, selectedFragment);
+		if (null != newSelectedFragment
+				&& null != selectedFragment) {
+			transaction.remove(selectedFragment);
+		}
+
+		transaction.replace(R.id.frame_layout, newSelectedFragment);
 		transaction.commit();
 
 		return true;
@@ -173,6 +181,14 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 	}
 
 	@Override
+	protected void onPause() {
+		super.onPause();
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		isAppRunning = false;
@@ -224,23 +240,14 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 		TextView memberCatchPhrase = view.findViewById(R.id.memberCatchPhrase);
 		Mark mark = new Mark(memberMarkView);
 
-		hasPictureBeDrawn = false;
-		memberProfilePicture.getViewTreeObserver().addOnPreDrawListener(this::onMemberPicturePreDraw);
+		ImageUtils.runJustBeforeBeingDrawn(memberProfilePicture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(memberProfilePicture,100);
+			asyncTask.execute(currentUser.getProfilePhotoUrl());
+		});
 
 		mark.setMark(currentUser.getMark());
 		memberName.setText(currentUser.getName());
 		memberCatchPhrase.setText(currentUser.getCatchPhrase());
-	}
-
-	public boolean onMemberPicturePreDraw() {
-		if (!hasPictureBeDrawn) {
-			hasPictureBeDrawn = true;
-
-			memberProfilePicture.getViewTreeObserver().removeOnPreDrawListener(this::onMemberPicturePreDraw);
-			new DownloadImageAndSetBackgroundTask(memberProfilePicture,100).execute(currentUser.getProfilePhotoUrl());
-		}
-
-		return true;
 	}
 
 	private void updateNightCenterMenuVisibility() {

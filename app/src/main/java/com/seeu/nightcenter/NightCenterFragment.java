@@ -1,6 +1,7 @@
 package com.seeu.nightcenter;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.seeu.team.Team;
 import com.seeu.team.TeamService;
 import com.seeu.team.like.LikeService;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -37,13 +39,13 @@ public class NightCenterFragment extends Fragment {
 	private MemberHasTeam memberHasTeam;
 
 	private CardView myTeamCardView;
+	private DownloadImageAndSetBackgroundTask myTeamAsyncTask;
 	private TextView myTeamName;
-	private boolean myTeamPictureSet;
 
 	private CardView mergedTeamCardView;
+	private DownloadImageAndSetBackgroundTask mergedTeamAsyncTask;
 	private TextView mergedTeamName;
 	private Team mergedTeam;
-	private boolean mergedTeamPictureSet;
 
 	private LikeService likeService;
 
@@ -52,11 +54,7 @@ public class NightCenterFragment extends Fragment {
 
 	public NightCenterFragment() {
 		memberHasTeam = null;
-		myTeamPictureSet = false;
-
 		mergedTeam = null;
-		mergedTeamPictureSet = false;
-
 		members = new ArrayList<>();
 	}
 
@@ -87,9 +85,22 @@ public class NightCenterFragment extends Fragment {
 		myTeamName.setText(memberHasTeam.getTeam().getName());
 
 		setupMemberRecycler(view);
-		applyPicture();
+		setMyTeamPicture();
 
 		return view;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (null != myTeamAsyncTask) {
+			myTeamAsyncTask.cancelDownload();
+		}
+
+		if (null != mergedTeamAsyncTask) {
+			mergedTeamAsyncTask.cancelDownload();
+		}
 	}
 
 	/**
@@ -122,7 +133,7 @@ public class NightCenterFragment extends Fragment {
 				mergedTeam = response;
 
 				mergedTeamName.setText(response.getName());
-				applyPicture();
+				setMergedTeamPicture();
 
 				members.addAll(mergedTeam.getMembers());
 				if (null != memberRecyclerAdapter) {
@@ -132,24 +143,17 @@ public class NightCenterFragment extends Fragment {
 		});
 	}
 
-	/**
-	 * Set the picture of each team in UI.
-	 * This method is called 2 times, one when the view is loaded, and one when the request to the API is done.
-	 * The reason is that we do not know which event is the longer, depending on the phone and the network connection.
-	 */
-	private void applyPicture() {
-		if (!myTeamPictureSet
-				&& null != myTeamCardView
-				&& null != memberHasTeam) {
-			myTeamPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(myTeamCardView, 150, 150, 150).execute(memberHasTeam.getTeam().getProfilePhotoUrl());
-		}
+	private void setMyTeamPicture() {
+		ImageUtils.runJustBeforeBeingDrawn(myTeamCardView, () -> {
+			myTeamAsyncTask = new DownloadImageAndSetBackgroundTask(myTeamCardView, 150);
+			myTeamAsyncTask.execute(memberHasTeam.getTeam().getProfilePhotoUrl());
+		});
+	}
 
-		if (!mergedTeamPictureSet
-				&& null != mergedTeamCardView
-				&& null != mergedTeam) {
-			mergedTeamPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(mergedTeamCardView, 150, 150, 150).execute(mergedTeam.getProfilePhotoUrl());
-		}
+	private void setMergedTeamPicture() {
+		ImageUtils.runJustBeforeBeingDrawn(mergedTeamCardView, () -> {
+			mergedTeamAsyncTask = new DownloadImageAndSetBackgroundTask(mergedTeamCardView, 150);
+			mergedTeamAsyncTask.execute(mergedTeam.getProfilePhotoUrl());
+		});
 	}
 }

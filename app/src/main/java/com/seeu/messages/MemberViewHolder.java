@@ -1,6 +1,5 @@
 package com.seeu.messages;
 
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 

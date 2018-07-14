@@ -1,6 +1,7 @@
 package com.seeu.common.subviews;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import com.seeu.R;
 import com.seeu.member.Member;
 import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,9 +36,11 @@ public class TeamMemberPicturesFragment extends Fragment {
 
 	private ImageView[] memberPictures;
 	private TextView extraMembers;
+	private List<DownloadImageAndSetBackgroundTask> asyncTasks;
 
 	public TeamMemberPicturesFragment() {
 		team = null;
+		asyncTasks = new ArrayList<>(5);
 	}
 
 	@Override
@@ -68,6 +72,13 @@ public class TeamMemberPicturesFragment extends Fragment {
 		return view;
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		cancelTasks();
+	}
+
 	/**
 	 * Set the urls of the member pictures that will be displayed.
 	 * If there are less than 5 members, hide useless image views.
@@ -77,10 +88,16 @@ public class TeamMemberPicturesFragment extends Fragment {
 		int nbMembers = (team.getMembers() != null) ? team.getMembers().size() : 0;
 
 		for (int i = 0; i < nbMembers && i < memberPictures.length; i++) {
-			memberPictures[i].setVisibility(View.VISIBLE);
+			ImageView currentPicture = memberPictures[i];
+			currentPicture.setVisibility(View.VISIBLE);
 
 			String url = team.getMembers().get(i).getProfilePhotoUrl();
-			new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(url);
+
+			ImageUtils.runJustBeforeBeingDrawn(currentPicture, () -> {
+				DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(currentPicture, 16);
+				asyncTask.execute(url);
+				asyncTasks.add(asyncTask);
+			});
 		}
 
 		// Hide member pictures that are not used
@@ -98,5 +115,12 @@ public class TeamMemberPicturesFragment extends Fragment {
 		} else {
 			extraMembers.setVisibility(View.GONE);
 		}
+	}
+
+	private void cancelTasks() {
+		for (DownloadImageAndSetBackgroundTask asyncTask : asyncTasks) {
+			asyncTask.cancelDownload();
+		}
+		asyncTasks.clear();
 	}
 }

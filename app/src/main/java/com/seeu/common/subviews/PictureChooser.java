@@ -3,6 +3,7 @@ package com.seeu.common.subviews;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -37,6 +38,7 @@ public class PictureChooser extends Fragment implements OnClickListener {
 	private boolean isChooserLayoutDrawn;
 
 	private ImageView chosenPicture;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private boolean isPictureLayoutDrawn;
 	private String currentPictureUrl;
 	private Uri chosenPictureUri;
@@ -68,6 +70,15 @@ public class PictureChooser extends Fragment implements OnClickListener {
 		rootElement.setOnClickListener(this);
 
 		return view;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
 	}
 
 	@Override
@@ -150,7 +161,12 @@ public class PictureChooser extends Fragment implements OnClickListener {
 		if (isPictureLayoutDrawn) {
 			if (null != currentPictureUrl) {
 				chosenPicture.setVisibility(VISIBLE);
-				new DownloadImageAndSetBackgroundTask(chosenPicture, 10).execute(currentPictureUrl);
+
+				if (null != asyncTask) {
+					asyncTask.cancelDownload();
+				}
+				asyncTask = new DownloadImageAndSetBackgroundTask(chosenPicture, 10);
+				asyncTask.execute(currentPictureUrl);
 			} else {
 				chosenPicture.setVisibility(GONE);
 			}

@@ -9,13 +9,13 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.seeu.R;
 
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.URL;
 
 /**
  * Created by thomasfouan on 19/03/2018.
@@ -28,6 +28,7 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 	private int width;
 	private int height;
 	private boolean blurEffect;
+	private BitmapFactory.Options options;
 
 	public DownloadImageAndSetBackgroundTask(@NonNull View view, float cornerRadius) {
 		this(view, cornerRadius, view.getWidth(), view.getHeight());
@@ -54,10 +55,41 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 		Bitmap bitmap = null;
 		RoundedBitmapDrawable result;
 
+		long time = System.currentTimeMillis();
+
 		try {
 			String url = urls[0];
-			InputStream in = new java.net.URL(url).openStream();
-			bitmap = BitmapFactory.decodeStream(in);
+			InputStream in = new URL(url).openStream();
+
+			// First decode with inJustDecodeBounds=true to check dimensions
+			options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(in, null, options);
+			in.close();
+
+			// Calculate inSampleSize
+			options.inSampleSize = ImageUtils.calculateInSampleSize(options, width, height);
+
+			// Decode bitmap with inSampleSize set
+			options.inJustDecodeBounds = false;
+			in = new URL(url).openStream();
+
+			if (isCancelled()) {
+				return null;
+			}
+
+			// The following line is very slow to execute
+			bitmap = BitmapFactory.decodeStream(in, null, options);
+			in.close();
+
+			if (isCancelled()) {
+				return null;
+			}
+
+			time = System.currentTimeMillis() - time;
+			System.out.println("Time to process downloading image : " + time/1000 + "." + time%1000);
+			time = System.currentTimeMillis();
+
 			bitmap = ImageUtils.resizeBitmapFitXY(bitmap, width, height);
 
 			View view = viewWeakReference.get();
@@ -73,6 +105,9 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 			result.setCornerRadius(cornerRadius);
 		}
 
+		time = System.currentTimeMillis() - time;
+		System.out.println("Time to process resize/blur/round image : " + time/1000 + "." + time%1000);
+
 		return result;
 	}
 
@@ -87,6 +122,13 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 			((ImageView) view).setImageDrawable(drawable);
 		} else {
 			view.setBackground(drawable);
+		}
+	}
+
+	public void cancelDownload() {
+		super.cancel(true);
+		if (null != options) {
+			options.requestCancelDecode();
 		}
 	}
 }

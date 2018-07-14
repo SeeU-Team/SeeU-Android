@@ -1,5 +1,6 @@
 package com.seeu.common;
 
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,19 +12,19 @@ import com.seeu.R;
 import com.seeu.common.subviews.Mark;
 import com.seeu.member.Member;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
 /**
  * Created by thomasfouan on 10/04/2018.
  *
  * Class that provides a default View Holder for the Member entity.
  */
-public class BaseMemberViewHolder extends ViewHolder implements OnClickListener, ViewTreeObserver.OnPreDrawListener {
+public class BaseMemberViewHolder extends ViewHolder implements OnClickListener {
 
 	private Member member;
-	private boolean isPictureLayoutDrawn;
-	private boolean isPictureSet;
 
 	private ImageView picture;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private TextView name;
 	private Mark mark;
 
@@ -32,8 +33,6 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 	public BaseMemberViewHolder(View itemView, ItemClickListener listener) {
 		super(itemView);
 		member = null;
-		isPictureLayoutDrawn = false;
-		isPictureSet = false;
 		this.listener = listener;
 
 		picture	= itemView.findViewById(R.id.memberPicture);
@@ -41,8 +40,6 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 
 		TextView markView	= itemView.findViewById(R.id.memberMark);
 		mark = new Mark(markView);
-
-		picture.getViewTreeObserver().addOnPreDrawListener(this);
 
 		itemView.setOnClickListener(this);
 	}
@@ -52,11 +49,10 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 	 * @param pictureUrl the url of the member's picture
 	 */
 	private void setPicture(String pictureUrl) {
-		if (isPictureLayoutDrawn
-				&& !isPictureSet) {
-			isPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(picture, 200).execute(pictureUrl);
-		}
+		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(picture, 200);
+			asyncTask.execute(pictureUrl);
+		});
 	}
 
 	/**
@@ -80,6 +76,7 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 	 * @param member the member to display
 	 */
 	protected void setData(Member member) {
+		cancelPictureDownload();
 		this.member = member;
 
 		setPicture(member.getProfilePhotoUrl());
@@ -92,16 +89,9 @@ public class BaseMemberViewHolder extends ViewHolder implements OnClickListener,
 		listener.onItemClick(v, getAdapterPosition());
 	}
 
-	@Override
-	public boolean onPreDraw() {
-		isPictureLayoutDrawn = true;
-		picture.getViewTreeObserver().removeOnPreDrawListener(this);
-		if (null != member
-				&& !isPictureSet) {
-			isPictureSet = true;
-			new DownloadImageAndSetBackgroundTask(picture, 200).execute(member.getProfilePhotoUrl());
+	public void cancelPictureDownload() {
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
 		}
-
-		return true;
 	}
 }

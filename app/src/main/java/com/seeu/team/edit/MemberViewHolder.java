@@ -1,19 +1,15 @@
 package com.seeu.team.edit;
 
-import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 import com.seeu.R;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
-import com.seeu.utils.SharedPreferencesManager;
-
-import java.lang.ref.WeakReference;
+import com.seeu.utils.ImageUtils;
 
 /**
  * Created by thomasfouan on 08/05/2018.
@@ -23,6 +19,7 @@ import java.lang.ref.WeakReference;
 class MemberViewHolder extends ViewHolder {
 
 	private ImageView picture;
+	private DownloadImageAndSetBackgroundTask asyncTask;
 	private FloatingActionButton deleteActionBtn;
 
 	private ItemClickListener itemClickListener;
@@ -47,10 +44,17 @@ class MemberViewHolder extends ViewHolder {
 	 * @param url the member picture's url
 	 */
 	private void setPicture(String url) {
-		new DownloadImageAndSetBackgroundTask(picture, 30, 80, 80).execute(url);
+		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
+			asyncTask = new DownloadImageAndSetBackgroundTask(picture, 30);
+			asyncTask.execute(url);
+		});
 	}
 
 	public void setData(Member member, boolean isCurrentUser) {
+		if (null != asyncTask) {
+			asyncTask.cancelDownload();
+		}
+
 		setPicture(member.getProfilePhotoUrl());
 
 		// Show the delete button for all users except the current user (the leader)

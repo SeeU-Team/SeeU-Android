@@ -2,12 +2,14 @@ package com.seeu.messages;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.seeu.R;
 import com.seeu.chat.ChatActivity;
 import com.seeu.common.BaseMemberRecyclerAdapter;
+import com.seeu.common.BaseMemberViewHolder;
 import com.seeu.common.ItemClickListener;
 import com.seeu.member.Member;
 
@@ -28,6 +30,17 @@ public class MemberRecyclerAdapter extends BaseMemberRecyclerAdapter implements 
 	public MemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = inflater.inflate(R.layout.messages_layout_member_item, parent, false);
 		return new MemberViewHolder(view, this);
+	}
+
+	@Override
+	public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+		super.onDetachedFromRecyclerView(recyclerView);
+
+		int nbChild = recyclerView.getChildCount();
+		for (int i = 0; i < nbChild; i++) {
+			MemberViewHolder viewHolder = (MemberViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
+			viewHolder.cancelPictureDownload();
+		}
 	}
 
 	@Override

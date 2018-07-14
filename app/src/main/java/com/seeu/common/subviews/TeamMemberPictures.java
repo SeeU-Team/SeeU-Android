@@ -1,5 +1,6 @@
 package com.seeu.common.subviews;
 
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -7,7 +8,9 @@ import android.widget.TextView;
 import com.seeu.R;
 import com.seeu.team.Team;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
+import com.seeu.utils.ImageUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,9 +28,10 @@ public class TeamMemberPictures {
 
 	private ImageView[] memberPictures;
 	private TextView extraMembers;
+	private List<DownloadImageAndSetBackgroundTask> asyncTasks;
 
 	public TeamMemberPictures(View itemView) {
-
+		asyncTasks = new ArrayList<>(5);
 		memberPictures = new ImageView[5];
 
 		memberPictures[0]	= itemView.findViewById(R.id.teamMemberPicture1);
@@ -45,14 +49,20 @@ public class TeamMemberPictures {
 	 * If there are more than 5 members, increment a counter that will be displayed in the extra members bubble.
 	 */
 	public void setMemberPictures(List<String> urls) {
+		cancelPreviousTasks();
 		int nbMembers = urls.size();
 
 		for (int i = 0; i < nbMembers && i < memberPictures.length; i++) {
-			memberPictures[i].setVisibility(View.VISIBLE);
+			ImageView currentPicture = memberPictures[i];
+			currentPicture.setVisibility(View.VISIBLE);
 
 			String url = urls.get(i);
 			if (null != url) {
-				new DownloadImageAndSetBackgroundTask(memberPictures[i], 16, 32, 32).execute(url);
+				ImageUtils.runJustBeforeBeingDrawn(currentPicture, () -> {
+					DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(currentPicture, 16);
+					asyncTask.execute(url);
+					asyncTasks.add(asyncTask);
+				});
 			}
 		}
 
@@ -71,5 +81,12 @@ public class TeamMemberPictures {
 		} else {
 			extraMembers.setVisibility(View.GONE);
 		}
+	}
+
+	private void cancelPreviousTasks() {
+		for (DownloadImageAndSetBackgroundTask asyncTask : asyncTasks) {
+			asyncTask.cancelDownload();
+		}
+		asyncTasks.clear();
 	}
 }
