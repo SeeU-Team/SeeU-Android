@@ -22,7 +22,8 @@
             android:id="@+id/nav_team_profile"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Voir le profil de ma team"
-            android:enabled="false" />
+            android:enabled="false"
+            android:visible="false"/>
         <item
             android:id="@+id/nav_disconnection"
             android:icon="@drawable/ic_menu_manage"

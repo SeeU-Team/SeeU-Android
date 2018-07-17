@@ -63,7 +63,8 @@
                 android:textSize="22sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/memberName" />
+                app:layout_constraintTop_toBottomOf="@+id/memberName"
+                android:visibility="invisible"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/messageAction"

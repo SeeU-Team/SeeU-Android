@@ -36,13 +36,12 @@ import static android.view.View.GONE;
 public class MemberProfileActivity extends Activity {
 
 	private Member member;
-	private List<AsyncTask> asyncTasks;
+	private List<DownloadImageAndSetBackgroundTask> asyncTasks;
 
 	private ConstraintLayout pictureBlurred;
 	private CardView picture;
 	private View connectedStatus;
 	private TextView name;
-	private TextView catchPhrase;
 
 	private ImageView pictureDescription;
 	private TextView pictureDescriptionLabel;
@@ -64,7 +63,6 @@ public class MemberProfileActivity extends Activity {
 		picture					= findViewById(R.id.memberPicture);
 		connectedStatus			= findViewById(R.id.connectedMemberIndicator);
 		name					= findViewById(R.id.memberName);
-		catchPhrase				= findViewById(R.id.memberCatchPhrase);
 		pictureDescription		= findViewById(R.id.memberPictureDescription);
 		pictureDescriptionLabel = findViewById(R.id.memberPictureDescriptionLabel);
 		TextView markView		= findViewById(R.id.memberMark);
@@ -80,6 +78,15 @@ public class MemberProfileActivity extends Activity {
 
 		setMember();
 		updateUI();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		for (DownloadImageAndSetBackgroundTask asyncTask : asyncTasks) {
+			asyncTask.cancelDownload();
+		}
 	}
 
 	/**
@@ -112,7 +119,6 @@ public class MemberProfileActivity extends Activity {
 		}
 
 		name.setText(member.getName());
-		catchPhrase.setText(member.getCatchPhrase());
 		pictureDescriptionLabel.setText(member.getPictureDescriptionLabel());
 		mark.setMark(member.getMark());
 		textDescription.setText(member.getDescription());
@@ -123,7 +129,8 @@ public class MemberProfileActivity extends Activity {
 	 */
 	private void setPictureBlurred() {
 		ImageUtils.runJustBeforeBeingDrawn(pictureBlurred, () -> {
-			AsyncTask asyncTask = new DownloadImageAndSetBackgroundTask(pictureBlurred, 0, true).execute(member.getProfilePhotoUrl());
+			DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(pictureBlurred, 0, true);
+			asyncTask.execute(member.getProfilePhotoUrl());
 			asyncTasks.add(asyncTask);
 		});
 	}
@@ -133,7 +140,8 @@ public class MemberProfileActivity extends Activity {
 	 */
 	private void setPicture() {
 		ImageUtils.runJustBeforeBeingDrawn(picture, () -> {
-			AsyncTask asyncTask = new DownloadImageAndSetBackgroundTask(picture, 140).execute(member.getProfilePhotoUrl());
+			DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(picture, 140);
+			asyncTask.execute(member.getProfilePhotoUrl());
 			asyncTasks.add(asyncTask);
 		});
 	}
@@ -143,7 +151,8 @@ public class MemberProfileActivity extends Activity {
 	 */
 	private void setPictureDescription() {
 		ImageUtils.runJustBeforeBeingDrawn(pictureDescription, () -> {
-			AsyncTask asyncTask = new DownloadImageAndSetBackgroundTask(pictureDescription, 0).execute(member.getProfilePhotoUrl());
+			DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(pictureDescription, 0);
+			asyncTask.execute(member.getProfilePhotoUrl());
 			asyncTasks.add(asyncTask);
 		});
 	}

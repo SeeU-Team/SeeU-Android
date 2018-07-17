@@ -100,7 +100,8 @@
                     android:layout_weight="1"
                     android:text="@string/not_read_messages_placeholder"
                     android:textAlignment="textEnd"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:visibility="invisible"/>
 
             </LinearLayout>
         </LinearLayout>

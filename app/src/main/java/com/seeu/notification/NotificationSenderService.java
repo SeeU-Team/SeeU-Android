@@ -22,6 +22,7 @@ import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.team.Team;
 import com.seeu.team.profile.TeamProfileActivity;
+import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.SharedPreferencesManager;
 
 import java.util.Random;
@@ -91,6 +92,7 @@ public class NotificationSenderService {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.putExtra(Team.STORAGE_KEY, team);
 		intent.putExtra(TeamProfileActivity.TEAM_PROFILE_FORCE_RELOAD, true);
+		intent.putExtra(TeamWallFragment.TEAMWALL_STARTED_NAME, true);
 
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		stackBuilder.addNextIntentWithParentStack(intent);

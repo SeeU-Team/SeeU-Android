@@ -169,9 +169,6 @@ public class TeamCardFragment extends Fragment implements OnClickListener {
 		setName(team.getName());
 		setMark(team.getMark());
 
-		// TODO : get nb not read messages
-		setNbNotReadMessages(21);
-
 		setupTeamMemberPicturesFragment();
 	}
 

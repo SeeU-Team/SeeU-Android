@@ -15,8 +15,10 @@ import com.android.volley.VolleyError;
 import com.seeu.R;
 import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.Mark;
+import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.nightcenter.MemberRecyclerAdapter;
+import com.seeu.team.Asset;
 import com.seeu.team.Team;
 import com.seeu.team.TeamService;
 import com.seeu.team.like.Like;
@@ -28,6 +30,7 @@ import com.seeu.utils.network.CustomResponseListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.seeu.teamwall.TeamWallFragment.TEAMWALL_STARTED_NAME;
@@ -51,11 +54,13 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 	private TextView tags;
 	private GenderIndex genderIndex;
 	private MemberRecyclerAdapter memberRecyclerAdapter;
-	private AssetRecyclerAdapter descriptionRecyclerAdapter;
+	private AssetRecyclerAdapter assetRecyclerAdapter;
 	private Mark mark;
 	private TextView textDescription;
 
 	private Team team;
+	private List<Member> members;
+	private List<Asset> assets;
 	private LikeService likeService;
 
 	public TeamProfileActivity() {
@@ -68,6 +73,8 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 		setContentView(R.layout.teamprofile_activity);
 
 		likeService = new LikeService(this);
+		members = new ArrayList<>();
+		assets = new ArrayList<>();
 
 		picture = findViewById(R.id.teamPicture);
 		place = findViewById(R.id.teamPlace);
@@ -107,7 +114,7 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 	 */
 	private void setupMemberRecycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		memberRecyclerAdapter = new MemberRecyclerAdapter(this, team.getMembers(), startedFromTeamwall);
+		memberRecyclerAdapter = new MemberRecyclerAdapter(this, members, startedFromTeamwall);
 
 		RecyclerView memberRecycler = findViewById(R.id.memberRecycler);
 		memberRecycler.setAdapter(memberRecyclerAdapter);
@@ -118,10 +125,10 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 	 */
 	private void setupTeamDescriptionReycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		descriptionRecyclerAdapter = new AssetRecyclerAdapter(this, team.getAssets());
+		assetRecyclerAdapter = new AssetRecyclerAdapter(this, assets);
 
 		RecyclerView teamDescriptionRecycler = findViewById(R.id.assetRecycler);
-		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
+		teamDescriptionRecycler.setAdapter(assetRecyclerAdapter);
 	}
 
 	/**
@@ -141,13 +148,7 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 		if (needReload) {
 			loadTeam(team.getId());
 		} else {
-			if (null == team.getMembers()) {
-				team.setMembers(new ArrayList<>());
-			}
-
-			if (null == team.getAssets()) {
-				team.setAssets(new ArrayList<>());
-			}
+			updateLists();
 
 			updateUI();
 		}
@@ -167,11 +168,30 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 
 			@Override
 			public void onResponse(Team response) {
-				TeamProfileActivity.this.team = response;
+				team = response;
+				updateLists();
 
 				updateUI();
 			}
 		});
+	}
+
+	private void updateLists() {
+		if (null != team.getMembers()) {
+			members.addAll(team.getMembers());
+		}
+
+		if (null != team.getAssets()) {
+			assets.addAll(team.getAssets());
+		}
+
+		if (null != memberRecyclerAdapter) {
+			memberRecyclerAdapter.notifyDataSetChanged();
+		}
+
+		if (null != assetRecyclerAdapter) {
+			assetRecyclerAdapter.notifyDataSetChanged();
+		}
 	}
 
 	/**
@@ -188,7 +208,7 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 		mark.setMark(team.getMark());
 
 		memberRecyclerAdapter.notifyDataSetChanged();
-		descriptionRecyclerAdapter.notifyDataSetChanged();
+		assetRecyclerAdapter.notifyDataSetChanged();
 	}
 
 	private void setPicture() {

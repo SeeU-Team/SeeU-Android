@@ -88,7 +88,6 @@ public class MemberService extends AbstractService {
 	public void getFriends(Member currentMember, CustomResponseListener<Member[]> listener) {
 		String fullUrl = BASE_URL + "/" + currentMember.getId() + "/friends";
 
-		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<Member[]> request = new GsonRequest<>(
 				fullUrl,
 				Request.Method.GET,
@@ -109,7 +108,6 @@ public class MemberService extends AbstractService {
 		Map<String, String> params = new HashMap<>(1);
 		params.put("access_token", AccessToken.getCurrentAccessToken().getToken());
 
-		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<Member[]> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL + "/facebookFriends", params),
 				Request.Method.GET,

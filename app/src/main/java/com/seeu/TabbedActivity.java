@@ -100,6 +100,8 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 		transaction.replace(R.id.frame_layout, newSelectedFragment);
 		transaction.commit();
 
+		selectedFragment = newSelectedFragment;
+
 		return true;
 	};
 
@@ -237,7 +239,6 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 		memberProfilePicture = view.findViewById(R.id.memberPicture);
 		TextView memberMarkView = view.findViewById(R.id.memberMark);
 		TextView memberName = view.findViewById(R.id.memberName);
-		TextView memberCatchPhrase = view.findViewById(R.id.memberCatchPhrase);
 		Mark mark = new Mark(memberMarkView);
 
 		ImageUtils.runJustBeforeBeingDrawn(memberProfilePicture, () -> {
@@ -247,7 +248,6 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		mark.setMark(currentUser.getMark());
 		memberName.setText(currentUser.getName());
-		memberCatchPhrase.setText(currentUser.getCatchPhrase());
 	}
 
 	private void updateNightCenterMenuVisibility() {
@@ -295,8 +295,10 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 			// Manually displaying the NoTeam fragment - one time only
 			if (loadFirstFragment) {
+				selectedFragment = new NoTeamFragment();
+
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-				transaction.replace(R.id.frame_layout, new NoTeamFragment());
+				transaction.replace(R.id.frame_layout, selectedFragment);
 				transaction.commit();
 			}
 		}
@@ -310,8 +312,10 @@ public class TabbedActivity extends AppCompatActivity implements CustomResponseL
 
 		//Manually displaying the TeamWall fragment - one time only
 		if (loadFirstFragment) {
+			selectedFragment = new TeamWallFragment();
+
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.replace(R.id.frame_layout, new TeamWallFragment());
+			transaction.replace(R.id.frame_layout, selectedFragment);
 			transaction.commit();
 		}
 		isAlreadyLoadingMemberTeam = false;

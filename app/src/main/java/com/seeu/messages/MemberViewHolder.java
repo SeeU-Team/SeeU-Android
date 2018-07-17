@@ -68,5 +68,7 @@ public class MemberViewHolder extends BaseMemberViewHolder {
 	public void setData(Member member) {
 		super.setData(member);
 		setStatus(member.isConnected(), member.getLastConnection());
+
+		lastConnection.setVisibility(View.INVISIBLE);
 	}
 }

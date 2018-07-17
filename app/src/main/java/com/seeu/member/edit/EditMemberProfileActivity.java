@@ -28,7 +28,6 @@ import java.util.Map;
 public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member> implements CustomResponseListener<Void> {
 
 	private PictureChooser pictureChooser;
-	private EditText catchPhrase;
 	private EditText description;
 
 	private MemberService memberService;
@@ -49,7 +48,6 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 		transaction.replace(R.id.frame_layout_picture_chooser, pictureChooser);
 		transaction.commit();
 
-		catchPhrase = findViewById(R.id.memberCatchPhrase);
 		description = findViewById(R.id.memberTextDescription);
 
 		updateUI();
@@ -63,7 +61,6 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 	@Override
 	protected void updateUI() {
 		pictureChooser.setCurrentPictureUrl(entity.getProfilePhotoUrl());
-		catchPhrase.setText(entity.getCatchPhrase());
 		description.setText(entity.getDescription());
 	}
 
@@ -80,7 +77,6 @@ public class EditMemberProfileActivity extends AbstractEditEntityActivity<Member
 
 	@Override
 	protected void updateEntity() {
-		entity.setCatchPhrase(catchPhrase.getText().toString());
 		entity.setDescription(description.getText().toString());
 	}
 

@@ -346,7 +346,6 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 	@Override
 	public void onResponse(Team response) {
-		// TODO: if update, no team is returned
 		if (isNewEntity) {
 			SharedPreferencesManager.putEntity(this, Team.STORAGE_KEY, response);
 		}

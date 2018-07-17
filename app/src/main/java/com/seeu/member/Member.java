@@ -25,7 +25,6 @@ public class Member extends Entity {
 
 	private Long facebookId;
 	private Gender gender;
-	private String catchPhrase;
 	private String description;
 	private String pictureDescriptionUrl;
 	private String pictureDescriptionLabel;
