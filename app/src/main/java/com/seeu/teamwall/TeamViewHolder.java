@@ -13,7 +13,7 @@ import com.seeu.common.subviews.GenderIndex;
 import com.seeu.common.subviews.TeamMemberPictures;
 import com.seeu.member.Member;
 import com.seeu.team.Team;
-import com.seeu.team.TeamDescription;
+import com.seeu.team.Asset;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.ImageUtils;
 
@@ -34,28 +34,30 @@ public class TeamViewHolder extends ViewHolder {
 	private ConstraintLayout layoutPicture;
 	private TeamMemberPictures teamMemberPictures;
 	private GenderIndex genderIndex;
-	private ImageView[] descriptionPictures;
+	private ImageView[] assetsViews;
 
 	private ItemClickListener itemClickListener;
 	private ItemClickListener teamUpBtnClickListener;
 
-	private DownloadImageAndSetBackgroundTask asyncTask;
+	private List<DownloadImageAndSetBackgroundTask> asyncTasks;
 
 	public TeamViewHolder(View itemView, ItemClickListener itemClickListener, ItemClickListener teamUpBtnClickListener) {
 		super(itemView);
 
+		this.asyncTasks = new ArrayList<>();
+
 		this.itemClickListener = itemClickListener;
 		this.teamUpBtnClickListener = teamUpBtnClickListener;
 		teamMemberPictures = new TeamMemberPictures(itemView);
-		descriptionPictures = new ImageView[MAX_DESCRIPTION_PICTURES];
+		assetsViews = new ImageView[MAX_DESCRIPTION_PICTURES];
 
 		name 					= itemView.findViewById(R.id.teamName);
 		tags 					= itemView.findViewById(R.id.teamTags);
 		layoutPicture 			= itemView.findViewById(R.id.teamPicture);
-		descriptionPictures[0] 	= itemView.findViewById(R.id.teamDescription1);
-		descriptionPictures[1] 	= itemView.findViewById(R.id.teamDescription2);
-		descriptionPictures[2] 	= itemView.findViewById(R.id.teamDescription3);
-		descriptionPictures[3] 	= itemView.findViewById(R.id.teamDescription4);
+		assetsViews[0] 	= itemView.findViewById(R.id.asset1);
+		assetsViews[1] 	= itemView.findViewById(R.id.asset2);
+		assetsViews[2] 	= itemView.findViewById(R.id.asset3);
+		assetsViews[3] 	= itemView.findViewById(R.id.asset4);
 
 		View genderIndexView = itemView.findViewById(R.id.genderIndex);
 		genderIndex = new GenderIndex(genderIndexView);
@@ -88,8 +90,10 @@ public class TeamViewHolder extends ViewHolder {
 	 */
 	private void setPicture(String pictureUrl) {
 		ImageUtils.runJustBeforeBeingDrawn(layoutPicture, () -> {
-			asyncTask = new DownloadImageAndSetBackgroundTask(layoutPicture, 20);
+			DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(layoutPicture, 20);
 			asyncTask.execute(pictureUrl);
+
+			asyncTasks.add(asyncTask);
 		});
 	}
 
@@ -110,12 +114,20 @@ public class TeamViewHolder extends ViewHolder {
 	}
 
 	/**
-	 * Set the team's descriptions in the UI.
-	 * @param teamDescriptions the team's descriptions
+	 * Set the team's assetsViews in the UI.
+	 * @param assets the team's assetsViews
 	 */
-	private void setTeamDescriptions(List<TeamDescription> teamDescriptions) {
-		for (int i = 0; i < teamDescriptions.size() && i < 4; i++) {
-			descriptionPictures[i].setImageResource(teamDescriptions.get(i).getIcon());
+	private void setTeamDescriptions(List<Asset> assets) {
+		for (int i = 0; i < assets.size(); i++) {
+			Asset asset = assets.get(i);
+			ImageView imageView = assetsViews[i];
+
+			ImageUtils.runJustBeforeBeingDrawn(imageView, () -> {
+				DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(imageView, 0);
+				asyncTask.execute(asset.getImageLight());
+
+				asyncTasks.add(asyncTask);
+			});
 		}
 	}
 
@@ -124,9 +136,7 @@ public class TeamViewHolder extends ViewHolder {
 	 * @param team the team to display
 	 */
 	public void setData(Team team) {
-		if (null != asyncTask) {
-			asyncTask.cancelDownload();
-		}
+		cancelPreviousTasks();
 
 		List<String> memberPictures = new ArrayList<>();
 		for (Member member : team.getMembers()) {
@@ -138,7 +148,7 @@ public class TeamViewHolder extends ViewHolder {
 		setPicture(team.getProfilePhotoUrl());
 		setMemberPictures(memberPictures);
 		setGenderIndex(team.getMaleProportion());
-		setTeamDescriptions(team.getDescriptions());
+		setTeamDescriptions(team.getAssets());
 	}
 
 	public void onTeamUpBtnClick(View v) {
@@ -147,5 +157,11 @@ public class TeamViewHolder extends ViewHolder {
 
 	public void onClick(View v) {
 		itemClickListener.onItemClick(v, getAdapterPosition());
+	}
+
+	private void cancelPreviousTasks() {
+		for (DownloadImageAndSetBackgroundTask asyncTask : asyncTasks) {
+			asyncTask.cancelDownload();
+		}
 	}
 }

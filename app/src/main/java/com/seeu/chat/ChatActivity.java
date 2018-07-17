@@ -117,7 +117,7 @@ public class ChatActivity extends ListActivity implements CustomResponseListener
 //				|| currentUser.equals(message.getOwner())) {
 		if (message.getOwner().equals(receiver)) {
 
-			runOnUiThread(() -> addMessage(message));
+			//runOnUiThread(() -> addMessage(message));
 		} else {
 			// Send a notification
 			notificationSenderService.sendNewMessageNotificationWithStack(this, message, intent);

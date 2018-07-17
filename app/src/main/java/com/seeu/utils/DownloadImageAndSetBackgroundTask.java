@@ -31,15 +31,11 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 	private BitmapFactory.Options options;
 
 	public DownloadImageAndSetBackgroundTask(@NonNull View view, float cornerRadius) {
-		this(view, cornerRadius, view.getWidth(), view.getHeight());
+		this(view, cornerRadius, false);
 	}
 
 	public DownloadImageAndSetBackgroundTask(@NonNull View view, float cornerRadius, boolean blurEffect) {
 		this(view, cornerRadius, view.getWidth(), view.getHeight(), blurEffect);
-	}
-
-	public DownloadImageAndSetBackgroundTask(@NonNull View view, float cornerRadius, int width, int height) {
-		this(view, cornerRadius, width, height, false);
 	}
 
 	public DownloadImageAndSetBackgroundTask(@NonNull View view, float cornerRadius, int width, int height, boolean blurEffect) {
@@ -55,8 +51,6 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 		Bitmap bitmap = null;
 		RoundedBitmapDrawable result;
 
-		long time = System.currentTimeMillis();
-
 		try {
 			String url = urls[0];
 			InputStream in = new URL(url).openStream();
@@ -70,25 +64,21 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 			// Calculate inSampleSize
 			options.inSampleSize = ImageUtils.calculateInSampleSize(options, width, height);
 
+			if (isCancelled()) {
+				return null;
+			}
+
 			// Decode bitmap with inSampleSize set
 			options.inJustDecodeBounds = false;
-			in = new URL(url).openStream();
-
-			if (isCancelled()) {
-				return null;
-			}
+			InputStream in2 = new URL(url).openStream();
 
 			// The following line is very slow to execute
-			bitmap = BitmapFactory.decodeStream(in, null, options);
-			in.close();
+			bitmap = BitmapFactory.decodeStream(in2, null, options);
+			in2.close();
 
 			if (isCancelled()) {
 				return null;
 			}
-
-			time = System.currentTimeMillis() - time;
-			System.out.println("Time to process downloading image : " + time/1000 + "." + time%1000);
-			time = System.currentTimeMillis();
 
 			bitmap = ImageUtils.resizeBitmapFitXY(bitmap, width, height);
 
@@ -104,9 +94,6 @@ public class DownloadImageAndSetBackgroundTask extends AsyncTask<String, Void, R
 			result = RoundedBitmapDrawableFactory.create(Resources.getSystem(), bitmap);
 			result.setCornerRadius(cornerRadius);
 		}
-
-		time = System.currentTimeMillis() - time;
-		System.out.println("Time to process resize/blur/round image : " + time/1000 + "." + time%1000);
 
 		return result;
 	}

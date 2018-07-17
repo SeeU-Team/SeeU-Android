@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 import com.seeu.common.AbstractService;
+import com.seeu.utils.ImageUtils;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
@@ -134,11 +135,9 @@ public class MemberService extends AbstractService {
 		protected String doInBackground(Bitmap... bitmaps) {
 			Bitmap bitmap = bitmaps[0];
 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bitmap.compress(Bitmap.CompressFormat.PNG, 75, baos);
-
-			byte[] imageBytes = baos.toByteArray();
-			return Base64.encodeToString(imageBytes, Base64.NO_WRAP | Base64.URL_SAFE);
+			return null != bitmap
+					? ImageUtils.getStringImage(bitmap)
+					: null;
 		}
 
 		@Override

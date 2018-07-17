@@ -21,9 +21,9 @@ public abstract class AbstractService {
 	protected RequestQueue queue;
 	protected final String BASE_URL;
 
-	protected AbstractService(Context weakRefContext, String rootEndPointUrl) {
-		this.weakRefContext = new WeakReference<>(weakRefContext);
-		this.queue = Volley.newRequestQueue(weakRefContext);
+	protected AbstractService(Context context, String rootEndPointUrl) {
+		this.weakRefContext = new WeakReference<>(context);
+		this.queue = Volley.newRequestQueue(context);
 		this.BASE_URL = Constants.SEEU_API_URL + rootEndPointUrl;
 	}
 

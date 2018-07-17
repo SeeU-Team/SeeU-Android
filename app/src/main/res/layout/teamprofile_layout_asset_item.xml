@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
+    android:id="@+id/assetRootLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
@@ -7,20 +8,21 @@
     android:layout_marginEnd="25dp">
 
     <ImageView
-        android:id="@+id/teamDescriptionImage"
+        android:id="@+id/assetIcon"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/teamDescriptionName"
+        android:id="@+id/assetName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Beer"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/teamDescriptionImage" />
+        app:layout_constraintTop_toBottomOf="@+id/assetIcon" />
 
 </android.support.constraint.ConstraintLayout>

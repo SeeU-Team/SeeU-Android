@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -39,6 +40,7 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 	private LoginButton loginButton;
 	private TextView errorView;
+	private ImageView seeuIcon;
 
 	private AuthenticationService authenticationService;
 
@@ -48,7 +50,8 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 		setContentView(R.layout.connection_activity);
 
 		loginButton = findViewById(R.id.login_button);
-		errorView = findViewById(R.id.error_login);
+		errorView = findViewById(R.id.login_error);
+		seeuIcon = findViewById(R.id.login_seeu_icon);
 
 		this.authenticationService = new AuthenticationService(this);
 
@@ -94,7 +97,8 @@ public class ConnectionActivity extends Activity implements FacebookCallback<Log
 
 	private void loadMemberInfo(AccessToken accessToken) {
 		loginButton.setVisibility(View.GONE);
-		errorView.setText("Lancement de l'application");
+		errorView.setText("");
+		seeuIcon.setVisibility(View.VISIBLE);
 
 		FirebaseInstanceId
 				.getInstance()

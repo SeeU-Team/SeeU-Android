@@ -5,7 +5,6 @@ import com.seeu.member.Gender;
 import com.seeu.member.Member;
 import com.seeu.teamwall.Category;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import lombok.Getter;
@@ -34,7 +33,7 @@ public class Team extends Entity {
 	private ArrayList<Category> categories;
 	private ArrayList<Tag> tags;
 	private ArrayList<Member> members;
-	private ArrayList<TeamDescription> descriptions;
+	private ArrayList<Asset> assets;
 
 	private boolean merged;
 
@@ -42,7 +41,7 @@ public class Team extends Entity {
 		categories = new ArrayList<>();
 		tags = new ArrayList<>();
 		members = new ArrayList<>();
-		descriptions = new ArrayList<>();
+		assets = new ArrayList<>();
 	}
 
 	public void setTagsFromString(String tags) {

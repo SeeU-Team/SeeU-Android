@@ -94,7 +94,7 @@ public class TeamMemberPicturesFragment extends Fragment {
 			String url = team.getMembers().get(i).getProfilePhotoUrl();
 
 			ImageUtils.runJustBeforeBeingDrawn(currentPicture, () -> {
-				DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(currentPicture, 16);
+				DownloadImageAndSetBackgroundTask asyncTask = new DownloadImageAndSetBackgroundTask(currentPicture, 64);
 				asyncTask.execute(url);
 				asyncTasks.add(asyncTask);
 			});

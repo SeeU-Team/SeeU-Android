@@ -5,8 +5,9 @@ package com.seeu.notification;
  */
 enum NotificationType {
 	MESSAGE(0),
-	LIKE(1),
-	MERGE(2);
+	TEAMUP(1),
+	RECIPROCALTEAMUP(2),
+	MERGE(3);
 
 	private int value;
 

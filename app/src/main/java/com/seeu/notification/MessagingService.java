@@ -17,6 +17,7 @@ import com.seeu.chat.Message;
 import com.seeu.chat.TeamMessage;
 import com.seeu.member.Member;
 import com.seeu.member.MemberService;
+import com.seeu.team.Team;
 import com.seeu.utils.SharedPreferencesManager;
 import com.seeu.utils.network.CustomResponseListener;
 
@@ -68,8 +69,11 @@ public class MessagingService extends FirebaseMessagingService implements Custom
 			case MESSAGE:
 				manageChatMessage(remoteMessage);
 				break;
-			case LIKE:
+			case TEAMUP:
 				manageLikeMessage(remoteMessage);
+				break;
+			case RECIPROCALTEAMUP:
+				manageReciprocalLikeMessage(remoteMessage);
 				break;
 			case MERGE:
 				manageMergeMessage(remoteMessage);
@@ -133,11 +137,18 @@ public class MessagingService extends FirebaseMessagingService implements Custom
 	}
 
 	private void manageLikeMessage(RemoteMessage remoteMessage) {
+		Team team = gson.fromJson(remoteMessage.getData().get("team"), Team.class);
+		notificationSenderService.sendLikeNotification(this, team);
+	}
 
+	private void manageReciprocalLikeMessage(RemoteMessage remoteMessage) {
+		Team team = gson.fromJson(remoteMessage.getData().get("team"), Team.class);
+		notificationSenderService.sendReciprocalLikeNotification(this, team);
 	}
 
 	private void manageMergeMessage(RemoteMessage remoteMessage) {
-
+		Team team = gson.fromJson(remoteMessage.getData().get("team"), Team.class);
+		notificationSenderService.sendMergeNotification(this, team);
 	}
 
 	private ConversationType getConversationType(RemoteMessage remoteMessage) {

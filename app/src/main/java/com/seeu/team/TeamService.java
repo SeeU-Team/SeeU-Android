@@ -1,16 +1,23 @@
 package com.seeu.team;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.util.Base64;
+import android.widget.ImageView;
 
 import com.android.volley.Request;
 import com.google.gson.Gson;
 import com.seeu.common.AbstractService;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
+import com.seeu.member.MemberService;
 import com.seeu.teamwall.Category;
+import com.seeu.utils.ImageUtils;
 import com.seeu.utils.network.CustomResponseListener;
 import com.seeu.utils.network.GsonRequest;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +63,6 @@ public class TeamService extends AbstractService {
 		Map<String, String> params = new HashMap<>(1);
 		params.put("memberId", String.valueOf(member.getId()));
 
-		// TODO: send the member in the request or the token is enough ????
 		GsonRequest<MemberHasTeam> request = new GsonRequest<>(
 				getFullGETUrl(BASE_URL, params),
 				Request.Method.GET,
@@ -68,13 +74,32 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	public void getTeam(Long teamId, CustomResponseListener<Team> listener) {
+		GsonRequest<Team> request = new GsonRequest<>(
+				BASE_URL + "/" + teamId,
+				Request.Method.GET,
+				Team.class,
+				getToken(),
+				null,
+				listener);
+
+		queue.add(request);
+	}
+
+	public void createTeam(Team team, Bitmap bitmapImage, CustomResponseListener<Team> listener) {
+		if (null == bitmapImage) {
+			throw new IllegalArgumentException("The image must not be null");
+		}
+		new TeamService.CreateTeamWithNewPictureAsyncTask(team, listener).execute(bitmapImage);
+	}
+
 	/**
 	 * Save the new team passed in parameter in the Database.
 	 * @param team the team to save
 	 * @param imageBase64 the profile picture encoded in Base64
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void createTeam(Team team, String imageBase64, CustomResponseListener<Team> listener) {
+	private void createTeam(Team team, String imageBase64, CustomResponseListener<Team> listener) {
 		if (null == imageBase64) {
 			throw new IllegalArgumentException("The image must not be null");
 		}
@@ -95,13 +120,21 @@ public class TeamService extends AbstractService {
 		queue.add(request);
 	}
 
+	public void updateTeam(Team team, Bitmap bitmapImage, CustomResponseListener<Team> listener) {
+		if (null != bitmapImage) {
+			new TeamService.UpdateTeamWithNewPictureAsyncTask(team, listener).execute(bitmapImage);
+		} else {
+			updateTeam(team, (String) null, listener);
+		}
+	}
+
 	/**
 	 * Save the updated team passed in parameter in the Database.
 	 * @param team the team to save
 	 * @param imageBase64 the new profile picture encoded in Base64. May be null if not updated
 	 * @param listener callback listener called when the response is available from the server
 	 */
-	public void updateTeam(Team team, String imageBase64, CustomResponseListener<Team> listener) {
+	private void updateTeam(Team team, String imageBase64, CustomResponseListener<Team> listener) {
 		Map<String, String> params = new HashMap<>(2);
 		Gson gson = new Gson();
 		params.put("team", gson.toJson(team));
@@ -121,5 +154,55 @@ public class TeamService extends AbstractService {
 				listener);
 
 		queue.add(request);
+	}
+
+	private class CreateTeamWithNewPictureAsyncTask extends AsyncTask<Bitmap, Void, String> {
+
+		private Team team;
+		private CustomResponseListener<Team> listener;
+
+		private CreateTeamWithNewPictureAsyncTask(Team team, CustomResponseListener<Team> listener) {
+			this.team = team;
+			this.listener = listener;
+		}
+
+		@Override
+		protected String doInBackground(Bitmap... bitmaps) {
+			Bitmap bitmap = bitmaps[0];
+
+			return null != bitmap
+					? ImageUtils.getStringImage(bitmap)
+					: null;
+		}
+
+		@Override
+		protected void onPostExecute(String s) {
+			createTeam(team, s, listener);
+		}
+	}
+
+	private class UpdateTeamWithNewPictureAsyncTask extends AsyncTask<Bitmap, Void, String> {
+
+		private Team team;
+		private CustomResponseListener<Team> listener;
+
+		private UpdateTeamWithNewPictureAsyncTask(Team team, CustomResponseListener<Team> listener) {
+			this.team = team;
+			this.listener = listener;
+		}
+
+		@Override
+		protected String doInBackground(Bitmap... bitmaps) {
+			Bitmap bitmap = bitmaps[0];
+
+			return null != bitmap
+					? ImageUtils.getStringImage(bitmap)
+					: null;
+		}
+
+		@Override
+		protected void onPostExecute(String s) {
+			updateTeam(team, s, listener);
+		}
 	}
 }

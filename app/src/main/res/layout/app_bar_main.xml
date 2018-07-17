@@ -29,7 +29,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/ic_menu_send"/>
+                    android:src="@drawable/ic_seeu_icon"/>
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>

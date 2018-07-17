@@ -72,7 +72,7 @@
 
             <!--********** TEAM DESCRIPTION PICTURES **********-->
             <ImageView
-                android:id="@+id/teamDescription1"
+                android:id="@+id/asset1"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="102dp"
@@ -81,7 +81,7 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
-                android:id="@+id/teamDescription2"
+                android:id="@+id/asset2"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="76dp"
@@ -90,7 +90,7 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
-                android:id="@+id/teamDescription3"
+                android:id="@+id/asset3"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="50dp"
@@ -99,7 +99,7 @@
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
-                android:id="@+id/teamDescription4"
+                android:id="@+id/asset4"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="24dp"

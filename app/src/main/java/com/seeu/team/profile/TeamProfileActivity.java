@@ -2,13 +2,11 @@ package com.seeu.team.profile;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,9 +18,9 @@ import com.seeu.common.subviews.Mark;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.nightcenter.MemberRecyclerAdapter;
 import com.seeu.team.Team;
+import com.seeu.team.TeamService;
 import com.seeu.team.like.Like;
 import com.seeu.team.like.LikeService;
-import com.seeu.teamwall.TeamWallFragment;
 import com.seeu.utils.DownloadImageAndSetBackgroundTask;
 import com.seeu.utils.ImageUtils;
 import com.seeu.utils.SharedPreferencesManager;
@@ -42,6 +40,7 @@ import static com.seeu.teamwall.TeamWallFragment.TEAMWALL_STARTED_NAME;
 public class TeamProfileActivity extends Activity implements CustomResponseListener<Like> {
 
 	public static final String TEAM_UP_RESULT_NAME = "result";
+	public static final String TEAM_PROFILE_FORCE_RELOAD = "reload";
 
 	private boolean startedFromTeamwall;
 
@@ -52,7 +51,7 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 	private TextView tags;
 	private GenderIndex genderIndex;
 	private MemberRecyclerAdapter memberRecyclerAdapter;
-	private TeamDescriptionRecyclerAdapter descriptionRecyclerAdapter;
+	private AssetRecyclerAdapter descriptionRecyclerAdapter;
 	private Mark mark;
 	private TextView textDescription;
 
@@ -88,12 +87,10 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 			teamUpBtn.setVisibility(View.GONE);
 		}
 
-		setTeamFromCaller();
-
 		setupMemberRecycler();
 		setupTeamDescriptionReycler();
 
-		updateUI();
+		setTeamFromCaller();
 	}
 
 	@Override
@@ -102,28 +99,6 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 
 		if (null != asyncTask) {
 			asyncTask.cancelDownload();
-		}
-	}
-
-	/**
-	 * Set the team from the intent provided by the caller.
-	 * If the caller does not provide a team, throws an exception.
-	 */
-	private void setTeamFromCaller() {
-		Serializable ser = getIntent().getSerializableExtra(Team.STORAGE_KEY);
-
-		if (null == ser) {
-			throw new IllegalStateException("No team has been provided for team profile");
-		}
-
-		team = (Team) ser;
-
-		if (null == team.getMembers()) {
-			team.setMembers(new ArrayList<>());
-		}
-
-		if (null == team.getDescriptions()) {
-			team.setDescriptions(new ArrayList<>());
 		}
 	}
 
@@ -139,14 +114,64 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 	}
 
 	/**
-	 * Method that set up the recycler view for the team descriptions.
+	 * Method that set up the recycler view for the team assets.
 	 */
 	private void setupTeamDescriptionReycler() {
 		// Keep reference of the dataset (arraylist here) in the adapter
-		descriptionRecyclerAdapter = new TeamDescriptionRecyclerAdapter(this, team.getDescriptions());
+		descriptionRecyclerAdapter = new AssetRecyclerAdapter(this, team.getAssets());
 
-		RecyclerView teamDescriptionRecycler = findViewById(R.id.teamDescriptionRecycler);
+		RecyclerView teamDescriptionRecycler = findViewById(R.id.assetRecycler);
 		teamDescriptionRecycler.setAdapter(descriptionRecyclerAdapter);
+	}
+
+	/**
+	 * Set the team from the intent provided by the caller.
+	 * If the caller does not provide a team, throws an exception.
+	 */
+	private void setTeamFromCaller() {
+		boolean needReload = getIntent().getBooleanExtra(TEAM_PROFILE_FORCE_RELOAD, false);
+		Serializable ser = getIntent().getSerializableExtra(Team.STORAGE_KEY);
+
+		if (null == ser) {
+			throw new IllegalStateException("No team has been provided for team profile");
+		}
+
+		team = (Team) ser;
+
+		if (needReload) {
+			loadTeam(team.getId());
+		} else {
+			if (null == team.getMembers()) {
+				team.setMembers(new ArrayList<>());
+			}
+
+			if (null == team.getAssets()) {
+				team.setAssets(new ArrayList<>());
+			}
+
+			updateUI();
+		}
+	}
+
+	private void loadTeam(Long teamId) {
+		TeamService teamService = new TeamService(this);
+		teamService.getTeam(teamId, new CustomResponseListener<Team>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Toast.makeText(TeamProfileActivity.this, "An error occurred while trying to retrieve the team", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onResponse(Team response) {
+				TeamProfileActivity.this.team = response;
+
+				updateUI();
+			}
+		});
 	}
 
 	/**
@@ -179,7 +204,6 @@ public class TeamProfileActivity extends Activity implements CustomResponseListe
 	 * @param view the view clicked
 	 */
 	public void teamUpActionBtn(View view) {
-		// TODO: if the member is leader, like the team. Otherwise, send notification to the leader
 		MemberHasTeam memberHasTeam = SharedPreferencesManager.getObject(this, MemberHasTeam.STORAGE_KEY, MemberHasTeam.class);
 		likeService.likeTeam(memberHasTeam.getTeam(), team, this);
 	}

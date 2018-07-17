@@ -21,6 +21,7 @@ import com.seeu.chat.Message;
 import com.seeu.member.Member;
 import com.seeu.member.MemberHasTeam;
 import com.seeu.team.Team;
+import com.seeu.team.profile.TeamProfileActivity;
 import com.seeu.utils.SharedPreferencesManager;
 
 import java.util.Random;
@@ -32,6 +33,10 @@ public class NotificationSenderService {
 	private static final String MESSAGE_CHANNEL_ID = "messageChannelId";
 	private static final String MESSAGE_CHANNEL_NAME = "SeeU Messages";
 	private static final String MESSAGE_CHANNEL_DESC = "Messages reçues via SeeU";
+
+	private static final String ACTIVITY_CHANNEL_ID = "activityChannelId";
+	private static final String ACTIVITY_CHANNEL_NAME = "SeeU Activities";
+	private static final String ACTIVITY_CHANNEL_DESC = "Activité sur SeeU";
 
 	public Intent getChatActivityIntent(Context context, Message message, ConversationType type) {
 		Intent intent;
@@ -48,6 +53,7 @@ public class NotificationSenderService {
 				intent.putExtra(Team.STORAGE_KEY, memberHasTeam.getTeam());
 				break;
 			case TEAM_TO_BEFORE:
+				intent.putExtra(ChatActivity.INTENT_IS_BEFORE_CONV, true);
 				intent.putExtra(Team.STORAGE_KEY, message.getOwner());
 			default:
 				break;
@@ -57,27 +63,10 @@ public class NotificationSenderService {
 	}
 
 	public void sendNewMessageNotification(Context context, PendingIntent pendingIntent, Message message) {
-		// Setting up notification channels for android O and above
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-			setupChannels(context);
-		}
+		String title = message.getOwner().getName();
+		String text = message.getContent();
 
-		int notificationId = new Random().nextInt(60000);
-		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-		Notification notificationBuilder = new NotificationCompat.Builder(context, MESSAGE_CHANNEL_ID)
-				.setSmallIcon(R.drawable.ic_notifications_black) // a resource for a custom small icon
-				.setContentTitle(message.getOwner().getName())
-				.setContentText(message.getContent())
-				.setAutoCancel(true) // dismisses the notification on click
-				.setSound(defaultSoundUri)
-				.setContentIntent(pendingIntent)
-				.build();
-
-		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (notificationManager != null) {
-			notificationManager.notify(notificationId, notificationBuilder);
-		}
+		sendCommonNotification(context, title, text, pendingIntent, MESSAGE_CHANNEL_ID);
 	}
 
 	public void sendNewMessageNotificationWithStack(Context context, Message message, ConversationType type) {
@@ -96,6 +85,67 @@ public class NotificationSenderService {
 		sendNewMessageNotification(context, pendingIntent, message);
 	}
 
+	private PendingIntent getTeamProfilePendingIntent(Context context, Team team) {
+		Intent intent;
+		intent = new Intent(context, TeamProfileActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.putExtra(Team.STORAGE_KEY, team);
+		intent.putExtra(TeamProfileActivity.TEAM_PROFILE_FORCE_RELOAD, true);
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+		stackBuilder.addNextIntentWithParentStack(intent);
+
+		return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_UPDATE_CURRENT);
+	}
+
+	public void sendLikeNotification(Context context, Team team) {
+		String title = "Nouveau team up !";
+		String text = "La team " + team.getName() + " souhaite team up avec vous. Team Up en retour pour démarrer une conversation avec elle !";
+		PendingIntent pendingIntent = getTeamProfilePendingIntent(context, team);
+
+		sendCommonNotification(context, title, text, pendingIntent, ACTIVITY_CHANNEL_ID);
+	}
+
+	public void sendReciprocalLikeNotification(Context context, Team team) {
+		String title = "Team up réciproque !";
+		String text = "La team " + team.getName() + " souhaite également team up avec vous. Une nouvelle conversation peut démarrer entre vos leaders !";
+		PendingIntent pendingIntent = getTeamProfilePendingIntent(context, team);
+
+		sendCommonNotification(context, title, text, pendingIntent, ACTIVITY_CHANNEL_ID);
+	}
+
+	public void sendMergeNotification(Context context, Team team) {
+		String title = "Nouveau merge !";
+		String text = "Vous avez mergé avec la team " + team.getName() + ". Ouvrez le nouvel onglet NightCenter dans l'application pour commencer à chatter avec ses membres !";
+		PendingIntent pendingIntent = getTeamProfilePendingIntent(context, team);
+
+		sendCommonNotification(context, title, text, pendingIntent, ACTIVITY_CHANNEL_ID);
+	}
+
+	private void sendCommonNotification(Context context, String title, String text, PendingIntent pendingIntent, String channel) {
+		// Setting up notification channels for android O and above
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+			setupChannels(context);
+		}
+
+		int notificationId = new Random().nextInt(60000);
+		Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+		Notification notificationBuilder = new NotificationCompat.Builder(context, channel)
+				.setSmallIcon(R.drawable.ic_seeu_icon_black) // a resource for a custom small icon
+				.setContentTitle(title)
+				.setContentText(text)
+				.setAutoCancel(true) // dismisses the notification on click
+				.setSound(defaultSoundUri)
+				.setContentIntent(pendingIntent)
+				.build();
+
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		if (notificationManager != null) {
+			notificationManager.notify(notificationId, notificationBuilder);
+		}
+	}
+
 	@RequiresApi(api = Build.VERSION_CODES.O)
 	private void setupChannels(Context context) {
 
@@ -106,9 +156,17 @@ public class NotificationSenderService {
 		messageChannel.setLightColor(Color.RED);
 		messageChannel.enableVibration(true);
 
+		NotificationChannel
+		activityChannel = new NotificationChannel(ACTIVITY_CHANNEL_ID, ACTIVITY_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
+		activityChannel.setDescription(ACTIVITY_CHANNEL_DESC);
+		activityChannel.enableLights(true);
+		activityChannel.setLightColor(Color.RED);
+		activityChannel.enableVibration(true);
+
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		if (notificationManager != null) {
 			notificationManager.createNotificationChannel(messageChannel);
+			notificationManager.createNotificationChannel(activityChannel);
 		}
 	}
 }

@@ -21,9 +21,12 @@ import com.seeu.R;
 import com.seeu.common.AbstractEditEntityActivity;
 import com.seeu.common.subviews.PictureChooser;
 import com.seeu.member.Member;
+import com.seeu.team.Asset;
+import com.seeu.team.AssetService;
 import com.seeu.team.Team;
 import com.seeu.common.membersearch.MemberSearchableActivity;
 import com.seeu.team.TeamService;
+import com.seeu.team.profile.AssetRecyclerAdapter;
 import com.seeu.teamwall.Category;
 import com.seeu.teamwall.CategoryRecyclerAdapter;
 import com.seeu.teamwall.CategoryService;
@@ -55,6 +58,10 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	private List<Category> categories;
 	private CategoryService categoryService;
 
+	private AssetRecyclerAdapter assetRecyclerAdapter;
+	private List<Asset> assets;
+	private AssetService assetService;
+
 	private EditText name;
 	private EditText place;
 	private EditText tags;
@@ -65,6 +72,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	public EditTeamProfileActivity() {
 		super();
 		categories = new ArrayList<>();
+		assets = new ArrayList<>();
 	}
 
 	@Override
@@ -74,6 +82,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 		teamService = new TeamService(this);
 		categoryService = new CategoryService(this);
+		assetService = new AssetService(this);
 
 		pictureChooser = new PictureChooser();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -87,8 +96,10 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 		setupMemberRecycler();
 		setupCategoryRecycler();
+		setupAssetRecycler();
 
 		loadCategories();
+		loadAssets();
 		updateUI();
 	}
 
@@ -133,6 +144,13 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		categoryRecycler.setAdapter(categoryRecyclerAdapter);
 	}
 
+	private void setupAssetRecycler() {
+		assetRecyclerAdapter = new AssetRecyclerAdapter(this, assets, this::onAssetClick);
+
+		RecyclerView assetRecycler = findViewById(R.id.assetRecycler);
+		assetRecycler.setAdapter(assetRecyclerAdapter);
+	}
+
 	/**
 	 * Load all the categories of teams. Refresh teams when received.
 	 */
@@ -144,7 +162,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Log.e("TeamWallFragment", "Error while loading categories", error);
+				Log.e("EditTeamProfileActivity", "Error while loading categories", error);
 				Toast.makeText(EditTeamProfileActivity.this, "Error while loading categories " + error.getMessage(), Toast.LENGTH_LONG).show();
 			}
 
@@ -162,8 +180,37 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		});
 	}
 
+	private void loadAssets() {
+		assetService.getAllAssets(new CustomResponseListener<Asset[]>() {
+			@Override
+			public void onHeadersResponse(Map<String, String> headers) {
+			}
+
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				Log.e("EditTeamProfileActivity", "Error while loading assets", error);
+				Toast.makeText(EditTeamProfileActivity.this, "Error while loading assets " + error.getMessage(), Toast.LENGTH_LONG).show();
+			}
+
+			@Override
+			public void onResponse(Asset[] response) {
+				Collections.addAll(assets, response);
+
+				if (null != assetRecyclerAdapter) {
+					assetRecyclerAdapter.notifyDataSetChanged();
+				}
+
+				updateSelectedAssets();
+			}
+		});
+	}
+
 	public void onCategoryClick(View view, int position) {
 		categoryRecyclerAdapter.setSelected(position);
+	}
+
+	public void onAssetClick(View view, int position) {
+		assetRecyclerAdapter.select(position);
 	}
 
 	/**
@@ -192,6 +239,7 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 		textDescription.setText(entity.getDescription());
 
 		updateSelectedCategory();
+		updateSelectedAssets();
 	}
 
 	private void updateSelectedCategory() {
@@ -205,6 +253,20 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 					// For now, we can select only one category
 					categoryRecyclerAdapter.setSelected(i);
 					break;
+				}
+			}
+		}
+	}
+
+	private void updateSelectedAssets() {
+		if (null == assetRecyclerAdapter) {
+			return;
+		}
+
+		for (Asset asset : entity.getAssets()) {
+			for (int i = 0; i < assets.size(); i++) {
+				if (asset.equals(assets.get(i))) {
+					assetRecyclerAdapter.select(i);
 				}
 			}
 		}
@@ -240,31 +302,33 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 
 		entity.getCategories().clear();
 		entity.getCategories().add(categoryRecyclerAdapter.getSelectedItem());
+
+		entity.getAssets().clear();
+		entity.getAssets().addAll(assetRecyclerAdapter.getSelectedItems());
 	}
 
 	@Override
 	protected void saveEntity() {
 		Uri chosenPictureUri = pictureChooser.getChosenPictureUri();
-		String imageBase64 = null;
+		Bitmap bitmap = null;
 
 		if (null != chosenPictureUri) {
 			try {
 				// Get data of picture
-				Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), chosenPictureUri);
+				bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), chosenPictureUri);
 				//encoding image to string
-				imageBase64 = ImageUtils.getStringImage(bitmap);
 			} catch (IOException e) {
 				e.printStackTrace();
-				imageBase64 = null;
+				bitmap = null;
 			}
 		}
 
 		if (isNewEntity) {
 			// Save the newly created team with its picture
-			teamService.createTeam(entity, imageBase64, this);
+			teamService.createTeam(entity, bitmap, this);
 		} else {
 			// Save the updated team with its new picture or not
-			teamService.updateTeam(entity, imageBase64, this);
+			teamService.updateTeam(entity, bitmap, this);
 		}
 	}
 
@@ -283,7 +347,9 @@ public class EditTeamProfileActivity extends AbstractEditEntityActivity<Team> im
 	@Override
 	public void onResponse(Team response) {
 		// TODO: if update, no team is returned
-		// SharedPreferencesManager.putEntity(this, Team.STORAGE_KEY, response);
+		if (isNewEntity) {
+			SharedPreferencesManager.putEntity(this, Team.STORAGE_KEY, response);
+		}
 		// End this activity when successfully save the team
 
 		Intent returnIntent = new Intent();
