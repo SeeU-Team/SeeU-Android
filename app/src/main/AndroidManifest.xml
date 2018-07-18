@@ -113,7 +113,6 @@
             android:parentActivityName=".team.edit.EditTeamProfileActivity"
             android:label="Add a member to the team"
             android:theme="@android:style/Theme.Holo.Dialog"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"/>
 
         <activity
